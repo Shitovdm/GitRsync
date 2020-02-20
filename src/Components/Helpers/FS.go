@@ -1,19 +1,20 @@
-package helpers
+package Helpers
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
 
-func GetCurrentPath() (*string, error) {
+func GetCurrentPath() string {
 	ex, err := os.Executable()
 	if err != nil {
-		return nil, err
+		log.Fatal(err.Error())
 	}
 	exPath := filepath.Dir(ex)
 
-	return &exPath, nil
+	return exPath
 }
 
 func IsDirExists(dirPath string) bool {
