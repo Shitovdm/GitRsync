@@ -1,0 +1,6 @@
+.custom-select option{
+    padding: 10px;
+    background-color: #1a2035;
+    line-height: 2em;
+    text-align: center;
+}
