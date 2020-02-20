@@ -1,0 +1,12 @@
+<div class="sidebar-wrapper">
+    <ul class="nav">
+        {{range $item := .menu}}
+            <li class="nav-item{{if $item.active}} active{{end}}">
+                <a class="nav-link" href="{{ $item.href}}" style="color: #FFF">
+                    <i class="material-icons">{{ $item.icon}}</i>
+                    <p>{{ $item.text}}</p>
+                </a>
+            </li>
+        {{end}}
+    </ul>
+</div>

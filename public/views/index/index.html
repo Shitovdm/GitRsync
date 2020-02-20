@@ -1,0 +1,377 @@
+{{define "content"}}
+  <div class="row">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-header card-header-primary card-header-icon">
+          <div class="card-icon">
+            <i class="material-icons">store</i>
+          </div>
+          <p class="card-category">Used Platforms/Repositories</p>
+          <h3 class="card-title">2/20
+            <small>PCs</small>
+          </h3>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="material-icons text-gray">inbox</i>
+            <a href="#" class="text-gray">Management</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-header card-header-info card-header-icon">
+          <div class="card-icon">
+            <i class="material-icons">access_time</i>
+          </div>
+          <p class="card-category">Last Update</p>
+          <h3 class="card-title">Today 14:32</h3>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="material-icons">update</i>
+            <a href="#" class="text-gray">Update Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-header card-header-warning card-header-icon">
+          <div class="card-icon">
+            <i class="material-icons">sync</i>
+          </div>
+          <p class="card-category">Needed sync</p>
+          <h3 class="card-title">5</h3>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="material-icons">sync</i>
+            <a href="#" class="text-gray">Sync Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-header card-header-danger card-header-icon">
+          <div class="card-icon">
+            <i class="material-icons">info_outline</i>
+          </div>
+          <p class="card-category">Errors</p>
+          <h3 class="card-title">6</h3>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="material-icons">storage</i>
+            <a href="#" class="text-gray">Open Log</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12">
+    <div id="accordion">
+
+      {{range $id, $proj := .projects}}
+        <div class="card mt-3 mb-3" id="{{ $id}}" data-project="{{ $proj.title}}">
+          <div class="card-header" id="proj-{{ $id}}">
+            <div class="row">
+              <div class="col-md-3">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      Start
+                      <input class="form-check-input launchC" id="launch-{{ $proj.title}}" type="checkbox" data-project="{{ $proj.title}}" onchange="if($(this).not(':checked')) {$('#'+$(this).attr('id').replace('launch', 'build')).prop('checked', false)}">&nbsp;
+                      <span class="form-check-sign">
+                        <span class="check"></span>
+                      </span>
+                    </label>
+                    <label class="form-check-label">
+                      Build
+                      <input class="form-check-input buildC" id="build-{{ $proj.title}}" type="checkbox" data-project="{{ $proj.title}}" onchange="if($(this).is(':checked')) {$('#'+$(this).attr('id').replace('build', 'launch')).prop('checked', true)}">&nbsp;
+                      <span class="form-check-sign">
+                        <span class="check"></span>
+                      </span>
+                    </label>
+
+                    <a class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{ $id}}" aria-expanded="true" aria-controls="collapse-{{ $id}}">
+                      <h4 class="mb-0"><span class="text-primary font-weight-bold">{{ $proj.title}}</span></h4>
+                    </a>
+                  </div>
+              </div>
+              <div class="col-md-6">
+                <div style="display:table;height:100%;">
+                  <div class="servicelist-wrapper">
+                    <div class="servicelist" id="serviceList-{{ $proj.title}}"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 text-right">
+                <button class="btn btn-sm btn-primary git-puller" data-project="{{ $proj.title}}" data-target="#collapse-{{ $id}}" title="Pull from Git" rel="tooltip" data-placement="top"><i class="fab fa-git-square fa-2x"></i></button>
+                <button class="btn btn-sm btn-info config-reloader" data-project="{{ $proj.title}}" data-target="#collapse-{{ $id}}" title="Reload config" rel="tooltip" data-placement="top"><i class="fas fa-refresh fa-2x"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div id="collapse-{{ $id}}" class="collapse" aria-labelledby="proj-{{ $id}}" data-parent="#accordion">
+            <div class="card-body">
+
+            </div>
+          </div>
+        </div>
+      {{end}}
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header card-header-tabs card-header-success">
+        <div class="nav-tabs-navigation">
+          <div class="nav-tabs-wrapper">
+            <ul class="nav nav-tabs" data-tabs="tabs">
+              <li class="nav-item">
+                <a class="nav-link active" href="#repositories" data-toggle="tab">
+                  <i class="material-icons">storage</i> Repositories
+                  <div class="ripple-container"></div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#platforms" data-toggle="tab">
+                  <i class="material-icons">dns</i> Platforms
+                  <div class="ripple-container"></div>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#Statistics" data-toggle="tab">
+                  <i class="material-icons">cloud</i> Statistics
+                  <div class="ripple-container"></div>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="tab-content">
+          <div class="tab-pane active" id="repositories">
+            <table class="table">
+              <tbody>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="" checked="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Sign contract for "What are conference organizers afraid of?"</td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+                </td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="" checked="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Create 4 Invisible User Experiences you Never Knew About</td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane" id="platforms">
+            <table class="table">
+              <tbody>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="" checked="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+                </td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Sign contract for "What are conference organizers afraid of?"</td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane" id="Statistics">
+            <table class="table">
+              <tbody>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="" checked="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+                </td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" value="" checked="">
+                      <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                    </label>
+                  </div>
+                </td>
+                <td>Sign contract for "What are conference organizers afraid of?"</td>
+                <td class="td-actions text-right">
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Task">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove">
+                    <i class="material-icons">close</i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

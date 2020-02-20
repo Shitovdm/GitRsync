@@ -1,0 +1,121 @@
+<div id="settings-{{ .id}}">
+    <form class="projectSettingsForm" id="project-settings-{{ .id}}">
+        <input type="hidden" name="projectTitle" value="{{ .title}}">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <strong>Не забудьте настроить имена сервисов для взаимодействия.</strong>
+                    Сетевое взаимодействие сервисов в итоговой сборке осуществляется по имени сервиса.
+                    При этом имя сервиса организуется следующим образом: [название проекта]-[название сервиса в нем].
+                    В данном случае сервис <strong>database</strong> приводится к виду <strong>{{ .title}}-database</strong>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <h4 class="mt-0">Настройки проекта для лаунчера</h4>
+                </div>
+                <div class="form-group">
+                    <label class="bmd-label-floating">URL репозитория (https://gitlab-e.artepay.ru/pmc/project.git): </label>
+                    <input type="text" name="gitlabUrl" class="form-control" value="{{ .gitlabUrl}}">
+                </div>
+                <div class="form-group">
+                    <label class="bmd-label-floating">Путь относительно папки с проектами: </label>
+                    <input type="text" name="projectPath" class="form-control" value="{{ .projectPath}}">
+                </div>
+                {{if .svcTerminal}}
+                    <div class="form-group">
+                        <h4 class="mt-5">Оболочка командной строки:</h4>
+                    </div>
+                    {{$svcTerminal := .svcTerminal}}
+                    {{range $serviceName := .svcList}}
+                        {{ range $svc, $terminalApp := $svcTerminal }}
+                            {{if eq $serviceName $svc}}
+                                <div class="form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">{{$serviceName}}</label>
+                                    <select name="terminalApp[{{$svc}}]" class="selectpicker" data-style="select-with-transition" title="{{$serviceName}}" data-size="3">
+                                        <option value="none"{{if $terminalApp}}{{if eq $terminalApp "none"}} selected{{end}}{{end}}>Нет</option>
+                                        <option value="bash"{{if $terminalApp}}{{if eq $terminalApp "bash"}} selected{{end}}{{end}}>bash</option>
+                                        <option value="sh"{{if $terminalApp}}{{if eq $terminalApp "sh"}} selected{{end}}{{end}}>sh</option>
+                                    </select>
+                                </div>
+                            {{end}}
+                        {{end}}
+                    {{end}}
+                {{end}}
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <h4 class="mt-0">Настройка переменных окружения</h4>
+                </div>
+                {{$environmentAvail := .environmentAvail}}
+                {{$environmentSet := .environmentSet}}
+
+                {{range $key, $value := $environmentAvail}}
+                    {{ $inputVal := $value}}
+                    {{range $keySet, $valueSet := $environmentSet}}
+                        {{if eq $key $keySet}}
+
+                            {{ $inputVal = $valueSet}}
+                        {{end}}
+                    {{end}}
+                    <div class="form-group">
+                        <label class="bmd-label-floating">{{ $key}}: </label>
+                        <input type="text" name="environment[{{ $key}}]" class="form-control" value="{{ $inputVal}}">
+                    </div>
+                {{end}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Сохранить проект</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="save_result"></div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--
+<div class="nav-tabs-navigation mb-5">
+    <div class="nav-tabs-wrapper">
+        <ul class="nav nav-pills" data-tabs="tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#settings-{{ .id}}" data-toggle="tab">
+                    <i class="material-icons">settings_applications</i> Настройки проекта
+                    <div class="ripple-container"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#logs-{{ .id}}" data-toggle="tab">
+                    <i class="material-icons">history</i> Логи
+                    <div class="ripple-container"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#commands-{{ .id}}" data-toggle="tab">
+                    <i class="material-icons">code</i> Командная строка
+                    <div class="ripple-container"></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="settings-{{ .id}}">
+
+    </div>
+    <div class="tab-pane" id="logs-{{ .id}}">
+
+    </div>
+    <div class="tab-pane" id="commands-{{ .id}}">
+
+    </div>
+</div>
+-->
