@@ -2,25 +2,35 @@ package main
 
 import (
 	"fmt"
-	"github.com/Shitovdm/git-repo-exporter/helpers"
+	"github.com/Shitovdm/git-repo-exporter/src/Application"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 )
 
-//var wg sync.WaitGroup // 1
-
-/**
-Step 1/8 : ARG  BUILDER=${BUILDER}
-Step 2/8 : FROM ${BUILDER} as builder
- ---> 755e306a9382
-Step 3/8 : FROM scratch
-*/
+func init() {
+	Configuration.Init("git-repo-exporter")
+}
 
 func main() {
 
-	command := "git clone https://github.com/jung-kurt/gofpdf.git"
-	helpers.execCommand(command)
+	/*appConfig := map[string]string{
+		"gitlabLogin":    "test",
+		"gitlabPassword": "test",
+		"projectsFolder": "test",
+		"shellstarter":   "test",
+	}*/
 
-	if helpers.IsDirExists("") {
-		fmt.Println("true")
+	//_ = Configuration.Save("AppConfig.json", &appConfig)
+
+	var newConfig interface{}
+	res := Configuration.Load("AppConfig.json", &newConfig)
+	if res == nil {
+		fmt.Println(newConfig)
 	}
 
+	//Helpers.Exec(`docker ps -a`)
+
+	fmt.Println(Helpers.GetCurrentPath())
+
+	Application.StartServer()
 }
