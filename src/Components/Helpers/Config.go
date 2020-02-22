@@ -24,3 +24,13 @@ func GetRepositoriesConfig() ([]map[string]interface{}, error) {
 
 	return repositoriesConfig, nil
 }
+
+func GetPlatformsConfig() ([]map[string]interface{}, error) {
+	var platformsConfig []map[string]interface{}
+	conferr := Configuration.Load("Platforms.json", &platformsConfig)
+	if conferr != nil {
+		return []map[string]interface{}{}, errors.New("unable to load platforms configuration")
+	}
+
+	return platformsConfig, nil
+}

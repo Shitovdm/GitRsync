@@ -65,13 +65,21 @@ func WebRouter() http.Handler {
 	indexController := new(Controllers.IndexController)
 	e.GET("/", indexController.Index)
 
-	// /projects/*
+	// /repositories
 	repositories := e.Group("/repositories")
 	{
 		repositoriesController := new(Controllers.RepositoriesController)
 		repositories.GET("/", repositoriesController.Index)
 		repositories.GET("add/", repositoriesController.Add)
 		repositories.GET("remove/", repositoriesController.Remove)
+
+	}
+
+	// /platforms
+	platforms := e.Group("/platforms")
+	{
+		platformsController := new(Controllers.PlatformsController)
+		platforms.GET("/", platformsController.Index)
 
 	}
 
