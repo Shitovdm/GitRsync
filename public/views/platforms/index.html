@@ -35,29 +35,31 @@
                                             <th>User</th>
                                             <th>Control</th>
                                         </tr>
-                                        <tr>
-                                            <td>GitHub</td>
-                                            <td>https://github.com/</td>
-                                            <td>shitov.dm@gmail.com</td>
-                                            <td class="td-actions text-right">
-                                                <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Edit Platform">
-                                                    <i class="material-icons">edit</i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="" class="btn btn-white btn-link btn-sm" data-original-title="Remove Platform">
-                                                    <i class="material-icons">close</i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        {{range $id, $platform := .platforms}}
+                                            <tr id="platform_{{$platform.guid}}">
+                                                <td>{{$platform.name}}</td>
+                                                <td>{{$platform.address}}</td>
+                                                <td>{{$platform.username}}</td>
+                                                <td class="td-actions text-right">
+                                                    <button type="button" data-toggle="modal" data-target="#edit-platform-modal" data-name="{{$platform.name}}" data-guid="{{$platform.guid}}" title="Edit Platform" class="btn btn-white btn-link btn-sm btn-edit-platform" data-original-title="Edit Platform">
+                                                        <i class="material-icons">edit</i>
+                                                    </button>
+                                                    <button type="button" data-toggle="modal" data-target="#remove-platform-modal" data-name="{{$platform.name}}" data-guid="{{$platform.guid}}" title="Remove Platform" class="btn btn-white btn-link btn-sm btn-sm btn-remove-platform-modal" data-original-title="Remove Platform">
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {{end}}
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="tab-pane" id="add_platform">
-                                    <form id="projectForm">
+                                    <form id="platformForm">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Platform Name (GitHub):</label>
-                                                    <input type="text" name="PlatformName" class="form-control">
+                                                    <input type="text" name="name" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -65,7 +67,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Platform Address (https://github.com/):</label>
-                                                    <input type="text" name="PlatformAddress" class="form-control">
+                                                    <input type="text" name="address" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -78,13 +80,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Username or E-mail:</label>
-                                                    <input type="text" name="platformUsername" class="form-control">
+                                                    <input type="text" name="username" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="bmd-label-floating">Password:</label>
-                                                    <input type="password" name="platformPassword" class="form-control">
+                                                    <input type="password" name="password" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -94,13 +96,92 @@
                                             </div>
                                         </div>
                                         <div class="form-group" style="padding: 20px 0px 0px 0px; text-align: center">
-                                            <button type="submit" class="btn btn-success">Add Platform</button>
+                                            <button type="submit" class="btn btn-success btn-add-platform">Add Platform</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit-platform-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Platform editing</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPlatformForm" style="text-align: left;">
+                        <div class="row">
+                            <input style="display: none" type="text" name="guid" class="form-control">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 ml-auto">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Platform Name (GitHub):</label>
+                                    <input type="text" name="name" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Platform Address (https://github.com/):</label>
+                                    <input type="text" name="address" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top: 20px">
+                            <div class="col-md-12">
+                                <b>Authorization Data (Optional)</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Username or E-mail:</label>
+                                    <input type="text" name="username" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Password:</label>
+                                    <input type="password" name="password" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success btn-edit-platform">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade dark-modal" id="remove-platform-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Platform Removal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to remove <b class="remove-platform-name"></b> platform?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-remove-platform" data-dismiss="modal">Close</button>
+                    <button type="button" data-guid="" class="btn btn-danger btn-remove-platform">Remove</button>
                 </div>
             </div>
         </div>

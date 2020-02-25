@@ -4,3 +4,22 @@
     line-height: 2em;
     text-align: center;
 }
+
+.dark-modal .modal-dialog {
+    background-color: #1a2035;
+}
+
+.dark-modal .modal-header {
+    border-bottom: 1px solid #3a3a3a;
+    color: #fff;
+}
+
+
+
+.dark-modal .modal-body {
+
+}
+
+.dark-modal .modal-footer {
+    border-top: 1px solid #3a3a3a;
+}
