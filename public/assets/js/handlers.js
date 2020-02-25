@@ -3,48 +3,68 @@ var term;
 var connections = [];
 var stream;
 
-function addProject() {
-    let form = $('#projectForm');
-    let formData = getFormData(form);
-    if (typeof term === "undefined") {
-        term = new ExecTerminal('terminal');
-        term.UpdateTerminalFit();
-    }
+function getFormData($form){
+    let unIndexedArray = $form.serializeArray();
+    let indexedArray = {};
 
-    let ws = webSocketConnection("ws://localhost:8888/projects/add/");
+    $.map(unIndexedArray, function(n, i){
+        indexedArray[n['name']] = n['value'];
+    });
+
+    return JSON.stringify(indexedArray);
+}
+
+function reloadPageData() {
+    location.reload();
+    return false;
+}
+
+$('#platformForm').on('submit', function(e)
+{
+    e.preventDefault();
+    let form = $('#platformForm');
+    let formData = getFormData(form);
+    let ws = webSocketConnection("ws://localhost:8888/platforms/add/");
     ws.onopen = function()
     {
         ws.send(formData);
+        reloadPageData();
     };
     ws.onmessage = function(msg) {
         term.terminal.writeln(msg.data)
     };
-}
+});
 
-function saveProjectSettings(settingsId) {
-    let form = $('#'+settingsId);
-    let formData = $(form).serialize();
-    $.ajax({
-        method: 'post',
-        url: '/projects/settings/',
-        data: formData,
-        //contentType: "application/json; charset=utf-8",
-        success: function (data) {
-            load_settings(data.project, $('#'+data.element));
-            $.notify({
-                icon: "add_alert",
-                message: "Настройки проекта успешно обновлены"
-            }, {
-                type: 'success',
-                timer: 1000,
-                placement: {
-                    from: 'top',
-                    align: 'center'
-                }
-            });
-        },
-    })
-}
+$('body').on('click', '.btn-remove-platform-modal', function (e)
+{
+    $('.btn-remove-platform').attr('data-guid', $(this).data('guid'));
+    $('.remove-platform-name').text($(this).data('name'));
+});
+
+$('body').on('click', '.btn-remove-platform', function (e)
+{
+    e.preventDefault();
+    let guid = $(this).data('guid');
+    let formData = JSON.stringify({guid: guid});
+    let ws = webSocketConnection("ws://localhost:8888/platforms/remove/");
+    ws.onopen = function()
+    {
+        ws.send(formData);
+        $('.btn-close-remove-platform').click();
+        $('#platform_' + guid).remove();
+    };
+    ws.onmessage = function(msg) {
+        term.terminal.writeln(msg.data)
+    };
+});
+
+
+
+
+
+
+
+
 
 function load_settings(project, element) {
     let id = element.attr('id');
@@ -265,56 +285,7 @@ function clearConnections() {
     }
 }
 
-if ($('#projectForm').length > 0) {
-    $('#projectForm').on('submit', function(e) {
-        e.preventDefault();
-        addProject();
-    });
-}
-
-
-if ($('#accordion').length > 0) {
-    setTimeout(function () {
-        $('#accordion .card').each(function() {
-            load_settings($(this).data('project'), $(this));
-        })
-    }, 1000);
-    $('#startAll').click(function () {
-        startAll();
-    });
-    $('#stopAll').click(function () {
-        stopAll();
-    });
-    $('.git-puller').click(function () {
-        gitPull($(this).data('project'));
-    });
-    $('.config-reloader').click(function () {
-        reloadConfig($(this).data('project'));
-    });
-    setInterval(function () {
-        getServices();
-    }, 5000);
-}
-
-function getFormData($form){
-    let unIndexedArray = $form.serializeArray();
-    let indexedArray = {};
-
-    $.map(unIndexedArray, function(n, i){
-        indexedArray[n['name']] = n['value'];
-    });
-
-    return JSON.stringify(indexedArray);
-}
 
 $(document).arrive(".selectpicker", function() {
     $(this).selectpicker();
-});
-
-$(document).arrive(".projectSettingsForm", function () {
-    let settingsId = $(this).attr('id');
-    $(this).on('submit', function(e) {
-        e.preventDefault();
-        saveProjectSettings(settingsId);
-    });
 });

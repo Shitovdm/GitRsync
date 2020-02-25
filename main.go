@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Shitovdm/git-repo-exporter/src/Application"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
+	"github.com/getlantern/systray"
+	"github.com/getlantern/systray/example/icon"
 )
 
 func init() {
@@ -13,6 +13,8 @@ func init() {
 
 func main() {
 
+	//systray.Run(onReady, onExit)
+
 	/*appConfig := map[string]string{
 		"gitlabLogin":    "test",
 		"gitlabPassword": "test",
@@ -20,17 +22,34 @@ func main() {
 		"shellstarter":   "test",
 	}*/
 
-	//_ = Configuration.Save("AppConfig.json", &appConfig)
-
-	var newConfig interface{}
-	res := Configuration.Load("AppConfig.json", &newConfig)
-	if res == nil {
-		fmt.Println(newConfig)
-	}
 
 	//Helpers.Exec(`docker ps -a`)
 
-	fmt.Println(Helpers.GetCurrentPath())
+	/*repositories := Helpers.GetRepositoriesConfig()
 
+	fmt.Println(repositories.Config)
+	var platformsConfig map[string]interface{}
+	_ = Configuration.Load("Platforms.json", &platformsConfig)
+	fmt.Println(platformsConfig["config"])
+
+	byteData, _ := json.Marshal(platformsConfig)
+	fmt.Println(&byteData)*/
 	Application.StartServer()
+
+
+}
+
+
+func onReady() {
+	systray.SetIcon(icon.Data)
+	systray.SetTitle("Awesome App")
+	systray.SetTooltip("Pretty awesome超级棒")
+	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
+
+	// Sets the icon of a menu item. Only available on Mac.
+	mQuit.SetIcon(icon.Data)
+}
+
+func onExit() {
+	// clean up here
 }

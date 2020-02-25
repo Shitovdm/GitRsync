@@ -80,6 +80,8 @@ func WebRouter() http.Handler {
 	{
 		platformsController := new(Controllers.PlatformsController)
 		platforms.GET("/", platformsController.Index)
+		platforms.GET("add/", platformsController.Add)
+		platforms.GET("remove/", platformsController.Remove)
 
 	}
 

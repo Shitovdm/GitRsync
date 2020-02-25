@@ -102,6 +102,20 @@ func Save(path string, v interface{}) error {
 	panic("store: unknown configuration format")
 }
 
+/*func Add(path string, v interface{}) error {
+	if applicationName == "" {
+		panic("store: application name not defined")
+	}
+
+	if format, ok := formats[extension(path)]; ok {
+
+
+		return SaveWith(path, v, format.m)
+	}
+
+	panic("store: unknown configuration format")
+}*/
+
 // LoadWith loads the configuration using any unmarshaller at all.
 func LoadWith(path string, v interface{}, um UnmarshalFunc) error {
 	if applicationName == "" {
