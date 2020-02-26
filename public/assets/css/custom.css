@@ -1,11 +1,11 @@
-.custom-select option{
+.custom-select option {
     padding: 10px;
     background-color: #1a2035;
     line-height: 2em;
     text-align: center;
 }
 
-.dark-modal .modal-dialog {
+.dark-modal .modal-content {
     background-color: #1a2035;
 }
 
@@ -14,10 +14,9 @@
     color: #fff;
 }
 
-
-
+.dark-modal .modal-header button span,
 .dark-modal .modal-body {
-
+    color: #fff;
 }
 
 .dark-modal .modal-footer {

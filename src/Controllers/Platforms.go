@@ -1,6 +1,7 @@
 package Controllers
 
 import (
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Interface"
 	"github.com/Shitovdm/git-repo-exporter/src/Models"
@@ -16,7 +17,7 @@ func (ctrl PlatformsController) Index(c *gin.Context) {
 	menu := Interface.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Platforms"
-	templateParams["platforms"], _ = Helpers.GetPlatformsConfigData()
+	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
 
 	c.HTML(http.StatusOK, "platforms/index", templateParams)
 }
@@ -31,16 +32,16 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 	}
 
 	newPlatformUuid, _ := uuid.NewV4()
-	platforms := Helpers.GetPlatformsConfig()
+	platforms := Configuration.GetPlatformsConfig()
 	platforms = append(platforms, Models.PlatformConfig{
-		Guid:     newPlatformUuid.String(),
+		Uuid:     newPlatformUuid.String(),
 		Name:     addPlatformRequest.Name,
 		Address:  addPlatformRequest.Address,
 		Username: addPlatformRequest.Username,
 		Password: addPlatformRequest.Password,
 	})
 
-	err = Helpers.SavePlatformsConfig(platforms)
+	err = Configuration.SavePlatformsConfig(platforms)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -57,12 +58,12 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 		return
 	}
 
-	oldPlatformsList := Helpers.GetPlatformsConfig()
+	oldPlatformsList := Configuration.GetPlatformsConfig()
 	newPlatformsList := make([]Models.PlatformConfig, 0)
 	for _, platform := range oldPlatformsList {
-		if platform.Guid == editPlatformRequest.Guid {
+		if platform.Uuid == editPlatformRequest.Uuid {
 			newPlatformsList = append(newPlatformsList, Models.PlatformConfig{
-				Guid:     platform.Guid,
+				Uuid:     platform.Uuid,
 				Name:     editPlatformRequest.Name,
 				Address:  editPlatformRequest.Address,
 				Username: editPlatformRequest.Username,
@@ -73,7 +74,7 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 		newPlatformsList = append(newPlatformsList, platform)
 	}
 
-	err = Helpers.SavePlatformsConfig(newPlatformsList)
+	err = Configuration.SavePlatformsConfig(newPlatformsList)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -90,15 +91,15 @@ func (ctrl PlatformsController) Remove(c *gin.Context) {
 		return
 	}
 
-	oldPlatformsList := Helpers.GetPlatformsConfig()
+	oldPlatformsList := Configuration.GetPlatformsConfig()
 	newPlatformsList := make([]Models.PlatformConfig, 0)
 	for _, platform := range oldPlatformsList {
-		if platform.Guid != removePlatformRequest.Guid {
+		if platform.Uuid != removePlatformRequest.Uuid {
 			newPlatformsList = append(newPlatformsList, platform)
 		}
 	}
 
-	err = Helpers.SavePlatformsConfig(newPlatformsList)
+	err = Configuration.SavePlatformsConfig(newPlatformsList)
 	if err != nil {
 		log.Println(err.Error())
 	}

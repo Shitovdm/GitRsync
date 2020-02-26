@@ -9,13 +9,13 @@
                                 <div class="nav-tabs-wrapper">
                                     <ul class="nav nav-tabs" data-tabs="tabs">
                                         <li class="nav-item">
-                                            <a class="nav-link active" href="#platforms" data-toggle="tab">
+                                            <a class="nav-link {{if ne 0 (len .platforms)}}active{{end}}" href="#platforms" data-toggle="tab">
                                                 <i class="material-icons">home</i> Platforms
                                                 <div class="ripple-container"></div>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#add_platform" data-toggle="tab">
+                                            <a class="nav-link {{if eq 0 (len .platforms)}}active{{end}}" href="#add_platform" data-toggle="tab">
                                                 <i class="material-icons">add</i> Add Platform
                                                 <div class="ripple-container"></div>
                                             </a>
@@ -26,7 +26,7 @@
                         </div>
                         <div class="card-body">
                             <div class="tab-content">
-                                <div class="tab-pane active" id="platforms">
+                                <div class="tab-pane {{if ne 0 (len .platforms)}}active{{end}}" id="platforms">
                                     <table class="table">
                                         <tbody>
                                         <tr>
@@ -36,15 +36,26 @@
                                             <th>Control</th>
                                         </tr>
                                         {{range $id, $platform := .platforms}}
-                                            <tr id="platform_{{$platform.guid}}">
+                                            <tr id="platform_{{$platform.uuid}}">
                                                 <td>{{$platform.name}}</td>
                                                 <td>{{$platform.address}}</td>
                                                 <td>{{$platform.username}}</td>
                                                 <td class="td-actions text-right">
-                                                    <button type="button" data-toggle="modal" data-target="#edit-platform-modal" data-name="{{$platform.name}}" data-guid="{{$platform.guid}}" title="Edit Platform" class="btn btn-white btn-link btn-sm btn-edit-platform" data-original-title="Edit Platform">
+                                                    <button type="button" data-toggle="modal" data-target="#edit-platform-modal"
+                                                            data-uuid="{{$platform.uuid}}"
+                                                            data-name="{{$platform.name}}"
+                                                            data-address="{{$platform.address}}"
+                                                            data-username="{{$platform.username}}"
+                                                            data-password="{{$platform.password}}"
+                                                            title="Edit Platform"
+                                                            class="btn btn-white btn-link btn-sm btn-edit-platform-modal"
+                                                            data-original-title="Edit Platform">
                                                         <i class="material-icons">edit</i>
                                                     </button>
-                                                    <button type="button" data-toggle="modal" data-target="#remove-platform-modal" data-name="{{$platform.name}}" data-guid="{{$platform.guid}}" title="Remove Platform" class="btn btn-white btn-link btn-sm btn-sm btn-remove-platform-modal" data-original-title="Remove Platform">
+                                                    <button type="button" data-toggle="modal" data-target="#remove-platform-modal"
+                                                            data-name="{{$platform.name}}"
+                                                            data-uuid="{{$platform.uuid}}"
+                                                            title="Remove Platform" class="btn btn-white btn-link btn-sm btn-sm btn-remove-platform-modal" data-original-title="Remove Platform">
                                                         <i class="material-icons">close</i>
                                                     </button>
                                                 </td>
@@ -53,12 +64,12 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="tab-pane" id="add_platform">
+                                <div class="tab-pane {{if eq 0 (len .platforms)}}active{{end}}" id="add_platform">
                                     <form id="platformForm">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label class="bmd-label-floating">Platform Name (GitHub):</label>
+                                                    <label class="bmd-label-floating">Platform Name (Example: GitHub):</label>
                                                     <input type="text" name="name" class="form-control">
                                                 </div>
                                             </div>
@@ -66,7 +77,7 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label class="bmd-label-floating">Platform Address (https://github.com/):</label>
+                                                    <label class="bmd-label-floating">Platform Address (Example: https://github.com/):</label>
                                                     <input type="text" name="address" class="form-control">
                                                 </div>
                                             </div>
@@ -107,8 +118,7 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="edit-platform-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade dark-modal" id="edit-platform-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -120,7 +130,7 @@
                 <div class="modal-body">
                     <form id="editPlatformForm" style="text-align: left;">
                         <div class="row">
-                            <input style="display: none" type="text" name="guid" class="form-control">
+                            <input style="display: none" type="text" name="uuid" class="form-control">
                         </div>
                         <div class="row">
                             <div class="col-sm-12 col-md-12 ml-auto">
@@ -138,7 +148,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="padding-top: 20px">
+                        <div class="row" style="padding: 10px 0px 10px 0px">
                             <div class="col-md-12">
                                 <b>Authorization Data (Optional)</b>
                             </div>
@@ -160,13 +170,12 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success btn-edit-platform">Save changes</button>
+                    <button type="button" class="btn btn-secondary btn-close-edit-platform" data-dismiss="modal">Close</button>
+                    <button type="button" data-uuid="" class="btn btn-success btn-edit-platform">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="modal fade dark-modal" id="remove-platform-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -181,7 +190,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-close-remove-platform" data-dismiss="modal">Close</button>
-                    <button type="button" data-guid="" class="btn btn-danger btn-remove-platform">Remove</button>
+                    <button type="button" data-uuid="" class="btn btn-danger btn-remove-platform">Remove</button>
                 </div>
             </div>
         </div>
