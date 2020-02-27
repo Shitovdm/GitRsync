@@ -1,173 +1,298 @@
 {{define "content"}}
-<div class="row">
-  <div class="col-lg-12 col-md-12 col-sm-12">
     <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header card-header-tabs card-header-primary">
-            <div class="nav-tabs-navigation">
-              <div class="nav-tabs-wrapper">
-                <ul class="nav nav-tabs" data-tabs="tabs">
-                  <li class="nav-item">
-                    <a class="nav-link {{if ne 0 (len .repositories)}}active{{end}}" href="#your_repositories" data-toggle="tab">
-                      <i class="material-icons">home</i> Your Repositories
-                      <div class="ripple-container"></div>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link {{if eq 0 (len .repositories)}}active{{end}}" href="#new_repository" data-toggle="tab">
-                      <i class="material-icons">add</i> New Repository
-                      <div class="ripple-container"></div>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-tabs card-header-primary">
+                            <div class="nav-tabs-navigation">
+                                <div class="nav-tabs-wrapper">
+                                    <ul class="nav nav-tabs" data-tabs="tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link {{if ne 0 (len .repositories)}}active{{end}}"
+                                               href="#your_repositories" data-toggle="tab">
+                                                <i class="material-icons">home</i> Your Repositories
+                                                <div class="ripple-container"></div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link {{if eq 0 (len .repositories)}}active{{end}}"
+                                               href="#new_repository" data-toggle="tab">
+                                                <i class="material-icons">add</i> New Repository
+                                                <div class="ripple-container"></div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
 
-          <div class="card-body">
-            <div class="tab-content">
-              <div class="tab-pane {{if ne 0 (len .repositories)}}active{{end}}" id="your_repositories">
-                <table class="table">
-                  <tbody>
-                  <tr>
-                    <th>Active</th>
-                    <th>Name</th>
-                    <th>Source Repository Link</th>
-                    <th>Destination Repository Link</th>
-                    <th>Control</th>
-                  </tr>
-                  {{ $repositories := .repositories }}
-                  {{ $platforms := .platforms }}
-                  {{range $repository := $repositories}}
-                    <tr id="repository_{{$repository.uuid}}">
-                      <td>
-                        <div class="form-check" style="margin-left: 10px">
-                          <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <span class="form-check-sign">
-                              <span class="check"></span>
-                            </span>
-                          </label>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane {{if ne 0 (len .repositories)}}active{{end}}"
+                                     id="your_repositories">
+                                    <table class="table">
+                                        <tbody>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Source Repository Link</th>
+                                            <th>Destination Repository Link</th>
+                                            <th>Control</th>
+                                        </tr>
+                                        {{ $repositories := .repositories }}
+                                        {{ $platforms := .platforms }}
+                                        {{range $repository := $repositories}}
+                                            <tr id="repository_{{$repository.uuid}}">
+                                                <td>{{$repository.name}}</td>
+                                                <td>
+                                                    {{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}
+                                                    <a target="_blank"
+                                                       href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}">
+                                                        <button type="button"
+                                                                class="btn btn-white btn-link btn-sm btn-sm"
+                                                                data-original-title="Open Repository Page"
+                                                                title="Open Repository Page">
+                                                            <i class="material-icons">open_in_new</i>
+                                                        </button>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}
+                                                    <a target="_blank"
+                                                       href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}">
+                                                        <button type="button"
+                                                                class="btn btn-white btn-link btn-sm btn-sm"
+                                                                data-original-title="Open Repository Page"
+                                                                title="Open Repository Page">
+                                                            <i class="material-icons">open_in_new</i>
+                                                        </button>
+                                                    </a>
+                                                </td>
+                                                <td class="td-actions text-right">
+                                                    <button type="button" data-toggle="modal"
+                                                            data-target="#edit-repository-modal"
+                                                            data-uuid="{{$repository.uuid}}"
+                                                            data-name="{{$repository.name}}"
+                                                            data-spu="{{$repository.spu}}"
+                                                            data-spp="{{$repository.spp}}"
+                                                            data-dpu="{{$repository.dpu}}"
+                                                            data-dpp="{{$repository.dpp}}"
+                                                            title="Edit Repository"
+                                                            class="btn btn-white btn-link btn-sm btn-edit-repository-modal"
+                                                            data-original-title="Edit Repository">
+                                                        <i class="material-icons">edit</i>
+                                                    </button>
+                                                    <button type="button" data-toggle="modal"
+                                                            data-target="#remove-repository-modal"
+                                                            data-uuid="{{$repository.uuid}}"
+                                                            data-name="{{$repository.name}}"
+                                                            title="Remove Repository"
+                                                            class="btn btn-white btn-link btn-sm btn-sm btn-remove-repository-modal"
+                                                            data-original-title="Remove Repository">
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {{end}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane {{if eq 0 (len .repositories)}}active{{end}}" id="new_repository">
+                                    {{if eq 0 (len .platforms)}}
+                                        <div class="alert alert-danger" role="alert">
+                                            First add at least one platform <a class="alert-link"
+                                                                               href="/platforms">here</a>
+                                        </div>
+                                    {{else}}
+                                        <form id="repositoryForm">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-floating">Repository Name
+                                                            (optional):</label>
+                                                        <input type="text" name="name" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="source-platform">Source Platform</label>
+                                                        <select class="form-control selectpicker"
+                                                                data-style="btn btn-info" name="spu"
+                                                                id="source-platform" style="text-align: center">
+                                                            {{if eq 0 (len .platforms)}}
+                                                                <option disabled>Nothing to select</option>{{end}}
+                                                            {{range $id, $platform := .platforms}}
+                                                                <option data-address="{{$platform.address}}"
+                                                                        value="{{$platform.uuid}}">{{$platform.name}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="padding: 0px;">
+                                                    <div style="padding: 55px 0px 0px 0px; text-align: right">
+                                                        <strong style="font-size: 16px; font-weight: bold; color: #ccc;">https://github.com/</strong>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <div class="form-group" style="padding: 40px 0px 0px 0px;">
+                                                        <label class="bmd-label-floating"
+                                                               style="padding: 40px 0px 0px 0px;">Source Repository Path
+                                                            (Example: Shitovdm/git-repo-exporter.git):</label>
+                                                        <input type="text" name="spp" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="source-platform">Destination Platform</label>
+                                                        <select class="form-control selectpicker"
+                                                                data-style="btn btn-info" name="dpu"
+                                                                id="destination-platform">
+                                                            {{if eq 0 (len .platforms)}}
+                                                                <option disabled>Nothing to select</option>
+                                                            {{end}}
+                                                            {{range $id, $platform := .platforms}}
+                                                                <option data-address="{{$platform.address}}"
+                                                                        value="{{$platform.uuid}}">{{$platform.name}}</option>
+                                                            {{end}}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="padding: 0px;">
+                                                    <div style="padding: 55px 0px 0px 0px; text-align: right">
+                                                        <strong style="font-size: 16px; font-weight: bold; color: #ccc;">https://gitlab-e.artepay.ru/</strong>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <div class="form-group" style="padding: 40px 0px 0px 0px;">
+                                                        <label class="bmd-label-floating"
+                                                               style="padding: 40px 0px 0px 0px;">Destination Repository
+                                                            Path
+                                                            (Example: Shitovdm/git-repo-exporter-copy.git):</label>
+                                                        <input type="text" name="dpp" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group"
+                                                 style="padding: 20px 0px 0px 0px; text-align: center">
+                                                <button type="submit" class="btn btn-success">Add Repository</button>
+                                            </div>
+                                        </form>
+                                    {{end}}
+                                </div>
+                            </div>
                         </div>
-                      </td>
-                      <td>{{$repository.name}}</td>
-                      <td>
-                        {{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}
-                        <a target="_blank" href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}">
-                          <button type="button" class="btn btn-white btn-link btn-sm btn-sm" data-original-title="Open Repository Page" title="Open Repository Page">
-                            <i class="material-icons">open_in_new</i>
-                          </button>
-                        </a>
-                      </td>
-                      <td>
-                        {{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}
-                        <a target="_blank" href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}">
-                          <button type="button" class="btn btn-white btn-link btn-sm btn-sm" data-original-title="Open Repository Page" title="Open Repository Page">
-                            <i class="material-icons">open_in_new</i>
-                          </button>
-                        </a>
-                      </td>
-                      <td class="td-actions text-right">
-                        <button type="button" data-toggle="modal" data-target="#edit-repository-modal"
-                                data-uuid="{{$repository.uuid}}"
-                                data-name="{{$repository.name}}"
-                                data-spu="{{$repository.spu}}"
-                                data-spp="{{$repository.spp}}"
-                                data-dpu="{{$repository.dpu}}"
-                                data-dpp="{{$repository.dpp}}"
-                                title="Edit Repository"
-                                class="btn btn-white btn-link btn-sm btn-edit-repository-modal"
-                                data-original-title="Edit Repository">
-                          <i class="material-icons">edit</i>
-                        </button>
-                        <button type="button" data-toggle="modal" data-target="#remove-repository-modal"
-                                data-uuid="{{$repository.uuid}}"
-                                data-name="{{$repository.name}}"
-                                title="Remove Repository" class="btn btn-white btn-link btn-sm btn-sm btn-remove-repository-modal"
-                                data-original-title="Remove Repository">
-                          <i class="material-icons">close</i>
-                        </button>
-                      </td>
-                    </tr>
-                  {{end}}
-                  </tbody>
-                </table>
-              </div>
-              <div class="tab-pane {{if eq 0 (len .repositories)}}active{{end}}" id="new_repository">
-                {{if eq 0 (len .platforms)}}
-                  <div class="alert alert-danger" role="alert">
-                    First add at least one platform <a class="alert-link" href="/platforms">here</a>
-                  </div>
-                {{else}}
-                  <form id="repositoryForm">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Repository Name (optional):</label>
-                          <input type="text" name="name" class="form-control">
-                        </div>
-                      </div>
                     </div>
-                    <div class="row">
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label for="source-platform">Source Platform</label>
-                          <select class="form-control selectpicker" data-style="btn btn-info" name="spu" id="source-platform" style="text-align: center">
-                            {{if eq 0 (len .platforms)}}<option disabled>Nothing to select</option>{{end}}
-                            {{range $id, $platform := .platforms}}
-                              <option data-address="{{$platform.address}}" value="{{$platform.uuid}}">{{$platform.name}}</option>
-                            {{end}}
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-2" style="padding: 0px;">
-                        <div style="padding: 55px 0px 0px 0px; text-align: right">
-                          <strong style="font-size: 16px; font-weight: bold; color: #ccc;">https://github.com/</strong>
-                        </div>
-                      </div>
-                      <div class="col-md-7">
-                        <div class="form-group" style="padding: 40px 0px 0px 0px;">
-                          <label class="bmd-label-floating" style="padding: 40px 0px 0px 0px;">Repository Path (Example: Shitovdm/git-repo-exporter.git):</label>
-                          <input type="text" name="spp" class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label for="source-platform">Destination Platform</label>
-                          <select class="form-control selectpicker" data-style="btn btn-info" name="dpu" id="destination-platform">
-                            {{if eq 0 (len .platforms)}}<option disabled>Nothing to select</option>{{end}}
-                            {{range $id, $platform := .platforms}}
-                              <option data-address="{{$platform.address}}" value="{{$platform.uuid}}">{{$platform.name}}</option>
-                            {{end}}
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-2" style="padding: 0px;">
-                        <div style="padding: 55px 0px 0px 0px; text-align: right">
-                          <strong style="font-size: 16px; font-weight: bold; color: #ccc;">https://gitlab-e.artepay.ru/</strong>
-                        </div>
-                      </div>
-                      <div class="col-md-7">
-                        <div class="form-group" style="padding: 40px 0px 0px 0px;">
-                          <label class="bmd-label-floating" style="padding: 40px 0px 0px 0px;">Repository Path (Example: Shitovdm/git-repo-exporter-copy.git):</label>
-                          <input type="text" name="dpp" class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group" style="padding: 20px 0px 0px 0px; text-align: center">
-                      <button type="submit" class="btn btn-success">Add Repository</button>
-                    </div>
-                  </form>
-                {{end}}
-              </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
+    <div class="modal fade dark-modal" id="edit-repository-modal" tabindex="-1" role="dialog"
+         aria-labelledby="modalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Platform editing</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editRepositoryForm" style="text-align: left;">
+                        <div class="row">
+                            <input style="display: none" type="text" name="uuid" class="form-control">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 ml-auto">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Platform Name (GitHub):</label>
+                                    <input type="text" name="name" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="source-platform">Source Platform</label>
+                                    <select class="form-control selectpicker"
+                                            data-style="btn btn-info" name="spu"
+                                            id="source-platform" style="text-align: center">
+                                        {{if eq 0 (len .platforms)}}
+                                            <option disabled>Nothing to select</option>{{end}}
+                                        {{range $id, $platform := .platforms}}
+                                            <option data-address="{{$platform.address}}"
+                                                    value="{{$platform.uuid}}">{{$platform.name}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Source Repository Path:</label>
+                                    <input type="text" name="spp" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="source-platform">Destination Platform</label>
+                                    <select class="form-control selectpicker"
+                                            data-style="btn btn-info" name="dpu"
+                                            id="destination-platform">
+                                        {{if eq 0 (len .platforms)}}
+                                            <option disabled>Nothing to select</option>
+                                        {{end}}
+                                        {{range $id, $platform := .platforms}}
+                                            <option data-address="{{$platform.address}}"
+                                                    value="{{$platform.uuid}}">{{$platform.name}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Repository Path:</label>
+                                    <input type="text" name="dpp" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-edit-platform" data-dismiss="modal">Close
+                    </button>
+                    <button type="button" data-uuid="" class="btn btn-success btn-edit-platform">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade dark-modal" id="remove-repository-modal" tabindex="-1" role="dialog"
+         aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Platform Removal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to remove <b class="remove-repository-name"></b> repository?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-remove-repository" data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" data-uuid="" class="btn btn-danger btn-remove-repository">Remove</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {{end}}
