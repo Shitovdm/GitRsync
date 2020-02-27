@@ -71,6 +71,7 @@ func WebRouter() http.Handler {
 		repositoriesController := new(Controllers.RepositoriesController)
 		repositories.GET("/", repositoriesController.Index)
 		repositories.GET("add/", repositoriesController.Add)
+		repositories.GET("edit/", repositoriesController.Edit)
 		repositories.GET("remove/", repositoriesController.Remove)
 
 	}
@@ -81,8 +82,8 @@ func WebRouter() http.Handler {
 		platformsController := new(Controllers.PlatformsController)
 		platforms.GET("/", platformsController.Index)
 		platforms.GET("add/", platformsController.Add)
+		platforms.GET("edit/", platformsController.Edit)
 		platforms.GET("remove/", platformsController.Remove)
-
 	}
 
 	// 404

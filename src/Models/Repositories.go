@@ -1,16 +1,31 @@
 package Models
 
-type Repositories struct {
-	Config []*RepositoryConfig `json:"config"`
-}
-
 type RepositoryConfig struct {
-	Guid        string                   `json:"guid"`
-	Source      RepositoryTransferConfig `json:"source"`
-	Destination RepositoryTransferConfig `json:"destination"`
+	Uuid                    string `json:"uuid"`
+	Name                    string `json:"name"`
+	SourcePlatformUuid      string `json:"spu"`
+	SourcePlatformPath      string `json:"spp"`
+	DestinationPlatformUuid string `json:"dpu"`
+	DestinationPlatformPath string `json:"dpp"`
 }
 
-type RepositoryTransferConfig struct {
-	PlatformGuid   string `json:"platformGuid"`
-	RepositoryPath string `json:"repositoryPath"`
+type AddRepositoryRequest struct {
+	Name                    string `json:"name"`
+	SourcePlatformUuid      string `json:"spu"`
+	SourcePlatformPath      string `json:"spp"`
+	DestinationPlatformUuid string `json:"dpu"`
+	DestinationPlatformPath string `json:"dpp"`
+}
+
+type EditRepositoryRequest struct {
+	Uuid                    string `json:"uuid"`
+	Name                    string `json:"name"`
+	SourcePlatformUuid      string `json:"spu"`
+	SourcePlatformPath      string `json:"spp"`
+	DestinationPlatformUuid string `json:"dpu"`
+	DestinationPlatformPath string `json:"dpp"`
+}
+
+type RemoveRepositoryRequest struct {
+	Uuid string `json:"uuid"`
 }
