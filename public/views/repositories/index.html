@@ -218,9 +218,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="source-platform">Source Platform</label>
-                                    <select class="form-control selectpicker"
-                                            data-style="btn btn-info" name="spu"
-                                            id="source-platform" style="text-align: center">
+                                    <select class="form-control selectpicker" data-style="btn btn-info" name="spu">
                                         {{if eq 0 (len .platforms)}}
                                             <option disabled>Nothing to select</option>{{end}}
                                         {{range $id, $platform := .platforms}}
@@ -230,9 +228,7 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12" style="padding-top: 20px">
                                 <div class="form-group">
                                     <label class="bmd-label-floating">Source Repository Path:</label>
                                     <input type="text" name="spp" class="form-control">
@@ -243,9 +239,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="source-platform">Destination Platform</label>
-                                    <select class="form-control selectpicker"
-                                            data-style="btn btn-info" name="dpu"
-                                            id="destination-platform">
+                                    <select class="form-control selectpicker" data-style="btn btn-info" name="dpu">
                                         {{if eq 0 (len .platforms)}}
                                             <option disabled>Nothing to select</option>
                                         {{end}}
@@ -256,7 +250,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" style="padding-top: 20px">
                                 <div class="form-group">
                                     <label class="bmd-label-floating">Repository Path:</label>
                                     <input type="text" name="dpp" class="form-control">
@@ -278,7 +272,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Platform Removal</h5>
+                    <h5 class="modal-title" id="modalLabel">Repository Removal</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
