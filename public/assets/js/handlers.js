@@ -121,12 +121,13 @@ $('body').on('click', '.btn-edit-repository-modal', function (e)
     form.find('input[name=uuid]').val($(this).data('uuid'));
     form.find('input[name=name]').parent('div').addClass('is-filled');
     form.find('input[name=name]').val($(this).data('name'));
-    form.find('input[name=spu]').val($(this).data('spu'));
+    form.find('select[name=spu]').val($(this).data('spu'));
     form.find('input[name=spp]').parent('div').addClass('is-filled');
     form.find('input[name=spp]').val($(this).data('spp'));
-    form.find('input[name=spu]').val($(this).data('dpu'));
+    form.find('select[name=dpu]').val($(this).data('dpu'));
     form.find('input[name=dpp]').parent('div').addClass('is-filled');
     form.find('input[name=dpp]').val($(this).data('dpp'));
+    $('.selectpicker').selectpicker('refresh')
 });
 
 $('body').on('click', '.btn-edit-platform', function (e)
@@ -164,6 +165,9 @@ $('body').on('click', '.btn-edit-repository', function (e)
 });
 
 
+$(".platform-selector-act").change(function() {
+    $("#" + $(this).attr('name') + "-prefix").text($(this.options[this.selectedIndex]).data('address'));
+});
 
 
 

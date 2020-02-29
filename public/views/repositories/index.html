@@ -18,7 +18,7 @@
                                         <li class="nav-item">
                                             <a class="nav-link {{if eq 0 (len .repositories)}}active{{end}}"
                                                href="#new_repository" data-toggle="tab">
-                                                <i class="material-icons">add</i> New Repository
+                                                <i class="material-icons">add</i> Add Repository
                                                 <div class="ripple-container"></div>
                                             </a>
                                         </li>
@@ -118,7 +118,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="source-platform">Source Platform</label>
-                                                        <select class="form-control selectpicker"
+                                                        <select class="form-control selectpicker platform-selector-act"
                                                                 data-style="btn btn-info" name="spu"
                                                                 id="source-platform" style="text-align: center">
                                                             {{if eq 0 (len .platforms)}}
@@ -132,7 +132,7 @@
                                                 </div>
                                                 <div class="col-md-2" style="padding: 0px;">
                                                     <div style="padding: 55px 0px 0px 0px; text-align: right">
-                                                        <strong style="font-size: 16px; font-weight: bold; color: #ccc;">https://github.com/</strong>
+                                                        <strong id="spu-prefix" style="font-size: 16px; font-weight: bold; color: #ccc;">https://github.com/</strong>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-7">
@@ -148,7 +148,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="source-platform">Destination Platform</label>
-                                                        <select class="form-control selectpicker"
+                                                        <select class="form-control selectpicker platform-selector-act"
                                                                 data-style="btn btn-info" name="dpu"
                                                                 id="destination-platform">
                                                             {{if eq 0 (len .platforms)}}
@@ -163,7 +163,7 @@
                                                 </div>
                                                 <div class="col-md-2" style="padding: 0px;">
                                                     <div style="padding: 55px 0px 0px 0px; text-align: right">
-                                                        <strong style="font-size: 16px; font-weight: bold; color: #ccc;">https://gitlab-e.artepay.ru/</strong>
+                                                        <strong id="dpu-prefix" style="font-size: 16px; font-weight: bold; color: #ccc;">https://gitlab-e.artepay.ru/</strong>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-7">
@@ -260,9 +260,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-edit-platform" data-dismiss="modal">Close
+                    <button type="button" class="btn btn-secondary btn-close-edit-repository" data-dismiss="modal">Close
                     </button>
-                    <button type="button" data-uuid="" class="btn btn-success btn-edit-platform">Save changes</button>
+                    <button type="button" data-uuid="" class="btn btn-success btn-edit-repository">Save changes</button>
                 </div>
             </div>
         </div>

@@ -22,8 +22,6 @@ func (ctrl RepositoriesController) Index(c *gin.Context) {
 	templateParams["repositories"], _ = Configuration.GetRepositoriesConfigData()
 	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
 
-	fmt.Println(templateParams["platforms"])
-
 	c.HTML(http.StatusOK, "repositories/index", templateParams)
 }
 
@@ -63,6 +61,8 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 		log.Println(err.Error())
 		return
 	}
+
+	fmt.Println(editRepositoryRequest)
 
 	oldRepositoriesList := Configuration.GetRepositoriesConfig()
 	newRepositoriesList := make([]Models.RepositoryConfig, 0)
