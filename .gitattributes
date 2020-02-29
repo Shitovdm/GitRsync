@@ -1,1 +1,2 @@
 public/assets/* linguist-vendored
+!public/assets/css/custom.css linguist-vendored
