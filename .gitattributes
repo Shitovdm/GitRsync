@@ -1,1 +1,10 @@
-public/assets/* linguist-vendored
+public/assets/css/* linguist-vendored
+public/assets/js/* linguist-vendored
+public/assets/img/* linguist-vendored
+public/assets/scss/* linguist-vendored
+public/views/index/* linguist-vendored
+public/views/platforms/* linguist-vendored
+public/views/repositories/* linguist-vendored
+public/views/logs/* linguist-vendored
+public/views/partials/* linguist-vendored
+public/views/layouts/* linguist-vendored
