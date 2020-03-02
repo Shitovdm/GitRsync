@@ -86,6 +86,13 @@ func WebRouter() http.Handler {
 		platforms.GET("remove/", platformsController.Remove)
 	}
 
+	// /logs
+	logs := e.Group("/logs")
+	{
+		logsController := new(Controllers.LogsController)
+		logs.GET("/", logsController.Index)
+	}
+
 	// 404
 	e.NoRoute(func(c *gin.Context) {
 		c.HTML(404, "404.html", gin.H{})

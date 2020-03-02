@@ -81,7 +81,7 @@ func LoadWith(path string, v interface{}, um UnmarshalFunc) error {
 		panic("store: application name not defined")
 	}
 
-	globalPath := buildPlatformPath(path)
+	globalPath := BuildPlatformPath(path)
 
 	data, err := ioutil.ReadFile(globalPath)
 
@@ -111,7 +111,7 @@ func SaveWith(path string, v interface{}, m MarshalFunc) error {
 
 	b.WriteRune('\n')
 
-	globalPath := buildPlatformPath(path)
+	globalPath := BuildPlatformPath(path)
 	if err := os.MkdirAll(filepath.Dir(globalPath), os.ModePerm); err != nil {
 		return err
 	}
@@ -133,10 +133,10 @@ func extension(path string) string {
 	return ""
 }
 
-func buildPlatformPath(path string) string {
+func BuildPlatformPath(path string) string {
 	if runtime.GOOS == "windows" {
 		return fmt.Sprintf("%s\\%s\\%s", os.Getenv("APPDATA"),
-			applicationName,
+			GetApplicationName(),
 			path)
 	}
 
@@ -148,7 +148,7 @@ func buildPlatformPath(path string) string {
 	}
 
 	return fmt.Sprintf("%s/%s/%s", unixConfigDir,
-		applicationName,
+		GetApplicationName(),
 		path)
 }
 
@@ -156,6 +156,9 @@ func SetApplicationName(handle string) {
 	applicationName = handle
 }
 
+func GetApplicationName() string {
+	return applicationName
+}
 
 func GetAppConfig() *Models.AppConfig {
 	var appConfig Models.AppConfig
@@ -204,7 +207,6 @@ func SaveRepositoriesConfig(repositories []Models.RepositoryConfig) error {
 	}
 	return nil
 }
-
 
 func GetPlatformsConfig() []Models.PlatformConfig {
 	platformsConfig := make([]Models.PlatformConfig, 0)

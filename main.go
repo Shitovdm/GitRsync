@@ -1,35 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Shitovdm/git-repo-exporter/src/Application"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
 )
 
 func init() {
-	Configuration.Init("git-repo-exporter")
+	Configuration.Init("GitRsync")
 }
 
 func main() {
 
-	/*appConfig := map[string]string{
-		"gitlabLogin":    "test",
-		"gitlabPassword": "test",
-		"projectsFolder": "test",
-		"shellstarter":   "test",
-	}*/
-
-
 	//Helpers.Exec(`docker ps -a`)
 
-	/*repositories := Helpers.GetRepositoriesConfig()
+	Logger.GetRuntimeLogFile()
+	fmt.Println(Logger.GetRuntimeLogs())
 
-	fmt.Println(repositories.Config)
-	var platformsConfig map[string]interface{}
-	_ = Configuration.Load("Platforms.json", &platformsConfig)
-	fmt.Println(platformsConfig["config"])
-
-	byteData, _ := json.Marshal(platformsConfig)
-	fmt.Println(&byteData)*/
 	Application.StartServer()
-
 }
