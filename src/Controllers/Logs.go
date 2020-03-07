@@ -22,3 +22,6 @@ func (ctrl LogsController) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "logs/index", templateParams)
 }
 
+func (ctrl LogsController) Append(c *gin.Context) {
+
+}
