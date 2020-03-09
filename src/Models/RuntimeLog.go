@@ -7,3 +7,7 @@ type RuntimeLog struct {
 	Category  string `json:"category"`
 	Message   string `json:"message"`
 }
+
+type ProcessLogsRequest struct {
+	Action  string `json:"action"`
+}

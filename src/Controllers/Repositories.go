@@ -28,7 +28,7 @@ func (ctrl RepositoriesController) Index(c *gin.Context) {
 func (ctrl RepositoriesController) Add(c *gin.Context) {
 
 	var addRepositoryRequest Models.AddRepositoryRequest
-	err := Helpers.WsHandler(c.Writer, c.Request, &addRepositoryRequest)
+	_, err := Helpers.WsHandler(c.Writer, c.Request, &addRepositoryRequest)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -56,7 +56,7 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 func (ctrl RepositoriesController) Edit(c *gin.Context) {
 
 	var editRepositoryRequest Models.EditRepositoryRequest
-	err := Helpers.WsHandler(c.Writer, c.Request, &editRepositoryRequest)
+	_, err := Helpers.WsHandler(c.Writer, c.Request, &editRepositoryRequest)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -92,7 +92,7 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 func (ctrl RepositoriesController) Remove(c *gin.Context) {
 
 	var removeRepositoryRequest Models.RemoveRepositoryRequest
-	err := Helpers.WsHandler(c.Writer, c.Request, &removeRepositoryRequest)
+	_, err := Helpers.WsHandler(c.Writer, c.Request, &removeRepositoryRequest)
 	if err != nil {
 		log.Println(err.Error())
 		return

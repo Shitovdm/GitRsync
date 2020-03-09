@@ -55,3 +55,17 @@ func AddRuntimeLog(sessionID string, level string, category string, message stri
 func ClearRuntimeLogs() {
 	_ = ioutil.WriteFile(GetRuntimeLogFile(), []byte(``), 0644)
 }
+
+func SetLogLevel(level string, str string) string {
+
+	switch level {
+	case "info":
+		return fmt.Sprintf("\x1b[92m%s\x1b[0m", str)
+	case "error":
+		return fmt.Sprintf("\x1b[91m%s\x1b[0m", str)
+	default:
+		return fmt.Sprintf("\x1b[91m%s\x1b[0m", str)
+	}
+
+
+}

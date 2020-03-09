@@ -25,7 +25,7 @@ func (ctrl PlatformsController) Index(c *gin.Context) {
 func (ctrl PlatformsController) Add(c *gin.Context) {
 
 	var addPlatformRequest Models.AddPlatformRequest
-	err := Helpers.WsHandler(c.Writer, c.Request, &addPlatformRequest)
+	_, err := Helpers.WsHandler(c.Writer, c.Request, &addPlatformRequest)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -52,7 +52,7 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 func (ctrl PlatformsController) Edit(c *gin.Context) {
 
 	var editPlatformRequest Models.EditPlatformRequest
-	err := Helpers.WsHandler(c.Writer, c.Request, &editPlatformRequest)
+	_, err := Helpers.WsHandler(c.Writer, c.Request, &editPlatformRequest)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -85,7 +85,7 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 func (ctrl PlatformsController) Remove(c *gin.Context) {
 
 	var removePlatformRequest Models.RemovePlatformRequest
-	err := Helpers.WsHandler(c.Writer, c.Request, &removePlatformRequest)
+	_, err := Helpers.WsHandler(c.Writer, c.Request, &removePlatformRequest)
 	if err != nil {
 		log.Println(err.Error())
 		return

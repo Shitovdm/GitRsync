@@ -22,17 +22,17 @@ var WebSocketUpgrade = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func WsHandler(w http.ResponseWriter, r *http.Request, body interface{}) error {
+func WsHandler(w http.ResponseWriter, r *http.Request, body interface{}) (*websocket.Conn, error) {
 	conn, err := WebSocketUpgrade.Upgrade(w, r, nil)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to set websocket upgrade! %s", err.Error()))
+		return nil, errors.New(fmt.Sprintf("Failed to set websocket upgrade! %s", err.Error()))
 	}
 
 	_, data, _ := conn.ReadMessage()
 	cFormat := format{m: json.Marshal, um: json.Unmarshal}
 	if err := cFormat.um(data, body); err != nil {
-		return errors.New(fmt.Sprintf("Failed to unmarshal form data! %s", err.Error()))
+		return nil, errors.New(fmt.Sprintf("Failed to unmarshal form data! %s", err.Error()))
 	}
 
-	return nil
+	return conn, nil
 }

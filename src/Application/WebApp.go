@@ -91,7 +91,7 @@ func WebRouter() http.Handler {
 	{
 		logsController := new(Controllers.LogsController)
 		logs.GET("/", logsController.Index)
-		logs.GET("append/", logsController.Append)
+		logs.GET("process/", logsController.Process)
 	}
 
 	// 404

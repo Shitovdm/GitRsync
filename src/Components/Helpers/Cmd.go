@@ -51,3 +51,4 @@ func OpenBrowser(url string) {
 		log.Fatal(err)
 	}
 }
+
