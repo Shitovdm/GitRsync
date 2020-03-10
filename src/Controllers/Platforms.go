@@ -4,6 +4,7 @@ import (
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Interface"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
 	"github.com/Shitovdm/git-repo-exporter/src/Models"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
@@ -18,6 +19,8 @@ func (ctrl PlatformsController) Index(c *gin.Context) {
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Platforms"
 	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
+
+	Logger.Info("PlatformsController", "PlatformsController successfully loaded!")
 
 	c.HTML(http.StatusOK, "platforms/index", templateParams)
 }

@@ -8,6 +8,6 @@ type RuntimeLog struct {
 	Message   string `json:"message"`
 }
 
-type ProcessLogsRequest struct {
+type RuntimeLogsRequest struct {
 	Action  string `json:"action"`
 }

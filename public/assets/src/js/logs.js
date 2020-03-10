@@ -6,25 +6,18 @@ $(document).ready(function () {
             term = new ExecTerminal('terminal');
             term.UpdateTerminalFit();
         }
-        term.terminal.writeln("hello world!")
-        getLogs()
+        SubscribeOnRuntimeLogs()
     }
 });
 
-
-function getLogs() {
-
-
-
-    let ws = webSocketConnection("ws://localhost:8888/logs/process/");
+function SubscribeOnRuntimeLogs() {
+    let ws = webSocketConnection("ws://localhost:8888/logs/subscribe/");
     ws.onopen = function()
     {
         ws.send(JSON.stringify({"action":"init"}));
+        //ws.send(JSON.stringify({"action":"subscribe"}));
     };
     ws.onmessage = function(msg) {
-        console.log(msg)
         term.terminal.writeln(msg.data)
     };
-
 }
-

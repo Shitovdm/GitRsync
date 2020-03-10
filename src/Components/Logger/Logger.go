@@ -13,9 +13,11 @@ const timeFormatStr = "2006-01-02 15:04:05"
 
 var RuntimeLogFile = "Runtime.json"
 var sessionID = ""
+var runtimeLogNote = ""
 
 func Init() {
 	sessionID = Helpers.GenerateUuid()
+	runtimeLogNote = ""
 }
 
 func GetRuntimeLogFile() string {
@@ -37,14 +39,18 @@ func GetRuntimeLogs() []Models.RuntimeLog {
 }
 
 func AddRuntimeLog(sessionID string, level string, category string, message string) {
-	runtimeLogs := GetRuntimeLogs()
-	runtimeLogs = append(runtimeLogs, Models.RuntimeLog{
+
+	runtimeLog := Models.RuntimeLog{
 		SessionID: sessionID,
 		Time:      time.Now().Format(timeFormatStr),
 		Level:     level,
 		Category:  category,
 		Message:   message,
-	})
+	}
+
+	runtimeLogNote = BuildRuntimeLogNote(runtimeLog)
+	runtimeLogs := GetRuntimeLogs()
+	runtimeLogs = append(runtimeLogs, runtimeLog)
 
 	err := Configuration.Save(RuntimeLogFile, &runtimeLogs)
 	if err != nil {
@@ -56,16 +62,37 @@ func ClearRuntimeLogs() {
 	_ = ioutil.WriteFile(GetRuntimeLogFile(), []byte(``), 0644)
 }
 
-func SetLogLevel(level string, str string) string {
+func GetRuntimeLogNote() string {
+	return runtimeLogNote
+}
 
+func ResetRuntimeLogNote() {
+	runtimeLogNote = ""
+}
+
+func BuildRuntimeLogNote(logNote Models.RuntimeLog) string {
+	runtimeLog := "[" + logNote.Time + "]" + "\t"
+	runtimeLog += logNote.SessionID + "\t"
+	runtimeLog += logNote.Level + "\t"
+	runtimeLog += logNote.Category + "\t"
+	runtimeLog += logNote.Message
+
+	return SetLogLevel(logNote.Level, runtimeLog)
+}
+
+func SetLogLevel(level string, str string) string {
 	switch level {
 	case "info":
+		return fmt.Sprintf("\x1b[89m%s\x1b[0m", str)
+	case "trace":
+		return fmt.Sprintf("\x1b[94m%s\x1b[0m", str)
+	case "debug":
 		return fmt.Sprintf("\x1b[92m%s\x1b[0m", str)
+	case "warning":
+		return fmt.Sprintf("\x1b[93m%s\x1b[0m", str)
 	case "error":
 		return fmt.Sprintf("\x1b[91m%s\x1b[0m", str)
 	default:
-		return fmt.Sprintf("\x1b[91m%s\x1b[0m", str)
+		return fmt.Sprintf("\x1b[90m%s\x1b[0m", str)
 	}
-
-
 }
