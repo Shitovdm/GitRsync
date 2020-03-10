@@ -1,6 +1,7 @@
 package Controllers
 
 import (
+	"fmt"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Interface"
@@ -47,6 +48,7 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 		Logger.Error("RepositoriesController/Add", err.Error())
 	}
 
+	Logger.Info("RepositoriesController/Add", fmt.Sprintf("New repository with name %s added successfully!", addRepositoryRequest.Name))
 	return
 }
 
@@ -81,6 +83,7 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 		Logger.Error("RepositoriesController/Edit", err.Error())
 	}
 
+	Logger.Info("RepositoriesController/Edit", fmt.Sprintf("Repository with name %s successfully edited!", editRepositoryRequest.Name))
 	return
 }
 
@@ -93,11 +96,14 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 		return
 	}
 
+	removedRepositoryName := ""
 	oldRepositoriesList := Configuration.GetRepositoriesConfig()
 	newRepositoriesList := make([]Models.RepositoryConfig, 0)
 	for _, repository := range oldRepositoriesList {
 		if repository.Uuid != removeRepositoryRequest.Uuid {
 			newRepositoriesList = append(newRepositoriesList, repository)
+		} else {
+			removedRepositoryName = repository.Name
 		}
 	}
 
@@ -106,5 +112,6 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 		Logger.Error("RepositoriesController/Remove", err.Error())
 	}
 
+	Logger.Info("RepositoriesController/Remove", fmt.Sprintf("Repository with name %s successfully removed!", removedRepositoryName))
 	return
 }

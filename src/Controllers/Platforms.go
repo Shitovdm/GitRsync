@@ -1,6 +1,7 @@
 package Controllers
 
 import (
+	"fmt"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Interface"
@@ -45,6 +46,7 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 		Logger.Error("PlatformsController/Add", err.Error())
 	}
 
+	Logger.Info("PlatformsController/Add", fmt.Sprintf("New platform with name %s added successfully!", addPlatformRequest.Name))
 	return
 }
 
@@ -78,6 +80,7 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 		Logger.Error("PlatformsController/Edit", err.Error())
 	}
 
+	Logger.Info("PlatformsController/Edit", fmt.Sprintf("Platform with name %s successfully edited!", editPlatformRequest.Name))
 	return
 }
 
@@ -90,11 +93,14 @@ func (ctrl PlatformsController) Remove(c *gin.Context) {
 		return
 	}
 
+	removedPlatformName := ""
 	oldPlatformsList := Configuration.GetPlatformsConfig()
 	newPlatformsList := make([]Models.PlatformConfig, 0)
 	for _, platform := range oldPlatformsList {
 		if platform.Uuid != removePlatformRequest.Uuid {
 			newPlatformsList = append(newPlatformsList, platform)
+		} else {
+			removedPlatformName = platform.Name
 		}
 	}
 
@@ -103,5 +109,6 @@ func (ctrl PlatformsController) Remove(c *gin.Context) {
 		Logger.Error("PlatformsController/Remove", err.Error())
 	}
 
+	Logger.Info("PlatformsController/Remove", fmt.Sprintf("Platform with name %s successfully removed!", removedPlatformName))
 	return
 }
