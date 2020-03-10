@@ -62,6 +62,10 @@ func ClearRuntimeLogs() {
 	_ = ioutil.WriteFile(GetRuntimeLogFile(), []byte(``), 0644)
 }
 
+func GetSessionId() string {
+	return sessionID
+}
+
 func GetRuntimeLogNote() string {
 	return runtimeLogNote
 }

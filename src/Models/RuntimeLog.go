@@ -9,5 +9,5 @@ type RuntimeLog struct {
 }
 
 type RuntimeLogsRequest struct {
-	Action  string `json:"action"`
+	Action string `json:"action"`
 }

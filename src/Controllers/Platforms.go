@@ -8,7 +8,6 @@ import (
 	"github.com/Shitovdm/git-repo-exporter/src/Models"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
-	"log"
 	"net/http"
 )
 
@@ -19,9 +18,6 @@ func (ctrl PlatformsController) Index(c *gin.Context) {
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Platforms"
 	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
-
-	Logger.Info("PlatformsController", "PlatformsController successfully loaded!")
-
 	c.HTML(http.StatusOK, "platforms/index", templateParams)
 }
 
@@ -30,7 +26,7 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 	var addPlatformRequest Models.AddPlatformRequest
 	_, err := Helpers.WsHandler(c.Writer, c.Request, &addPlatformRequest)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("PlatformsController/Add", err.Error())
 		return
 	}
 
@@ -46,7 +42,7 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 
 	err = Configuration.SavePlatformsConfig(platforms)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("PlatformsController/Add", err.Error())
 	}
 
 	return
@@ -57,7 +53,7 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 	var editPlatformRequest Models.EditPlatformRequest
 	_, err := Helpers.WsHandler(c.Writer, c.Request, &editPlatformRequest)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("PlatformsController/Edit", err.Error())
 		return
 	}
 
@@ -79,7 +75,7 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 
 	err = Configuration.SavePlatformsConfig(newPlatformsList)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("PlatformsController/Edit", err.Error())
 	}
 
 	return
@@ -90,7 +86,7 @@ func (ctrl PlatformsController) Remove(c *gin.Context) {
 	var removePlatformRequest Models.RemovePlatformRequest
 	_, err := Helpers.WsHandler(c.Writer, c.Request, &removePlatformRequest)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("PlatformsController/Remove", err.Error())
 		return
 	}
 
@@ -104,7 +100,7 @@ func (ctrl PlatformsController) Remove(c *gin.Context) {
 
 	err = Configuration.SavePlatformsConfig(newPlatformsList)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("PlatformsController/Remove", err.Error())
 	}
 
 	return

@@ -4,13 +4,13 @@ import (
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/Masterminds/sprig"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
 	"github.com/Shitovdm/git-repo-exporter/src/Controllers"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/foolin/goview/supports/gorice"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
-	"log"
 	"net/http"
 	"time"
 )
@@ -33,7 +33,7 @@ func StartServer() {
 	})
 
 	if err := g.Wait(); err != nil {
-		log.Fatal(err)
+		Logger.Error("StartServer", err.Error())
 	}
 
 }

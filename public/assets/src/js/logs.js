@@ -12,12 +12,10 @@ $(document).ready(function () {
 
 function SubscribeOnRuntimeLogs() {
     let ws = webSocketConnection("ws://localhost:8888/logs/subscribe/");
-    ws.onopen = function()
-    {
-        ws.send(JSON.stringify({"action":"init"}));
-        //ws.send(JSON.stringify({"action":"subscribe"}));
+    ws.onopen = function () {
+        ws.send(JSON.stringify({"action": "init"}));
     };
-    ws.onmessage = function(msg) {
+    ws.onmessage = function (msg) {
         term.terminal.writeln(msg.data)
     };
 }

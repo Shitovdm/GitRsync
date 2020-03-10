@@ -1,6 +1,7 @@
 package Controllers
 
 import (
+	"fmt"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Interface"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
@@ -16,11 +17,6 @@ type LogsController struct{}
 func (ctrl LogsController) Index(c *gin.Context) {
 	menu := Interface.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
-
-	//Logger.GetRuntimeLogFile()
-	//fmt.Println(Logger.GetRuntimeLogs())
-	//Logger.Info("LogsController", "Log file successfully loaded!")
-
 	c.HTML(http.StatusOK, "logs/index", templateParams)
 }
 
@@ -34,9 +30,12 @@ func (ctrl LogsController) Subscribe(c *gin.Context) {
 
 	switch subsctibeToLogRequest.Action {
 	case "init":
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(" GitRsync (C) Shitov Dmitry"))
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("\x1b[92m%s\x1b[0m", " GitRsync (C) Shitov Dmitry")))
 		for _, logNote := range Logger.GetRuntimeLogs() {
-			_ = conn.WriteMessage(websocket.TextMessage, []byte(Logger.BuildRuntimeLogNote(logNote)))
+			//	Only fot current session.
+			if logNote.SessionID == Logger.GetSessionId() {
+				_ = conn.WriteMessage(websocket.TextMessage, []byte(Logger.BuildRuntimeLogNote(logNote)))
+			}
 		}
 		go func() {
 			for {

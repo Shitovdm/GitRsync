@@ -1,27 +1,24 @@
 package Controllers
 
 import (
-	"fmt"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Interface"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
 	"github.com/Shitovdm/git-repo-exporter/src/Models"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
-	"log"
 	"net/http"
 )
 
 type RepositoriesController struct{}
 
 func (ctrl RepositoriesController) Index(c *gin.Context) {
-
 	menu := Interface.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Repositories"
 	templateParams["repositories"], _ = Configuration.GetRepositoriesConfigData()
 	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
-
 	c.HTML(http.StatusOK, "repositories/index", templateParams)
 }
 
@@ -30,7 +27,7 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 	var addRepositoryRequest Models.AddRepositoryRequest
 	_, err := Helpers.WsHandler(c.Writer, c.Request, &addRepositoryRequest)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("RepositoriesController/Add", err.Error())
 		return
 	}
 
@@ -47,7 +44,7 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 
 	err = Configuration.SaveRepositoriesConfig(repositories)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("RepositoriesController/Add", err.Error())
 	}
 
 	return
@@ -58,11 +55,9 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 	var editRepositoryRequest Models.EditRepositoryRequest
 	_, err := Helpers.WsHandler(c.Writer, c.Request, &editRepositoryRequest)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("RepositoriesController/Edit", err.Error())
 		return
 	}
-
-	fmt.Println(editRepositoryRequest)
 
 	oldRepositoriesList := Configuration.GetRepositoriesConfig()
 	newRepositoriesList := make([]Models.RepositoryConfig, 0)
@@ -83,7 +78,7 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 
 	err = Configuration.SaveRepositoriesConfig(newRepositoriesList)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("RepositoriesController/Edit", err.Error())
 	}
 
 	return
@@ -94,7 +89,7 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 	var removeRepositoryRequest Models.RemoveRepositoryRequest
 	_, err := Helpers.WsHandler(c.Writer, c.Request, &removeRepositoryRequest)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("RepositoriesController/Remove", err.Error())
 		return
 	}
 
@@ -108,7 +103,7 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 
 	err = Configuration.SaveRepositoriesConfig(newRepositoriesList)
 	if err != nil {
-		log.Println(err.Error())
+		Logger.Error("RepositoriesController/Remove", err.Error())
 	}
 
 	return
