@@ -7,6 +7,8 @@ type RepositoryConfig struct {
 	SourcePlatformPath      string `json:"spp"`
 	DestinationPlatformUuid string `json:"dpu"`
 	DestinationPlatformPath string `json:"dpp"`
+	Status                  string `json:"status"`
+	UpdatedAt               string `json:"updated_at"`
 }
 
 type AddRepositoryRequest struct {

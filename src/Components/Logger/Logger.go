@@ -100,3 +100,15 @@ func SetLogLevel(level string, str string) string {
 		return fmt.Sprintf("\x1b[90m%s\x1b[0m", str)
 	}
 }
+
+func CountErrorsInRuntimeLog() int {
+	count := 0
+	for _, logNote := range GetRuntimeLogs() {
+		//	Only fot current session.
+		if logNote.SessionID == GetSessionId() && logNote.Level == "error" {
+			count++
+		}
+	}
+
+	return count
+}

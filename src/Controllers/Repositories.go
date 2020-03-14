@@ -14,6 +14,15 @@ import (
 
 type RepositoriesController struct{}
 
+const (
+	STATUS_INITIATED = "initiated"
+	STATUS_PENDING = "pending"
+	STATUS_SYNCHRONIZED = "synchronized"
+	STATUS_EXPIRED = "expired"
+	STATUS_FAILED = "failed"
+	STATUS_BLOCKED = "blocked"
+)
+
 func (ctrl RepositoriesController) Index(c *gin.Context) {
 	menu := Interface.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
@@ -41,6 +50,8 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 		SourcePlatformPath:      addRepositoryRequest.SourcePlatformPath,
 		DestinationPlatformUuid: addRepositoryRequest.DestinationPlatformUuid,
 		DestinationPlatformPath: addRepositoryRequest.DestinationPlatformPath,
+		Status:                  STATUS_INITIATED,
+		UpdatedAt:               "",
 	})
 
 	err = Configuration.SaveRepositoriesConfig(repositories)
@@ -72,6 +83,8 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 				SourcePlatformPath:      editRepositoryRequest.SourcePlatformPath,
 				DestinationPlatformUuid: editRepositoryRequest.DestinationPlatformUuid,
 				DestinationPlatformPath: editRepositoryRequest.DestinationPlatformPath,
+				Status:                  repository.Status,
+				UpdatedAt:               repository.UpdatedAt,
 			})
 			continue
 		}

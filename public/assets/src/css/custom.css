@@ -22,3 +22,44 @@
 .dark-modal .modal-footer {
     border-top: 1px solid #3a3a3a;
 }
+
+.dashboard-table{
+    margin-bottom: 0px;
+}
+
+.status-cell{
+    text-align: center;
+    max-width: 50px;
+}
+
+.status{
+    user-select: none;
+    font-size: 5em;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.status-initiated{
+    color: #CCC;
+}
+
+.status-pending{
+    color: #0b75c9;
+}
+
+.status-synchronized{
+    color: #00c93c;
+}
+
+.status-expired{
+    color: #c9a400;
+}
+
+.status-failed{
+    color: #c92000;
+}
+
+.dashboard-table-btn{
+    margin: 0px 3px 0px 3px!important;
+    padding: 13px!important;
+}
