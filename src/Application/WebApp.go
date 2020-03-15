@@ -61,11 +61,20 @@ func WebRouter() http.Handler {
 		staticFileServer.ServeHTTP(context.Writer, context.Request)
 	})
 
-	// Homepage
 	indexController := new(Controllers.IndexController)
 	e.GET("/", indexController.Index)
 
-	// /repositories
+	actions := e.Group("/actions")
+	{
+		actionsController := new(Controllers.ActionsController)
+		actions.GET("sync/", actionsController.Sync)
+		actions.GET("pull/", actionsController.Pull)
+		actions.GET("push/", actionsController.Push)
+		actions.POST("info/", actionsController.Info)
+		actions.POST("block/", actionsController.Block)
+		actions.POST("active/", actionsController.Active)
+	}
+
 	repositories := e.Group("/repositories")
 	{
 		repositoriesController := new(Controllers.RepositoriesController)
@@ -73,10 +82,8 @@ func WebRouter() http.Handler {
 		repositories.GET("add/", repositoriesController.Add)
 		repositories.GET("edit/", repositoriesController.Edit)
 		repositories.GET("remove/", repositoriesController.Remove)
-
 	}
 
-	// /platforms
 	platforms := e.Group("/platforms")
 	{
 		platformsController := new(Controllers.PlatformsController)
@@ -86,7 +93,6 @@ func WebRouter() http.Handler {
 		platforms.GET("remove/", platformsController.Remove)
 	}
 
-	// /logs
 	logs := e.Group("/logs")
 	{
 		logsController := new(Controllers.LogsController)
@@ -94,7 +100,6 @@ func WebRouter() http.Handler {
 		logs.GET("subscribe/", logsController.Subscribe)
 	}
 
-	// 404
 	e.NoRoute(func(c *gin.Context) {
 		c.HTML(404, "404.html", gin.H{})
 	})
