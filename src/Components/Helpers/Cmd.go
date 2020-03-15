@@ -2,32 +2,42 @@ package Helpers
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
 	"sync"
 )
 
-func Exec(command string) {
+func Exec(command string, rd *io.PipeReader, wr *io.PipeWriter) {
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go execCmd(command, &wg)
+	go execCmd(command, &wg, rd, wr)
 	wg.Wait()
 }
 
-func execCmd(cmd string, wg *sync.WaitGroup) {
+func execCmd(command string, wg *sync.WaitGroup, rd *io.PipeReader, wr *io.PipeWriter) {
 	defer wg.Done()
-	fmt.Println("command is ", cmd)
-	parts := strings.Fields(cmd)
-	head := parts[0]
-	parts = parts[1:]
+	fmt.Println("command is ", command)
+	args := strings.Fields(command)
+	head := args[0]
+	args = args[1:]
 
-	out, err := exec.Command(head, parts...).Output()
+	//outPipe := os.NewFile(uintptr(syscall.Stdout), "/tmp/outPipe")
+
+	cmd := exec.Command(head, args...)
+	cmd.Stdout = wr
+	//cmd.Stderr = wr
+	//cmd.Stdin = rd
+	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("%s", err)
+		fmt.Printf("Failed to exec command! %s\n", err.Error())
+		os.Exit(1)
 	}
-	fmt.Printf("%s", out)
+
+	//fmt.Printf("Result: %v / %v", writer., stderr.String())
 }
 
 func Copy() {

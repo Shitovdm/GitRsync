@@ -240,3 +240,25 @@ func SavePlatformsConfig(platforms []Models.PlatformConfig) error {
 	}
 	return nil
 }
+
+func GetPlatformByUuid(uuid string) *Models.PlatformConfig {
+	platformsList := GetPlatformsConfig()
+	for _, platform := range platformsList {
+		if platform.Uuid == uuid {
+			return &platform
+		}
+	}
+
+	return nil
+}
+
+func GetRepositoryByUuid(uuid string) *Models.RepositoryConfig {
+	repositoriesList := GetRepositoriesConfig()
+	for _, repository := range repositoriesList {
+		if repository.Uuid == uuid {
+			return &repository
+		}
+	}
+
+	return nil
+}

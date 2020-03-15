@@ -87,18 +87,8 @@
                             </td>
                             <td>{{$repository.name}}</td>
                             <td>
-                                {{range $platform := $platforms}}
-                                    {{if eq $platform.uuid $repository.spu}}
-                                        {{$platform.address}}
-                                    {{end}}
-                                {{end}}
-                                {{$repository.spp}}<br>
-                                {{range $platform := $platforms}}
-                                    {{if eq $platform.uuid $repository.dpu}}
-                                        {{$platform.address}}
-                                    {{end}}
-                                {{end}}
-                                {{$repository.dpp}}
+                                {{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}<br>
+                                {{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}
                             </td>
                             <td>
                                 {{if eq "" $repository.updated_at}}
@@ -110,7 +100,7 @@
                             <td style="width: 300px">
                                 <button type="button" class="btn btn-success dashboard-table-btn btn-sync-repositories"
                                         title="Synchronize Repositories"><i class="material-icons">update</i></button>
-                                <button type="button" class="btn btn-warning dashboard-table-btn btn-pull-source-repository"
+                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-warning dashboard-table-btn btn-pull-source-repository"
                                         title="Pull Source Repository"><i class="material-icons">cloud_download</i></button>
                                 <button type="button" class="btn btn-info dashboard-table-btn btn-push-destination-repository"
                                         title="Push Destination Repository"><i class="material-icons">cloud_upload</i></button>
