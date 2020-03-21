@@ -2,7 +2,6 @@ package Helpers
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -11,33 +10,28 @@ import (
 	"sync"
 )
 
-func Exec(command string, rd *io.PipeReader, wr *io.PipeWriter) {
+func Exec(command string) {
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go execCmd(command, &wg, rd, wr)
+	go execCmd(command, &wg)
 	wg.Wait()
 }
 
-func execCmd(command string, wg *sync.WaitGroup, rd *io.PipeReader, wr *io.PipeWriter) {
+func execCmd(command string, wg *sync.WaitGroup) {
 	defer wg.Done()
-	fmt.Println("command is ", command)
+	fmt.Println("Command is:", command)
 	args := strings.Fields(command)
 	head := args[0]
 	args = args[1:]
-
-	//outPipe := os.NewFile(uintptr(syscall.Stdout), "/tmp/outPipe")
-
 	cmd := exec.Command(head, args...)
-	cmd.Stdout = wr
-	//cmd.Stderr = wr
-	//cmd.Stdin = rd
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
 	err := cmd.Run()
 	if err != nil {
 		fmt.Printf("Failed to exec command! %s\n", err.Error())
 		os.Exit(1)
 	}
-
-	//fmt.Printf("Result: %v / %v", writer., stderr.String())
 }
 
 func Copy() {
@@ -61,4 +55,3 @@ func OpenBrowser(url string) {
 		log.Fatal(err)
 	}
 }
-
