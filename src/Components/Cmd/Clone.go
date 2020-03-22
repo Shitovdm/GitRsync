@@ -24,7 +24,7 @@ func Clone(path string, url string) error {
 	lineBytes := bytes.Split(output, []byte{'\n'})
 	fmt.Println(lineBytes)
 	// The last split is just an empty string, right?
-	/*lineBytes = lineBytes[0 : len(lineBytes)-1]
+	lineBytes = lineBytes[0 : len(lineBytes)-1]
 	commits := make([]*Commit, len(lineBytes))
 
 	for x := 0; x < len(lineBytes); x++ {
@@ -33,7 +33,7 @@ func Clone(path string, url string) error {
 			return commitErr
 		}
 		commits[x] = commit
-	}*/
+	}
 
 	return nil
 }
