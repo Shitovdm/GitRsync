@@ -1,39 +1,47 @@
 package Cmd
 
 import (
-	"bytes"
-	"errors"
-	"fmt"
 	"os/exec"
+	"time"
 )
 
-func Clone(path string, url string) error {
-
+func Clone(path string, url string) bool {
 	if url == "" {
-		return errors.New("Passed invalid URL! ")
+		return false
 	}
 
 	var cmd *exec.Cmd
 	cmd = command("git", "clone", url)
 	cmd.Dir = path
-	output, err := cmd.Output()
+	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
-		return err
+		return false
 	}
 
-	lineBytes := bytes.Split(output, []byte{'\n'})
-	fmt.Println(lineBytes)
-	// The last split is just an empty string, right?
-	lineBytes = lineBytes[0 : len(lineBytes)-1]
-	commits := make([]*Commit, len(lineBytes))
+	finish := make(chan bool)
+	go func() {
+		go func() {
+			for {
+				output := make([]byte, 128, 128)
+				_, _ = StdoutPipe.Read(output)
+				if string(output) == "fatal: destination path 'rpc' already exists and is not an empty directory." ||
+					string(output) == "exit status 128" {
+					finish <- false
+				}
+				time.Sleep(10 * time.Microsecond)
+			}
+		}()
 
-	for x := 0; x < len(lineBytes); x++ {
-		commit, commitErr := NewCommit(path, string(lineBytes[x]))
-		if commitErr != nil {
-			return commitErr
+		err = cmd.Run()
+		if err != nil {
+			finish <- false
 		}
-		commits[x] = commit
-	}
 
-	return nil
+		_ = cmd.Wait()
+
+		finish <- true
+	}()
+
+	result := <-finish
+	return result
 }
