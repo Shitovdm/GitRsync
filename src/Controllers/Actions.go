@@ -2,6 +2,7 @@ package Controllers
 
 import (
 	"fmt"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Cmd"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
@@ -57,22 +58,37 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		isNewRepository = true
 	}
 
-	repositoryFullPath := platformConfig.Address + repositoryConfig.SourcePlatformPath
+	repositoryFullURL := platformConfig.Address + repositoryConfig.SourcePlatformPath
+	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", "rpc-test-sync"))
 	if isNewRepository {
 		//	Clone action.
-		Logger.Info("ActionsController/Pull", fmt.Sprintf("Cloning repository from %s...", repositoryFullPath))
-
+		Logger.Info("ActionsController/Pull", fmt.Sprintf("Cloning repository from %s...", repositoryFullURL))
 		go func() {
-			Helpers.Clone(repositoryFullPath, repositoryConfig.Name)
-			_ = conn.WriteMessage(websocket.TextMessage, []byte(`done`))
+			cloneResult := Cmd.Clone(repositoryFullPath, repositoryFullURL)
+			if cloneResult {
+				Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s cloned successfully!", repositoryFullURL))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte(ctrl.BuildWsJsonSuccess("Repository cloned successfully!")))
+			}else{
+				Logger.Error("ActionsController/Pull", fmt.Sprintf("Error occurred while cloning repository %s!", repositoryFullURL))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte(ctrl.BuildWsJsonError("Error occurred while cloning the repository!")))
+			}
 			_ = conn.Close()
 		}()
-
 	} else {
 		//	Pull action.
 		Logger.Info("ActionsController/Pull", fmt.Sprintf("Fetching new from %s...", repositoryFullPath))
+		go func() {
+			pullResult := Cmd.Pull(repositoryFullPath + "/rpc")
+			if pullResult {
+				Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte(ctrl.BuildWsJsonSuccess("Repository pulled successfully!")))
+			}else{
+				Logger.Error("ActionsController/Pull", fmt.Sprintf("Error occurred while pulling repository %s!", repositoryFullURL))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte(ctrl.BuildWsJsonError("Error occurred while pulling repository!")))
+			}
+			_ = conn.Close()
+		}()
 	}
-
 
 }
 
@@ -113,6 +129,14 @@ func (ctrl ActionsController) Active(c *gin.Context) {
 
 func (ctrl ActionsController) Info(c *gin.Context) {
 
+}
+
+func (ctrl ActionsController) BuildWsJsonError(message string) string {
+	return `{"status":"error","message":"`+message+`"}`
+}
+
+func (ctrl ActionsController) BuildWsJsonSuccess(message string) string {
+	return `{"status":"success","message":"`+message+`"}`
 }
 
 func (ctrl ActionsController) RespondWithError(c *gin.Context, message string) {

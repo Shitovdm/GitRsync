@@ -6,7 +6,7 @@ import (
 )
 
 func Log(path, hashish string) ([]*Commit, error) {
-	logFormat := "%H" // Just the hashes
+	logFormat := "%H"
 	var cmd *exec.Cmd
 
 	if hashish == "" {
@@ -21,7 +21,6 @@ func Log(path, hashish string) ([]*Commit, error) {
 	}
 
 	lineBytes := bytes.Split(output, []byte{'\n'})
-	// The last split is just an empty string, right?
 	lineBytes = lineBytes[0 : len(lineBytes)-1]
 	commits := make([]*Commit, len(lineBytes))
 

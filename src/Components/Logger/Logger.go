@@ -75,11 +75,11 @@ func ResetRuntimeLogNote() {
 }
 
 func BuildRuntimeLogNote(logNote Models.RuntimeLog) string {
-	runtimeLog := "[" + logNote.Time + "]" + "\t"
+	runtimeLog := "[" + logNote.Time + "]"// + "\t"
 	//runtimeLog += logNote.SessionID + "\t"
-	runtimeLog += logNote.Level + "\t"
-	runtimeLog += logNote.Category + "\t"
-	runtimeLog += logNote.Message
+	runtimeLog += "[" + logNote.Level + "]"// + "\t"
+	runtimeLog += "[" + logNote.Category + "]"// + "\t"
+	runtimeLog += " " + logNote.Message
 
 	return SetLogLevel(logNote.Level, runtimeLog)
 }

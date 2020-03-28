@@ -8,11 +8,8 @@ $('body').on('click', '.btn-pull-source-repository', function (e) {
         ws.send(JSON.stringify({"uuid": uuid}));
     };
     ws.onmessage = function (msg) {
-        console.log()
-        if(msg.data === "done") {
-            ws.close()
-            console.log("cloning done!!")
-        }
+        let body = JSON.parse(msg.data)
+        showNotification(body["status"], body["message"])
     };
 });
 
