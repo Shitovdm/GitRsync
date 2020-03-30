@@ -4,7 +4,7 @@ $('body').on('click', '.btn-pull-source-repository', function (e) {
     let uuid = $(this).data('uuid');
     let ws = webSocketConnection("ws://localhost:8888/actions/pull/");
     ws.onopen = function () {
-        console.log("Cloning...")
+        console.log("Cloning or pulling source repository...")
         ws.send(JSON.stringify({"uuid": uuid}));
     };
     ws.onmessage = function (msg) {
