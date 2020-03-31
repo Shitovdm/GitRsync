@@ -45,8 +45,12 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		return
 	}
 
+	spp := strings.TrimRight(repositoryConfig.SourcePlatformPath, ".git")
+	repositoryName := strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
+
 	isNewRepository := false
-	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) {
+	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) ||
+		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/%s", repositoryConfig.Name, repositoryName))) {
 		Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
 		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name)))
 		if err != nil {
@@ -55,7 +59,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(ErrorMsg))
 			return
 		}
-		Logger.Info("ActionsController/Pull", fmt.Sprintf("Root folder for repository %s succesfully created!", repositoryConfig.Name))
+		Logger.Info("ActionsController/Pull", fmt.Sprintf("Root folders for repository %s succesfully created!", repositoryConfig.Name))
 		isNewRepository = true
 	}
 
@@ -79,8 +83,6 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		//	Pull action.
 		Logger.Info("ActionsController/Pull", fmt.Sprintf("Fetching new from %s...", repositoryFullPath))
 		go func() {
-			spp := strings.TrimRight(repositoryConfig.SourcePlatformPath, ".git")
-			repositoryName := strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
 			pullResult := Cmd.Pull(repositoryFullPath + "/" + repositoryName)
 			if pullResult {
 				Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
@@ -112,18 +114,24 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		return
 	}
 
-	platformConfig := Configuration.GetPlatformByUuid(repositoryConfig.SourcePlatformUuid)
+	platformConfig := Configuration.GetPlatformByUuid(repositoryConfig.DestinationPlatformUuid)
 	if platformConfig == nil {
-		ErrorMsg := fmt.Sprintf("Platform with UUID %s not found!", repositoryConfig.SourcePlatformUuid)
+		ErrorMsg := fmt.Sprintf("Platform with UUID %s not found!", repositoryConfig.DestinationPlatformUuid)
 		Logger.Error("ActionsController/Push", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(ErrorMsg))
 		return
 	}
 
 	//	Step 1. Cloning/pulling destination repository.
+	dpp := strings.TrimRight(repositoryConfig.DestinationPlatformPath, ".git")
+	destinationRepositoryName := strings.Split(dpp, "/")[len(strings.Split(dpp, "/"))-1]
+
+	spp := strings.TrimRight(repositoryConfig.SourcePlatformPath, ".git")
+	sourceRepositoryName := strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
 
 	isNewRepository := false
-	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) {
+	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) ||
+		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/%s", repositoryConfig.Name, destinationRepositoryName))) {
 		Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
 		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name)))
 		if err != nil {
@@ -132,7 +140,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(ErrorMsg))
 			return
 		}
-		Logger.Info("ActionsController/Push", fmt.Sprintf("Root folder for repository %s succesfully created!", repositoryConfig.Name))
+		Logger.Info("ActionsController/Push", fmt.Sprintf("Root folders for repository %s succesfully created!", repositoryConfig.Name))
 		isNewRepository = true
 	}
 
@@ -151,28 +159,28 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		}()
 	} else {
 		//	Pull action.
-		Logger.Info("ActionsController/Push", fmt.Sprintf("Fetching new from %s...", repositoryFullPath))
+		/*Logger.Info("ActionsController/Push", fmt.Sprintf("Fetching new from %s...", repositoryFullPath))
 		go func() {
-			spp := strings.TrimRight(repositoryConfig.SourcePlatformPath, ".git")
-			repositoryName := strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
 			pullResult := Cmd.Pull(repositoryFullPath + "/" + repositoryName)
 			if pullResult {
 				Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
 			} else {
 				Logger.Error("ActionsController/Push", fmt.Sprintf("Error occurred while pulling repository %s!", repositoryFullURL))
 			}
-		}()
+		}()*/
 	}
 
 	//	Step 2. Copying all files from source to destination repositories dir`s.
-
-
+	if !Cmd.CopyRepository(repositoryFullPath, destinationRepositoryName, sourceRepositoryName) {
+		Logger.Error("ActionsController/Push", "Error occurred while copying repository files!")
+	}
 
 	//	Step 3. Rewriting commits author (if needed).
 
 
 
 	//	Step 4. Pushing destination repository.
+
 
 
 

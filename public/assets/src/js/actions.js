@@ -1,10 +1,23 @@
 $('body').on('click', '.btn-pull-source-repository', function (e) {
-
     e.preventDefault();
     let uuid = $(this).data('uuid');
     let ws = webSocketConnection("ws://localhost:8888/actions/pull/");
     ws.onopen = function () {
         console.log("Cloning or pulling source repository...")
+        ws.send(JSON.stringify({"uuid": uuid}));
+    };
+    ws.onmessage = function (msg) {
+        let body = JSON.parse(msg.data)
+        showNotification(body["status"], body["message"])
+    };
+});
+
+$('body').on('click', '.btn-push-destination-repository', function (e) {
+    e.preventDefault();
+    let uuid = $(this).data('uuid');
+    let ws = webSocketConnection("ws://localhost:8888/actions/push/");
+    ws.onopen = function () {
+        console.log("Pushing to destination repository...")
         ws.send(JSON.stringify({"uuid": uuid}));
     };
     ws.onmessage = function (msg) {
