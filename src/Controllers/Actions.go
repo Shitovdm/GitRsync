@@ -27,7 +27,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		Logger.Error("ActionsController/Pull", err.Error())
 		return
 	}
-	Logger.Info("ActionsController/Pull", fmt.Sprintf("Start pulling repository with UUID %s...", pullActionRequest.RepositoryUuid))
+	Logger.Trace("ActionsController/Pull", fmt.Sprintf("Start pulling repository with UUID %s...", pullActionRequest.RepositoryUuid))
 
 	repositoryConfig := Configuration.GetRepositoryByUuid(pullActionRequest.RepositoryUuid)
 	if repositoryConfig == nil {
@@ -67,7 +67,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))
 	if isNewRepository {
 		//	Clone action.
-		Logger.Info("ActionsController/Pull", fmt.Sprintf("Cloning repository from %s...", repositoryFullURL))
+		Logger.Trace("ActionsController/Pull", fmt.Sprintf("Cloning repository from %s...", repositoryFullURL))
 		go func() {
 			cloneResult := Cmd.Clone(repositoryFullPath, repositoryFullURL)
 			if cloneResult {
@@ -81,7 +81,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		}()
 	} else {
 		//	Pull action.
-		Logger.Info("ActionsController/Pull", fmt.Sprintf("Fetching new from %s...", repositoryFullPath))
+		Logger.Trace("ActionsController/Pull", fmt.Sprintf("Fetching new from %s...", repositoryFullURL))
 		go func() {
 			pullResult := Cmd.Pull(repositoryFullPath + "/" + repositoryName)
 			if pullResult {
@@ -104,7 +104,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		Logger.Error("ActionsController/Push", err.Error())
 		return
 	}
-	Logger.Info("ActionsController/Push", fmt.Sprintf("Start pushing repository with UUID %s...", pushActionRequest.RepositoryUuid))
+	Logger.Trace("ActionsController/Push", fmt.Sprintf("Start pushing repository with UUID %s...", pushActionRequest.RepositoryUuid))
 
 	repositoryConfig := Configuration.GetRepositoryByUuid(pushActionRequest.RepositoryUuid)
 	if repositoryConfig == nil {
@@ -132,7 +132,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	isNewRepository := false
 	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) ||
 		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/%s", repositoryConfig.Name, destinationRepositoryName))) {
-		Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
+		Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
 		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name)))
 		if err != nil {
 			ErrorMsg := fmt.Sprintf("Error while creating new folder ./projects/%s", repositoryConfig.Name)
@@ -146,43 +146,60 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 
 	repositoryFullURL := platformConfig.Address + repositoryConfig.DestinationPlatformPath
 	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))
+	finishFetching := make(chan bool)
 	if isNewRepository {
 		//	Clone action.
-		Logger.Info("ActionsController/Push", fmt.Sprintf("Cloning repository from %s...", repositoryFullURL))
+		Logger.Trace("ActionsController/Push", fmt.Sprintf("Cloning repository from %s...", repositoryFullURL))
 		go func() {
 			cloneResult := Cmd.Clone(repositoryFullPath, repositoryFullURL)
 			if cloneResult {
 				Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s cloned successfully!", repositoryFullURL))
+				finishFetching<- true
 			} else {
 				Logger.Error("ActionsController/Push", fmt.Sprintf("Error occurred while cloning repository %s!", repositoryFullURL))
+				finishFetching<- false
 			}
 		}()
 	} else {
 		//	Pull action.
-		/*Logger.Info("ActionsController/Push", fmt.Sprintf("Fetching new from %s...", repositoryFullPath))
+		Logger.Trace("ActionsController/Push", fmt.Sprintf("Fetching new from %s...", repositoryFullURL))
 		go func() {
-			pullResult := Cmd.Pull(repositoryFullPath + "/" + repositoryName)
+			pullResult := Cmd.Pull(repositoryFullPath + "/" + destinationRepositoryName)
 			if pullResult {
 				Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
+				finishFetching<- true
 			} else {
 				Logger.Error("ActionsController/Push", fmt.Sprintf("Error occurred while pulling repository %s!", repositoryFullURL))
+				finishFetching<- false
 			}
-		}()*/
+		}()
+	}
+
+	fetchRes := <-finishFetching
+	if !fetchRes {
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while fetching destination repository!")))
+		_ = conn.Close()
+		return
 	}
 
 	//	Step 2. Copying all files from source to destination repositories dir`s.
+	Logger.Trace("ActionsController/Push", "Start copying all repository files...")
 	if !Cmd.CopyRepository(repositoryFullPath, destinationRepositoryName, sourceRepositoryName) {
 		Logger.Error("ActionsController/Push", "Error occurred while copying repository files!")
 	}
 
-	//	Step 3. Rewriting commits author (if needed).
+	//	Step 3.1. Checking needed pushing destination repository.
+	if Cmd.Status(repositoryFullPath + "/" + destinationRepositoryName){
+		Logger.Info("ActionsController/Push", "Destination repository does not need to be updated, all changes are pushed earlier!")
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Destination repository does not need to be updated!")))
+		_ = conn.Close()
+		return
+	}
+	Logger.Info("ActionsController/Push", "Remote destination repository needs updating, have unpushed changes!")
 
-
+	//	Step 3.2. Rewriting commits author (if needed).
 
 	//	Step 4. Pushing destination repository.
-
-
-
 
 }
 

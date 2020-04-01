@@ -1,7 +1,6 @@
 package Helpers
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -107,11 +106,11 @@ func CopyDirContent(src string, dst string) error {
 
 		if fd.IsDir() {
 			if err = CopyDirContent(srcfp, dstfp); err != nil {
-				fmt.Println(err)
+				//Logger.Warning("FS/CopyDirContent", err.Error())
 			}
 		} else {
 			if err = CopyFile(srcfp, dstfp); err != nil {
-				fmt.Println(err)
+				//Logger.Warning("FS/CopyDirContent", err.Error())
 			}
 		}
 	}
