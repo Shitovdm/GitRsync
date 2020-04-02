@@ -199,7 +199,9 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 
 	//	Step 3.2. Rewriting commits author (if needed).
 
-	//	Step 4. Pushing destination repository.
+
+	//	Step 4. Pushing destination repository to remote.
+
 
 }
 
