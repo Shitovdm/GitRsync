@@ -186,6 +186,9 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	Logger.Trace("ActionsController/Push", "Start copying all repository files...")
 	if !Cmd.CopyRepository(repositoryFullPath, destinationRepositoryName, sourceRepositoryName) {
 		Logger.Error("ActionsController/Push", "Error occurred while copying repository files!")
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Error occurred while copying repository files!")))
+		_ = conn.Close()
+		return
 	}
 
 	//	Step 3.1. Checking needed pushing destination repository.
@@ -201,8 +204,18 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 
 
 	//	Step 4. Pushing destination repository to remote.
+	Logger.Trace("ActionsController/Push", "Start pushing destination repository...")
+	if !Cmd.Push(repositoryFullPath + "/" + destinationRepositoryName){
+		Logger.Error("ActionsController/Push", "Error occurred while pushing destination repository!")
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Error occurred while pushing destination repository!")))
+		_ = conn.Close()
+		return
+	}
 
-
+	Msg := "Destination repository successfully pushed to remote!"
+	Logger.Info("ActionsController/Push", Msg)
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(Msg))
+	return
 }
 
 func (ctrl ActionsController) Block(c *gin.Context) {
