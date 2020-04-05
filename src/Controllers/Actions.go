@@ -132,7 +132,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	isNewRepository := false
 	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) ||
 		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/%s", repositoryConfig.Name, destinationRepositoryName))) {
-		Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
+		Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s has not been initialized earlier! Creating root folder for repository...", repositoryConfig.Name))
 		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name)))
 		if err != nil {
 			ErrorMsg := fmt.Sprintf("Error while creating new folder ./projects/%s", repositoryConfig.Name)
@@ -140,7 +140,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(ErrorMsg))
 			return
 		}
-		Logger.Info("ActionsController/Push", fmt.Sprintf("Root folders for repository %s succesfully created!", repositoryConfig.Name))
+		Logger.Trace("ActionsController/Push", "Done!")
 		isNewRepository = true
 	}
 
@@ -190,6 +190,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		_ = conn.Close()
 		return
 	}
+	Logger.Trace("ActionsController/Push", "Done!")
 
 	//	Step 3.1. Checking needed pushing destination repository.
 	if Cmd.Status(repositoryFullPath + "/" + destinationRepositoryName){
@@ -198,13 +199,13 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		_ = conn.Close()
 		return
 	}
-	Logger.Info("ActionsController/Push", "Remote destination repository needs updating, have unpushed changes!")
+	Logger.Trace("ActionsController/Push", "Remote destination repository needs updating, have unpushed changes!")
 
 	//	Step 3.2. Rewriting commits author (if needed).
 
 
 	//	Step 4. Pushing destination repository to remote.
-	Logger.Trace("ActionsController/Push", "Start pushing destination repository...")
+	Logger.Trace("ActionsController/Push", "Pushing destination repository...")
 	if !Cmd.Push(repositoryFullPath + "/" + destinationRepositoryName){
 		Logger.Error("ActionsController/Push", "Error occurred while pushing destination repository!")
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Error occurred while pushing destination repository!")))
@@ -212,7 +213,8 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		return
 	}
 
-	Msg := "Destination repository successfully pushed to remote!"
+	Logger.Trace("ActionsController/Push", "Done!")
+	Msg := "Destination repository successfully pushed!"
 	Logger.Info("ActionsController/Push", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(Msg))
 	return
