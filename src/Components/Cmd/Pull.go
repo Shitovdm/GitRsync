@@ -1,6 +1,7 @@
 package Cmd
 
 import (
+	"fmt"
 	"os/exec"
 	"time"
 )
@@ -28,7 +29,8 @@ func Pull(path string) bool {
 					string(output) == "exit status 128" {
 					finish <- false
 				}
-				time.Sleep(500 * time.Millisecond)
+				fmt.Println(string(output))
+				time.Sleep(50 * time.Millisecond)
 			}
 		}()
 
@@ -44,5 +46,6 @@ func Pull(path string) bool {
 	}()
 
 	result := <-finish
+	breakFlag = true
 	return result
 }

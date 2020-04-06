@@ -52,6 +52,7 @@ func AddRuntimeLog(sessionID string, level string, category string, message stri
 	runtimeLogs := GetRuntimeLogs()
 	runtimeLogs = append(runtimeLogs, runtimeLog)
 
+	fmt.Println(fmt.Sprintf("[%s][%s][%s] %s", runtimeLog.Time, runtimeLog.Level, runtimeLog.Category, runtimeLog.Message))
 	err := Configuration.Save(RuntimeLogFile, &runtimeLogs)
 	if err != nil {
 		panic("Error while saving runtime log!")
@@ -75,10 +76,10 @@ func ResetRuntimeLogNote() {
 }
 
 func BuildRuntimeLogNote(logNote Models.RuntimeLog) string {
-	runtimeLog := "[" + logNote.Time + "]"// + "\t"
+	runtimeLog := "[" + logNote.Time + "]" // + "\t"
 	//runtimeLog += logNote.SessionID + "\t"
-	runtimeLog += "[" + logNote.Level + "]"// + "\t"
-	runtimeLog += "[" + logNote.Category + "]"// + "\t"
+	runtimeLog += "[" + logNote.Level + "]"    // + "\t"
+	runtimeLog += "[" + logNote.Category + "]" // + "\t"
 	runtimeLog += " " + logNote.Message
 
 	return SetLogLevel(logNote.Level, runtimeLog)
