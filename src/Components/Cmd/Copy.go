@@ -14,13 +14,13 @@ func CopyRepository(repositoryFullPath string, destinationRepositoryName string,
 	}
 
 	//	Removing .git folder from source repository.
-	err = os.RemoveAll(repositoryFullPath + "/" + sourceRepositoryName + "/.git")
+	err = os.RemoveAll(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git")
 	if err != nil {
 		return false
 	}
 
 	//	Copy all repository files from source repo to destination repo.
-	err = Helpers.CopyDirContent(repositoryFullPath+"/"+sourceRepositoryName, repositoryFullPath+"/"+destinationRepositoryName)
+	err = Helpers.CopyDirContent(repositoryFullPath+"/source/"+sourceRepositoryName, repositoryFullPath+"/destination/"+destinationRepositoryName)
 	if err != nil {
 		return false
 	}
@@ -54,7 +54,7 @@ func TemporaryMoveGitFolder(repositoryFullPath string, sourceRepositoryName stri
 		}
 	}
 
-	err := Helpers.CopyDirContent(repositoryFullPath+"/"+sourceRepositoryName+"/.git", repositoryFullPath+"/tmp/.git")
+	err := Helpers.CopyDirContent(repositoryFullPath+"/source/"+sourceRepositoryName+"/.git", repositoryFullPath+"/tmp/.git")
 	if err != nil {
 		return err
 	}
@@ -63,14 +63,14 @@ func TemporaryMoveGitFolder(repositoryFullPath string, sourceRepositoryName stri
 
 func RestoreGitFolder(repositoryFullPath string, sourceRepositoryName string) error {
 
-	if !Helpers.IsDirExists(repositoryFullPath + "/" + sourceRepositoryName + "/.git") {
-		err := Helpers.CreateNewDir(repositoryFullPath + "/" + sourceRepositoryName + "/.git")
+	if !Helpers.IsDirExists(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git") {
+		err := Helpers.CreateNewDir(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git")
 		if err != nil {
 			return err
 		}
 	}
 
-	err := Helpers.CopyDirContent(repositoryFullPath+"/tmp/.git", repositoryFullPath+"/"+sourceRepositoryName+"/.git")
+	err := Helpers.CopyDirContent(repositoryFullPath+"/tmp/.git", repositoryFullPath+"/source/"+sourceRepositoryName+"/.git")
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func RemoveTemporaryGitFolder(repositoryFullPath string) error {
 
 func RewriteGitFiles(repositoryFullPath string, destinationRepositoryName string) error {
 	tmpGitFolder := repositoryFullPath + "/tmp/.git"
-	destinationGitFolder := repositoryFullPath + "/" + destinationRepositoryName + "/.git"
+	destinationGitFolder := repositoryFullPath + "/destination/" + destinationRepositoryName + "/.git"
 
 	//	Rewrite folders.
 	_ = Helpers.CopyDirContent(tmpGitFolder+"/logs", destinationGitFolder+"/logs")

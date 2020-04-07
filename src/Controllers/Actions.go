@@ -53,35 +53,35 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 
 	isNewRepository := false
 	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) ||
-		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/%s", repositoryConfig.Name, repositoryName))) {
-		Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
-		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name)))
+		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/source/%s", repositoryConfig.Name, repositoryName))) {
+		Logger.Trace("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
+		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/source", repositoryConfig.Name)))
 		if err != nil {
-			ErrorMsg := fmt.Sprintf("Error while creating new folder ./projects/%s", repositoryConfig.Name)
+			ErrorMsg := fmt.Sprintf("Error while creating new folder ./projects/%s/source", repositoryConfig.Name)
 			Logger.Error("ActionsController/Pull", ErrorMsg)
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(ErrorMsg))
 			Logger.Warning("ActionsController/Pull", "Pulling source repository aborted!")
 			return
 		}
-		Logger.Info("ActionsController/Pull", fmt.Sprintf("Root folders for repository %s succesfully created!", repositoryConfig.Name))
+		Logger.Trace("ActionsController/Pull", fmt.Sprintf("Root folders for repository %s succesfully created!", repositoryConfig.Name))
 		isNewRepository = true
 	}
 
 	repositoryFullURL := platformConfig.Address + repositoryConfig.SourcePlatformPath
-	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))
+	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/source", repositoryConfig.Name))
+	//
 	if isNewRepository {
 		//	Clone action.
 		Logger.Trace("ActionsController/Pull", fmt.Sprintf("Cloning repository from %s...", repositoryFullURL))
 		go func() {
 			cloneResult := Cmd.Clone(repositoryFullPath, repositoryFullURL)
 			if cloneResult {
-				Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s cloned successfully!", repositoryFullURL))
+				Logger.Success("ActionsController/Pull", fmt.Sprintf("Repository %s cloned successfully!", repositoryFullURL))
 				_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Repository cloned successfully!")))
 			} else {
 				Logger.Error("ActionsController/Pull", fmt.Sprintf("Error occurred while cloning repository %s!", repositoryFullURL))
 				_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while cloning the repository!")))
 			}
-			_ = conn.Close()
 		}()
 	} else {
 		//	Pull action.
@@ -89,13 +89,12 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		go func() {
 			pullResult := Cmd.Pull(repositoryFullPath + "/" + repositoryName)
 			if pullResult {
-				Logger.Info("ActionsController/Pull", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
+				Logger.Success("ActionsController/Pull", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
 				_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Repository pulled successfully!")))
 			} else {
 				Logger.Error("ActionsController/Pull", fmt.Sprintf("Error occurred while pulling repository %s!", repositoryFullURL))
 				_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while pulling repository!")))
 			}
-			_ = conn.Close()
 		}()
 	}
 }
@@ -138,17 +137,17 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 
 	isNewRepository := false
 	if !Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))) ||
-		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/%s", repositoryConfig.Name, destinationRepositoryName))) {
-		Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s has not been initialized earlier! Initializing...", repositoryConfig.Name))
-		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name)))
+		!Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/destination/%s", repositoryConfig.Name, destinationRepositoryName))) {
+		Logger.Trace("ActionsController/Push", fmt.Sprintf("Repository %s has not been initialized earlier! Initializing...", repositoryConfig.Name))
+		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s/destination", repositoryConfig.Name)))
 		if err != nil {
-			ErrorMsg := fmt.Sprintf("Error while creating new folder ./projects/%s", repositoryConfig.Name)
+			ErrorMsg := fmt.Sprintf("Error while creating new folder ./projects/%s/destination", repositoryConfig.Name)
 			Logger.Error("ActionsController/Push", ErrorMsg)
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(ErrorMsg))
 			Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 			return
 		}
-		Logger.Info("ActionsController/Push", fmt.Sprintf("Root folder for repository %s successfully created!", repositoryConfig.Name))
+		Logger.Trace("ActionsController/Push", fmt.Sprintf("Root folder for repository %s successfully created!", repositoryConfig.Name))
 		isNewRepository = true
 	}
 
@@ -159,9 +158,9 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		//	Clone action.
 		Logger.Trace("ActionsController/Push", fmt.Sprintf("Cloning repository from %s...", repositoryFullURL))
 		go func() {
-			cloneResult := Cmd.Clone(repositoryFullPath, repositoryFullURL)
+			cloneResult := Cmd.Clone(repositoryFullPath+"/destination", repositoryFullURL)
 			if cloneResult {
-				Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s cloned successfully!", repositoryFullURL))
+				Logger.Trace("ActionsController/Push", fmt.Sprintf("Repository %s cloned successfully!", repositoryFullURL))
 				finishFetching <- true
 			} else {
 				Logger.Error("ActionsController/Push", fmt.Sprintf("Error occurred while cloning repository %s!", repositoryFullURL))
@@ -172,9 +171,9 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		//	Pull action.
 		Logger.Trace("ActionsController/Push", fmt.Sprintf("Pulling new from %s...", repositoryFullURL))
 		go func() {
-			pullResult := Cmd.Pull(repositoryFullPath + "/" + destinationRepositoryName)
+			pullResult := Cmd.Pull(repositoryFullPath + "/destination/" + destinationRepositoryName)
 			if pullResult {
-				Logger.Info("ActionsController/Push", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
+				Logger.Trace("ActionsController/Push", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
 				finishFetching <- true
 			} else {
 				Logger.Error("ActionsController/Push", fmt.Sprintf("Error occurred while pulling repository %s!", repositoryFullURL))
@@ -186,7 +185,6 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	fetchRes := <-finishFetching
 	if !fetchRes {
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while fetching destination repository!")))
-		_ = conn.Close()
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
 	}
@@ -196,49 +194,45 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	if !Cmd.CopyRepository(repositoryFullPath, destinationRepositoryName, sourceRepositoryName) {
 		Logger.Error("ActionsController/Push", "Error occurred while copying repository files!")
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Error occurred while copying repository files!")))
-		_ = conn.Close()
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
 	}
-	Logger.Info("ActionsController/Push", "Repository files successfully copied!")
+	Logger.Trace("ActionsController/Push", "Repository files successfully copied!")
 
 	//	Step 3.1. Checking needed pushing destination repository.
 	Logger.Trace("ActionsController/Push", "Checking needed pushing destination repository...")
-	commits, err := Cmd.Log(repositoryFullPath+"/"+destinationRepositoryName, "origin/master..HEAD")
-	if err != nil {
-		Msg := fmt.Sprintf("Error occurred while getting destination git repository log for unpushed commits! %s", err.Error())
-		Logger.Error("ActionsController/Push", Msg)
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
-		_ = conn.Close()
-		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
-		return
+	commits, err := Cmd.Log(repositoryFullPath+"/destination/"+destinationRepositoryName, "origin/master..HEAD")
+	if err == nil {
+		if len(commits) == 0 {
+			Logger.Debug("ActionsController/Push", "Destination repository does not need to be updated, all changes are pushed earlier!")
+			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Destination repository does not need to be updated!")))
+			return
+		}
 	}
-
-	if len(commits) == 0 {
-		Logger.Info("ActionsController/Push", "Destination repository does not need to be updated, all changes are pushed earlier!")
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Destination repository does not need to be updated!")))
-		_ = conn.Close()
-		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
-		return
-	}
-	Logger.Info("ActionsController/Push", "Remote destination repository needs updating, have unpushed changes!")
+	Logger.Trace("ActionsController/Push", "Remote destination repository needs updating, have unpushed changes!")
 
 	//	Step 3.2. Rewriting commits author (if needed).
-
-
+	Logger.Trace("ActionsController/Push", "Overriding destination repository commits author...")
+	if !Cmd.Override(repositoryFullPath + "/destination/" + destinationRepositoryName, "Shitov Dmitry", "shitov.dm@gmail.com") {
+		Msg := "Error occurred while overriding destination repository commits author!"
+		Logger.Error("ActionsController/Push", Msg)
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
+		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
+		return
+	}
+	Logger.Trace("ActionsController/Push", "All commits in destination repository successfully overridden!")
 
 	//	Step 4. Pushing destination repository to remote.
 	Logger.Trace("ActionsController/Push", "Pushing destination repository...")
-	if !Cmd.Push(repositoryFullPath + "/" + destinationRepositoryName){
+	if !Cmd.Push(repositoryFullPath + "/destination/" + destinationRepositoryName) {
 		Logger.Error("ActionsController/Push", "Error occurred while pushing destination repository!")
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Error occurred while pushing destination repository!")))
-		_ = conn.Close()
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
 	}
 
 	Msg := "Destination repository successfully pushed!"
-	Logger.Info("ActionsController/Push", Msg)
+	Logger.Success("ActionsController/Push", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(Msg))
 	return
 }

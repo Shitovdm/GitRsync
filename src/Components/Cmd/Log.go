@@ -2,6 +2,7 @@ package Cmd
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 )
 
@@ -25,6 +26,7 @@ func Log(path, hashish string) ([]*Commit, error) {
 	commits := make([]*Commit, len(lineBytes))
 
 	for x := 0; x < len(lineBytes); x++ {
+		fmt.Println(string(lineBytes[x]))
 		commit, commitErr := NewCommit(path, string(lineBytes[x]))
 		if commitErr != nil {
 			return []*Commit{}, commitErr

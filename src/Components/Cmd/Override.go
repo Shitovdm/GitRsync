@@ -1,18 +1,22 @@
 package Cmd
 
 import (
+	"fmt"
 	"os/exec"
 	"time"
 )
 
-func Pull(path string) bool {
+func Override(path string, username string, email string) bool {
 	var cmd *exec.Cmd
-	cmd = command("git", "pull")
+	envFilter := fmt.Sprintf("'GIT_AUTHOR_NAME='%s';GIT_AUTHOR_EMAIL='%s';GIT_COMMITTER_NAME='%s';GIT_COMMITTER_EMAIL='%s';'", username, email, username, email)
+	cmd = command("git", "filter-branch", "-f", "--env-filter", envFilter)
 	cmd.Dir = path
 	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
 		return false
 	}
+
+	fmt.Println("CMD command: " + cmd.String())
 
 	breakFlag := false
 	finish := make(chan bool)
@@ -24,10 +28,14 @@ func Pull(path string) bool {
 				}
 				output := make([]byte, 128, 128)
 				_, _ = StdoutPipe.Read(output)
-				if string(output) == "fatal: destination path 'rpc' already exists and is not an empty directory." ||
-					string(output) == "exit status 128" {
+				if string(output) == "Ref 'refs/heads/master' was rewritten" ||
+					string(output) == "WARNING: Ref 'refs/heads/master' is unchanged" {
+					finish <- true
+				}
+				if string(output) == "exit status 128" {
 					finish <- false
 				}
+				fmt.Println(string(output))
 				time.Sleep(50 * time.Millisecond)
 			}
 		}()

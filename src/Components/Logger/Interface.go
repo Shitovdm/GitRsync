@@ -19,3 +19,7 @@ func Warning(category string, message string) {
 func Error(category string, message string) {
 	AddRuntimeLog(sessionID, "error", category, message)
 }
+
+func Success(category string, message string) {
+	AddRuntimeLog(sessionID, "success", category, message)
+}

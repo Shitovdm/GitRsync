@@ -97,6 +97,8 @@ func SetLogLevel(level string, str string) string {
 		return fmt.Sprintf("\x1b[93m%s\x1b[0m", str)
 	case "error":
 		return fmt.Sprintf("\x1b[91m%s\x1b[0m", str)
+	case "success":
+		return fmt.Sprintf("\x1b[92m%s\x1b[0m", str)
 	default:
 		return fmt.Sprintf("\x1b[90m%s\x1b[0m", str)
 	}
