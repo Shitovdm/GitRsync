@@ -47,6 +47,10 @@ func main() {
 	//go Helpers.Exec(fmt.Sprintf("git clone %s %s", resource, path))
 
 
+
+
+	//Cmd.Override("C:/Users/Дмитрий/AppData/Roaming/GitRsync/projects/lib-go-amqp-first/destination/lib-go-amqp-firs", "Shitov Dmitry", "shitov.dm@gmail.com")
+
 	Application.StartServer()
 
 }

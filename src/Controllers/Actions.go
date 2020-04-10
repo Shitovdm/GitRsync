@@ -129,10 +129,10 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	}
 
 	//	Step 1. Cloning/pulling destination repository.
-	dpp := strings.TrimRight(repositoryConfig.DestinationPlatformPath, ".git")
+	dpp := strings.Trim(strings.TrimRight(repositoryConfig.DestinationPlatformPath, "git"), ".")
 	destinationRepositoryName := strings.Split(dpp, "/")[len(strings.Split(dpp, "/"))-1]
 
-	spp := strings.TrimRight(repositoryConfig.SourcePlatformPath, ".git")
+	spp := strings.Trim(strings.TrimRight(repositoryConfig.SourcePlatformPath, "git"), ".")
 	sourceRepositoryName := strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
 
 	isNewRepository := false
@@ -152,7 +152,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	}
 
 	repositoryFullURL := platformConfig.Address + repositoryConfig.DestinationPlatformPath
-	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf("/projects/%s", repositoryConfig.Name))
+	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf(`projects\%s`, repositoryConfig.Name))
 	finishFetching := make(chan bool)
 	if isNewRepository {
 		//	Clone action.
@@ -199,9 +199,23 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	}
 	Logger.Trace("ActionsController/Push", "Repository files successfully copied!")
 
+	destinationRepositoryPath := repositoryFullPath + `\destination\` + destinationRepositoryName
+
 	//	Step 3.1. Checking needed pushing destination repository.
+	fmt.Println("repositoryFullPath: ", repositoryFullPath)
+	fmt.Println("destinationRepositoryName: ", destinationRepositoryName)
+	fmt.Println("qqqqqqqqqqqqqqqq: ", repositoryFullPath+`\destination\`+destinationRepositoryName)
 	Logger.Trace("ActionsController/Push", "Checking needed pushing destination repository...")
-	commits, err := Cmd.Log(repositoryFullPath+"/destination/"+destinationRepositoryName, "origin/master..HEAD")
+
+	commits, _ := Cmd.Log(destinationRepositoryPath, "")
+	fmt.Println("commits0: ", commits)
+
+	commits, _ = Cmd.Log(destinationRepositoryPath + `\`, "origin/master..HEAD")
+	fmt.Println("commits1: ", commits)
+
+	commits, err = Cmd.Log(`C:\Users\Дмитрий\AppData\Roaming\GitRsync\projects\lib-go-amqp-first\destination\lib-go-amqp-first`, "origin/master..HEAD")
+	fmt.Println("commits2: ", commits)
+
 	if err == nil {
 		if len(commits) == 0 {
 			Logger.Debug("ActionsController/Push", "Destination repository does not need to be updated, all changes are pushed earlier!")
@@ -209,11 +223,12 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 			return
 		}
 	}
+	fmt.Println("err: ", err.Error())
 	Logger.Trace("ActionsController/Push", "Remote destination repository needs updating, have unpushed changes!")
 
 	//	Step 3.2. Rewriting commits author (if needed).
 	Logger.Trace("ActionsController/Push", "Overriding destination repository commits author...")
-	if !Cmd.Override(repositoryFullPath + "/destination/" + destinationRepositoryName, "Shitov Dmitry", "shitov.dm@gmail.com") {
+	if !Cmd.Override(repositoryFullPath + `\destination\` + destinationRepositoryName, "Shitov Dmitry", "shitov.dm@gmail.com") {
 		Msg := "Error occurred while overriding destination repository commits author!"
 		Logger.Error("ActionsController/Push", Msg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
@@ -223,13 +238,13 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	Logger.Trace("ActionsController/Push", "All commits in destination repository successfully overridden!")
 
 	//	Step 4. Pushing destination repository to remote.
-	Logger.Trace("ActionsController/Push", "Pushing destination repository...")
+	/*Logger.Trace("ActionsController/Push", "Pushing destination repository...")
 	if !Cmd.Push(repositoryFullPath + "/destination/" + destinationRepositoryName) {
 		Logger.Error("ActionsController/Push", "Error occurred while pushing destination repository!")
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Error occurred while pushing destination repository!")))
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
-	}
+	}*/
 
 	Msg := "Destination repository successfully pushed!"
 	Logger.Success("ActionsController/Push", Msg)
