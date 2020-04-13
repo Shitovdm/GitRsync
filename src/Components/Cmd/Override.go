@@ -9,30 +9,20 @@ import (
 func Override(path string, username string, email string) bool {
 
 
-
-
-	fmt.Println("Status: ", Status(path))
-
-	commits, err := Log(path, "")
+	/*commits, err := Log(path, "")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	fmt.Println(commits)
+	fmt.Println(commits)*/
 
 	var cmd *exec.Cmd
 	//author := fmt.Sprintf("GIT_AUTHOR_NAME='%s';GIT_AUTHOR_EMAIL='%s'", username, email)
 	//committer := fmt.Sprintf("GIT_COMMITTER_NAME='%s';GIT_COMMITTER_EMAIL='%s'", username, email)
 	//envFilter := fmt.Sprintf("\"%s;%s;\"", author, committer)
 
-	gitCmd := fmt.Sprintf(`git filter-branch --env-filter '
-		GIT_AUTHOR_NAME="%s";
-		GIT_AUTHOR_EMAIL="%s";
-		GIT_COMMITTER_NAME="%s";
-		GIT_COMMITTER_EMAIL="%s";' HEAD;`,
-		username,
-		email,
-		username,
-		email)
+	gitCmd := fmt.Sprintf(
+		`git filter-branch -f --env-filter "GIT_AUTHOR_NAME='%s'; GIT_AUTHOR_EMAIL='%s'; GIT_COMMITTER_NAME='%s'; GIT_COMMITTER_EMAIL='%s';" HEAD;`,
+		username, email, username, email)
 
 	cmd = exec.Command("bash", "-c", gitCmd)
 
@@ -74,7 +64,6 @@ func Override(path string, username string, email string) bool {
 
 		err = cmd.Run()
 		if err != nil {
-			time.Sleep(5*time.Second)
 			fmt.Println("running error!" + err.Error())
 			breakFlag = true
 			finish <- false
