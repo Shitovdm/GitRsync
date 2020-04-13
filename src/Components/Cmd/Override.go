@@ -10,7 +10,7 @@ func Override(path string, username string, email string) bool {
 
 
 
-	
+
 	fmt.Println("Status: ", Status(path))
 
 	commits, err := Log(path, "")
