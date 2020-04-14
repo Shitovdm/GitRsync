@@ -19,16 +19,20 @@ $(document).arrive(".selectpicker", function () {
 });
 
 function showNotification(type, message){
-    let icon = ""
+    let icon = "";
     switch (type) {
         case "success":
-            icon = "add_alert"
+            icon = "add_alert";
+            break;
         case "error":
-            icon = "error"
+            icon = "error";
+            break;
         case "warning":
-            icon = "warning"
+            icon = "warning";
+            break;
         case "info":
-            icon = "info"
+            icon = "info";
+            break;
     }
     $.notify({
         icon: icon,

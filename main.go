@@ -1,9 +1,12 @@
 package main
 
 import (
-	"github.com/Shitovdm/git-repo-exporter/src/Application"
+	"fmt"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Cmd"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
+	"log"
 )
 
 func init() {
@@ -51,7 +54,30 @@ func main() {
 
 	//Cmd.Override("C:/Users/Дмитрий/AppData/Roaming/GitRsync/projects/lib-go-amqp-first/destination/lib-go-amqp-firs", "Shitov Dmitry", "shitov.dm@gmail.com")
 
-	Application.StartServer()
+	//Application.StartServer()
+
+
+	sourceRepositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf(`projects\%s\source\git-repo-exporter`, "git-repo-exporter-test"))
+
+	repo, err := Helpers.OpenRepository(sourceRepositoryFullPath)
+	if err != nil {
+		log.Fatalf("error opening repository: %v", err)
+	}
+
+	commits, err := repo.GetLog(5)
+
+	fmt.Println(fmt.Sprintf("%s", commits))
+
+	dirty := repo.IsDirty()
+	if dirty == true {
+		log.Fatal("git directory has uncommited changes, please stash and try agian.")
+	}
+
+	fmt.Println(dirty)
+
+	if !Cmd.Override(sourceRepositoryFullPath, "Shitov Dmitry", "shitov.dm@gmail.com") {
+		fmt.Println("error")
+	}
 
 }
 

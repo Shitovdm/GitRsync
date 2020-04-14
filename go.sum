@@ -91,6 +91,10 @@ github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c h1:rp5dCmg/yLR3mgF
 github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c/go.mod h1:X07ZCGwUbLaax7L0S3Tw4hpejzu63ZrrQiUe6W0hcy0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/speedata/gogit v0.0.0-20170530073720-f25600b364f0 h1:PTWtN6rxetzMDCofa8Ml1U+X0CZhYVP/mCAtaeW7lok=
+github.com/speedata/gogit v0.0.0-20170530073720-f25600b364f0/go.mod h1:7c0w0ctWxldkfAnImQC8LsGW8yFbS1wTj1bd/nJX034=
+github.com/speedata/mmap-go v0.0.0-20141021215358-6c75090c5598 h1:u1FGPa3y8owczQC/8d3h2546811jPvzFD/xdPHdc0yQ=
+github.com/speedata/mmap-go v0.0.0-20141021215358-6c75090c5598/go.mod h1:vuzeyKHi671OptZvaMRjSl5OVT72r70BlhI4OsTekzM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=

@@ -8,36 +8,18 @@ import (
 
 func Override(path string, username string, email string) bool {
 
-
-	/*commits, err := Log(path, "")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	fmt.Println(commits)*/
-
 	var cmd *exec.Cmd
-	//author := fmt.Sprintf("GIT_AUTHOR_NAME='%s';GIT_AUTHOR_EMAIL='%s'", username, email)
-	//committer := fmt.Sprintf("GIT_COMMITTER_NAME='%s';GIT_COMMITTER_EMAIL='%s'", username, email)
-	//envFilter := fmt.Sprintf("\"%s;%s;\"", author, committer)
 
 	gitCmd := fmt.Sprintf(
-		`git filter-branch -f --env-filter "GIT_AUTHOR_NAME='%s'; GIT_AUTHOR_EMAIL='%s'; GIT_COMMITTER_NAME='%s'; GIT_COMMITTER_EMAIL='%s';" HEAD;`,
+		`git filter-branch -f --env-filter "GIT_AUTHOR_NAME='%s'; GIT_AUTHOR_EMAIL='%s'; GIT_COMMITTER_NAME='%s'; GIT_COMMITTER_EMAIL='%s'; fi" HEAD;`,
 		username, email, username, email)
 
 	cmd = exec.Command("bash", "-c", gitCmd)
-
-	//cmd = command("git", "filter-branch", "--force", "[--env-filter "+envFilter+"]")
-	//cmd = exec.Command("git", "filter-branch", "--force", "[--env-filter "+fmt.Sprintf("\"GIT_AUTHOR_NAME='%s'\"]", "Shitov Dmitry"))
-	//cmd = command("git", "filter-branch", "--env-filter \"GIT_AUTHOR_NAME='Shitov Dmitry';GIT_AUTHOR_EMAIL='shitov.dm@gmail.com';GIT_COMMITTER_NAME='Shitov Dmitry';GIT_COMMITTER_EMAIL='shitov.dm@gmail.com';\"")
 	cmd.Dir = path
 	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
 		return false
 	}
-
-	fmt.Println("DIR: " + cmd.Dir)
-	fmt.Println("PATH: " + cmd.Path)
-	fmt.Println("CMD command: " + cmd.String())
 
 	breakFlag := false
 	finish := make(chan bool)
@@ -76,5 +58,6 @@ func Override(path string, username string, email string) bool {
 
 	result := <-finish
 	breakFlag = true
+
 	return result
 }
