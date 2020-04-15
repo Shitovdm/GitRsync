@@ -37,7 +37,7 @@ $('body').on('click', '.btn-push-destination-repository', function (e) {
         showNotification(body["status"], body["message"]);
         switch (body["status"]) {
             case "success":
-                SetRepositoryStatus(repoObj, "pushed");
+                SetRepositoryStatus(repoObj, "synced");
                 break;
             case "error":
                 SetRepositoryStatus(repoObj, "push_failed");

@@ -24,14 +24,14 @@ const (
 	STATUS_PUSHED       = "pushed"
 	STATUS_PUSHFAILED   = "push_failed"
 	STATUS_PENDING      = "pending"
-	STATUS_SYNCHRONIZED = "synchronized"
+	STATUS_SYNCHRONIZED = "synced"
 	STATUS_EXPIRED      = "expired"
 	STATUS_FAILED       = "failed"
 	STATUS_BLOCKED      = "blocked"
 )
 
 var (
-	timeFormat = "2006-01-02 15:04:05"
+	timeFormat = "02-01-2006 15:04"
 )
 
 func (ctrl RepositoriesController) Index(c *gin.Context) {

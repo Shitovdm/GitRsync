@@ -83,19 +83,27 @@
                         <tr>
                             <td class="status-cell">
                                 <span class="status status-{{$repository.status}}">&bull;</span>
-                                <span class="status-name">{{$repository.status}}</span>
+                                <span class="status-name">{{replace $repository.status "_" " " -1}}</span>
                             </td>
                             <td>{{$repository.name}}</td>
                             <td>
-                                {{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}<br>
-                                {{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}
+                                <a target="_blank" style="color: #8b92a9"
+                                   href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}">
+                                    {{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}
+                                </a><br>
+                                <a target="_blank" style="color: #8b92a9"
+                                   href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}">
+                                    {{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}
+                                </a>
                             </td>
                             <td>
-                                {{if eq "" $repository.updated_at}}
-                                    Not updated
-                                {{else}}
-                                    {{$repository.updated_at}}
-                                {{end}}
+                                <span class="updated-at">
+                                    {{if eq "" $repository.updated_at}}
+                                        Not updated
+                                    {{else}}
+                                        {{$repository.updated_at}}
+                                    {{end}}
+                                </span>
                             </td>
                             <td style="width: 300px">
                                 <button type="button" class="btn btn-success dashboard-table-btn btn-sync-repositories"

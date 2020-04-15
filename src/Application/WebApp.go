@@ -2,7 +2,6 @@ package Application
 
 import (
 	rice "github.com/GeertJohan/go.rice"
-	"github.com/Masterminds/sprig"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
 	"github.com/Shitovdm/git-repo-exporter/src/Controllers"
@@ -11,7 +10,9 @@ import (
 	"github.com/foolin/goview/supports/gorice"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
+	"html/template"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -46,7 +47,9 @@ func WebRouter() http.Handler {
 		Extension:    ".html",
 		Master:       "layouts/master",
 		Partials:     []string{},
-		Funcs:        sprig.FuncMap(),
+		Funcs:        template.FuncMap{
+			"replace":  strings.Replace,
+		},
 		DisableCache: true,
 	})
 	ginView.SetFileHandler(gorice.FileHandler(riceBox))
