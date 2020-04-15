@@ -10,17 +10,28 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"net/http"
+	"time"
 )
 
 type RepositoriesController struct{}
 
 const (
-	STATUS_INITIATED = "initiated"
-	STATUS_PENDING = "pending"
+	STATUS_INITIATED    = "initiated"
+	STATUS_PENDINGPULL  = "pending_pull"
+	STATUS_PULLED       = "pulled"
+	STATUS_PULLFAILED   = "pull_failed"
+	STATUS_PENDINGPUSH  = "pending_push"
+	STATUS_PUSHED       = "pushed"
+	STATUS_PUSHFAILED   = "push_failed"
+	STATUS_PENDING      = "pending"
 	STATUS_SYNCHRONIZED = "synchronized"
-	STATUS_EXPIRED = "expired"
-	STATUS_FAILED = "failed"
-	STATUS_BLOCKED = "blocked"
+	STATUS_EXPIRED      = "expired"
+	STATUS_FAILED       = "failed"
+	STATUS_BLOCKED      = "blocked"
+)
+
+var (
+	timeFormat = "2006-01-02T15:04:05"
 )
 
 func (ctrl RepositoriesController) Index(c *gin.Context) {
@@ -126,5 +137,26 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 	}
 
 	Logger.Info("RepositoriesController/Remove", fmt.Sprintf("Repository with name %s successfully removed!", removedRepositoryName))
+	return
+}
+
+func UpdateRepositoryStatus(uuid string, status string) {
+
+	oldRepositoriesList := Configuration.GetRepositoriesConfig()
+	for i, repository := range oldRepositoriesList {
+		if repository.Uuid == uuid {
+			oldRepositoriesList[i].Status = status
+			if status == STATUS_PULLED || status == STATUS_PUSHED || status == STATUS_SYNCHRONIZED {
+				t := time.Now()
+				oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
+			}
+		}
+	}
+
+	err := Configuration.SaveRepositoriesConfig(oldRepositoriesList)
+	if err != nil {
+		return
+	}
+
 	return
 }

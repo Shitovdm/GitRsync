@@ -6,13 +6,12 @@ import (
 )
 
 func Log(path string, hashish string) ([]*Commit, error) {
-	logFormat := "%H"
-	var cmd *exec.Cmd
 
+	var cmd *exec.Cmd
 	if hashish == "" {
-		cmd = command("git", "log", "--pretty="+logFormat)
+		cmd = command("git", "log", "--pretty=%H")
 	} else {
-		cmd = command("git", "log", "--pretty="+logFormat, hashish)
+		cmd = command("git", "log", "--pretty=%H", hashish)
 	}
 	cmd.Dir = path
 	output, err := cmd.Output()

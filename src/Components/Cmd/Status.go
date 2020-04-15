@@ -2,6 +2,7 @@ package Cmd
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 )
 
@@ -23,6 +24,7 @@ func Status(path string) bool {
 	lineBytes = lineBytes[0 : len(lineBytes)-1]
 
 	for x := 0; x < len(lineBytes); x++ {
+		fmt.Println(string(lineBytes[x]))
 		if string(lineBytes[x]) == "nothing to commit, working tree clean" {
 			return true
 		}
