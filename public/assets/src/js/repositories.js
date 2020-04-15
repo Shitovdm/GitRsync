@@ -54,3 +54,11 @@ $('body').on('click', '.btn-edit-repository', function (e) {
         reloadPageData();
     };
 });
+
+function SetRepositoryStatus(repoObj, status) {
+    $(repoObj).parent('td').parent('tr').find('.status-name').text(status);
+    var statusDot = $(repoObj).parent('td').parent('tr').find('.status');
+    statusDot[0].removeAttribute("class");
+    statusDot.addClass("status");
+    statusDot.addClass("status-" + status);
+}

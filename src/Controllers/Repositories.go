@@ -31,7 +31,7 @@ const (
 )
 
 var (
-	timeFormat = "2006-01-02T15:04:05"
+	timeFormat = "2006-01-02 15:04:05"
 )
 
 func (ctrl RepositoriesController) Index(c *gin.Context) {

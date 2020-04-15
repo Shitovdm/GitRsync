@@ -43,20 +43,24 @@
     color: #CCC;
 }
 
-.status-pending{
+.status-pending, .status-pending_pull, .status-pending_push{
     color: #0b75c9;
+}
+
+.status-pulled, .status-pushed{
+    color: #c9a400;
+}
+
+.status-expired{
+    color: #000;
+}
+
+.status-failed, .status-pull_failed, .status-push_failed{
+    color: #c92000;
 }
 
 .status-synchronized{
     color: #00c93c;
-}
-
-.status-expired{
-    color: #c9a400;
-}
-
-.status-failed{
-    color: #c92000;
 }
 
 .dashboard-table-btn{
