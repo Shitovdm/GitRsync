@@ -69,16 +69,14 @@
     padding: 13px!important;
 }
 
-html, body {
-    background: #347fc3;
+body {
     width: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
 }
 
 .bar {
     display: none;
-    position: absolute;
+    position: fixed;
+    z-index: 9999999;
     height: 0px;
     width: calc(100% - 260px);
     left: 260px;
