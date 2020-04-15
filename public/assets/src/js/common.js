@@ -47,3 +47,11 @@ function showNotification(type, message){
         }
     });
 }
+
+function ToggleAjaxPreloader() {
+    if($("#preloader").css("display") === "none") {
+        $("#preloader").show(100)
+    }else {
+        $("#preloader").hide(100)
+    }
+}

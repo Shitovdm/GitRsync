@@ -85,7 +85,9 @@
                                 <span class="status status-{{$repository.status}}">&bull;</span>
                                 <span class="status-name">{{replace $repository.status "_" " " -1}}</span>
                             </td>
-                            <td>{{$repository.name}}</td>
+                            <td>
+                                <span style="color: #FFF">{{$repository.name}}</span>
+                            </td>
                             <td>
                                 <a target="_blank" style="color: #8b92a9"
                                    href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}">

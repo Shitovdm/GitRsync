@@ -1,4 +1,5 @@
 $('body').on('click', '.btn-pull-source-repository', function (e) {
+    ToggleAjaxPreloader()
     e.preventDefault();
     let uuid = $(this).data('uuid');
     let ws = webSocketConnection("ws://localhost:8888/actions/pull/");
@@ -9,6 +10,7 @@ $('body').on('click', '.btn-pull-source-repository', function (e) {
         ws.send(JSON.stringify({"uuid": uuid}));
     };
     ws.onmessage = function (msg) {
+        ToggleAjaxPreloader()
         let body = JSON.parse(msg.data);
         showNotification(body["status"], body["message"]);
         switch (body["status"]) {
@@ -23,6 +25,7 @@ $('body').on('click', '.btn-pull-source-repository', function (e) {
 });
 
 $('body').on('click', '.btn-push-destination-repository', function (e) {
+    ToggleAjaxPreloader()
     e.preventDefault();
     let uuid = $(this).data('uuid');
     let ws = webSocketConnection("ws://localhost:8888/actions/push/");
@@ -33,6 +36,7 @@ $('body').on('click', '.btn-push-destination-repository', function (e) {
         ws.send(JSON.stringify({"uuid": uuid}));
     };
     ws.onmessage = function (msg) {
+        ToggleAjaxPreloader()
         let body = JSON.parse(msg.data);
         showNotification(body["status"], body["message"]);
         switch (body["status"]) {
@@ -47,6 +51,7 @@ $('body').on('click', '.btn-push-destination-repository', function (e) {
 });
 
 $('body').on('click', '.btn-block-repository', function (e) {
+    ToggleAjaxPreloader()
     e.preventDefault();
     let uuid = $(this).data('uuid');
     let formData = JSON.stringify({uuid: uuid});

@@ -28,8 +28,9 @@
 }
 
 .status-cell{
-    text-align: center;
-    max-width: 50px;
+    padding-left: 20px!important;
+    text-align: left;
+    max-width: 70px;
 }
 
 .status{
@@ -66,4 +67,42 @@
 .dashboard-table-btn{
     margin: 0px 3px 0px 3px!important;
     padding: 13px!important;
+}
+
+html, body {
+    background: #347fc3;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.bar {
+    display: none;
+    position: absolute;
+    height: 0px;
+    width: calc(100% - 260px);
+    left: 260px;
+    margin: 0 auto;
+    background: #294b6b;
+    margin-top: 0px;
+}
+
+.circle {
+    position: absolute;
+    top: 0px;
+    margin-left: 0px;
+    height: 3px;
+    width: 0px;
+    left: 0;
+    background: #294b6b;
+    border-radius: 0px;
+    -webkit-animation: move 2s infinite;
+}
+
+
+@-webkit-keyframes move {
+    0% {width: 0;}
+    50% {width: 100%;}
+    75% {width: 100%;}
+    100 {width: 100%;}
 }
