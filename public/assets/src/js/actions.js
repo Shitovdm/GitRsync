@@ -1,9 +1,28 @@
 $('body').on('click', '.btn-pull-source-repository', function (e) {
-    ToggleAjaxPreloader()
     e.preventDefault();
-    let uuid = $(this).data('uuid');
+    ToggleAjaxPreloader();
+    new PullSourceRepository($(this).data('uuid'), this);
+});
+
+$('body').on('click', '.btn-push-destination-repository', function (e) {
+    e.preventDefault();
+    ToggleAjaxPreloader();
+    new PushDestinationRepository($(this).data('uuid'), this);
+});
+
+$('body').on('click', '.btn-sync-repositories', function (e) {
+    e.preventDefault();
+    //  Fetching new.
+    ToggleAjaxPreloader();
+    new PullSourceRepository($(this).data('uuid'), this);
+    //  Pushing new.
+    ToggleAjaxPreloader();
+    new PushDestinationRepository($(this).data('uuid'), this);
+});
+
+
+function PullSourceRepository(uuid, repoObj) {
     let ws = webSocketConnection("ws://localhost:8888/actions/pull/");
-    let repoObj = this;
     SetRepositoryStatus(repoObj, "pending_pull");
     ws.onopen = function () {
         console.log("Cloning or pulling source repository...");
@@ -22,14 +41,10 @@ $('body').on('click', '.btn-pull-source-repository', function (e) {
                 break;
         }
     };
-});
+}
 
-$('body').on('click', '.btn-push-destination-repository', function (e) {
-    ToggleAjaxPreloader()
-    e.preventDefault();
-    let uuid = $(this).data('uuid');
+function PushDestinationRepository(uuid, repoObj) {
     let ws = webSocketConnection("ws://localhost:8888/actions/push/");
-    let repoObj = this;
     SetRepositoryStatus(repoObj, "pending_push");
     ws.onopen = function () {
         console.log("Pushing to destination repository...");
@@ -48,7 +63,7 @@ $('body').on('click', '.btn-push-destination-repository', function (e) {
                 break;
         }
     };
-});
+}
 
 $('body').on('click', '.btn-block-repository', function (e) {
     ToggleAjaxPreloader()

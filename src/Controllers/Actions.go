@@ -17,6 +17,8 @@ type ActionsController struct{}
 
 func (ctrl ActionsController) Sync(c *gin.Context) {
 
+
+
 }
 
 func (ctrl ActionsController) Pull(c *gin.Context) {
