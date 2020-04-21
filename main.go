@@ -1,9 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"github.com/Shitovdm/git-repo-exporter/public/assets/src/icon"
 	"github.com/Shitovdm/git-repo-exporter/src/Application"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
+	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
+	"github.com/getlantern/systray"
+	"io/ioutil"
+	"time"
 )
 
 func init() {
@@ -13,101 +19,53 @@ func init() {
 
 func main() {
 
-	Application.StartServer()
+	go Application.StartServer()
 
-	/*onExit := func() {
-		fmt.Println("Starting onExit")
-		now := time.Now()
-		ioutil.WriteFile(fmt.Sprintf(`on_exit_%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
-		fmt.Println("Finished onExit")
-	}
-	// Should be called at the very beginning of main().
-	systray.RunWithAppWindow("Lantern", 1024, 768, onReady, onExit)*/
+	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
+
 }
 
-/*func onReady() {
+func onExit() {
+	now := time.Now()
+	ioutil.WriteFile(fmt.Sprintf(`./tmp/%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
+}
+
+func onReady() {
 	systray.SetTemplateIcon(icon.Data, icon.Data)
-	systray.SetTitle("Awesome App")
-	systray.SetTooltip("Lantern")
-	mQuitOrig := systray.AddMenuItem("Quit", "Quit the whole app")
-	go func() {
-		<-mQuitOrig.ClickedCh
-		fmt.Println("Requesting quit")
-		systray.Quit()
-		fmt.Println("Finished quitting")
-	}()
+	systray.SetTitle("GitRsync")
+	systray.SetTooltip("GitRsync")
 
-	// We can manipulate the systray in other goroutines
-	go func() {
-		systray.SetTemplateIcon(icon.Data, icon.Data)
-		systray.SetTitle("Awesome App")
-		systray.SetTooltip("Pretty awesome棒棒嗒")
-		mChange := systray.AddMenuItem("Change Me", "Change Me")
-		mChecked := systray.AddMenuItem("Unchecked", "Check Me")
-		mEnabled := systray.AddMenuItem("Enabled", "Enabled")
-		// Sets the icon of a menu item. Only available on Mac.
-		mEnabled.SetTemplateIcon(icon.Data, icon.Data)
+	mOpen := systray.AddMenuItem("Open GitRsync", "Open GitRsync UI")
+	systray.AddSeparator()
+	mOpenGit := systray.AddMenuItem("Project Page", "Open project page")
+	mDocs := systray.AddMenuItem("Documentation", "Open documentation")
+	systray.AddSeparator()
+	mRestart := systray.AddMenuItem("Restart...", "Restart GitRsync")
+	mQuit := systray.AddMenuItem("Quit GitRsync", "Quit GitRsync")
 
-		systray.AddMenuItem("Ignored", "Ignored")
-
-		subMenuTop := systray.AddMenuItem("SubMenu", "SubMenu Test (top)")
-		subMenuMiddle := subMenuTop.AddSubMenuItem("SubMenu - Level 2", "SubMenu Test (middle)")
-		subMenuBottom := subMenuMiddle.AddSubMenuItem("SubMenu - Level 3", "SubMenu Test (bottom)")
-		subMenuBottom2 := subMenuMiddle.AddSubMenuItem("Panic!", "SubMenu Test (bottom)")
-
-		mUrl := systray.AddMenuItem("Open UI", "my home")
-		mQuit := systray.AddMenuItem("退出", "Quit the whole app")
-
-		// Sets the icon of a menu item. Only available on Mac.
-		mQuit.SetIcon(icon.Data)
-
-		systray.AddSeparator()
-		mToggle := systray.AddMenuItem("Toggle", "Toggle the Quit button")
-		shown := true
-		toggle := func() {
-			if shown {
-				subMenuBottom.Check()
-				subMenuBottom2.Hide()
-				mQuitOrig.Hide()
-				mEnabled.Hide()
-				shown = false
-			} else {
-				subMenuBottom.Uncheck()
-				subMenuBottom2.Show()
-				mQuitOrig.Show()
-				mEnabled.Show()
-				shown = true
-			}
+	for {
+		select {
+		case <-mOpen.ClickedCh:
+			fmt.Println("Opening application UI...")
+			Helpers.OpenBrowser("http://localhost:8888")
+			break
+		case <-mOpenGit.ClickedCh:
+			fmt.Println("Opening app GIT page...")
+			Helpers.OpenBrowser("https://github.com/Shitovdm/GitRsync")
+			break
+		case <-mDocs.ClickedCh:
+			fmt.Println("Opening app specification...")
+			Helpers.OpenBrowser("http://localhost:8888/docs")
+			break
+		case <-mRestart.ClickedCh:
+			fmt.Println("Restarting application...")
+			systray.Quit()
+			systray.Run(onReady, onExit)
+			return
+		case <-mQuit.ClickedCh:
+			fmt.Println("Closing application...")
+			systray.Quit()
+			return
 		}
-
-		for {
-			select {
-			case <-mChange.ClickedCh:
-				mChange.SetTitle("I've Changed")
-			case <-mChecked.ClickedCh:
-				if mChecked.Checked() {
-					mChecked.Uncheck()
-					mChecked.SetTitle("Unchecked")
-				} else {
-					mChecked.Check()
-					mChecked.SetTitle("Checked")
-				}
-			case <-mEnabled.ClickedCh:
-				mEnabled.SetTitle("Disabled")
-				mEnabled.Disable()
-			case <-mUrl.ClickedCh:
-				systray.ShowAppWindow("https://www.github.com/getlantern/lantern")
-			case <-subMenuBottom2.ClickedCh:
-				panic("panic button pressed")
-			case <-subMenuBottom.ClickedCh:
-				toggle()
-			case <-mToggle.ClickedCh:
-				toggle()
-			case <-mQuit.ClickedCh:
-				systray.Quit()
-				fmt.Println("Quit2 now...")
-				return
-			}
-		}
-	}()
-}*/
+	}
+}
