@@ -236,8 +236,6 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 
 	//	Step 3. Checking needed pushing destination repository.
 	commits, err := Cmd.Log(destinationRepositoryPath, "origin/master..HEAD")
-	fmt.Println("Commits: ", commits)
-	fmt.Println("Error: ", err)
 	if err == nil {
 		if len(commits) == 0 {
 			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_SYNCHRONIZED)

@@ -19,9 +19,11 @@ func init() {
 
 func main() {
 
-	go Application.StartServer()
+	Application.StartServer()
 
-	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
+
+	//go Application.StartServer()
+	//systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
 
 }
 
