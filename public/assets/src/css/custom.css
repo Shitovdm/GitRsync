@@ -30,7 +30,7 @@
 .status-cell{
     padding-left: 20px!important;
     text-align: left;
-    max-width: 70px;
+    max-width: 80px;
 }
 
 .status{
@@ -40,11 +40,11 @@
     text-align: center;
 }
 
-.status-initiated{
+.status-initiated, .status-cleared{
     color: #CCC;
 }
 
-.status-pending, .status-pending_pull, .status-pending_push{
+.status-pending, .status-pending_pull, .status-pending_push, .status-pending_clear{
     color: #0b75c9;
 }
 
@@ -56,7 +56,7 @@
     color: #000;
 }
 
-.status-failed, .status-pull_failed, .status-push_failed{
+.status-failed, .status-pull_failed, .status-push_failed, .status-clear_failed{
     color: #c92000;
 }
 

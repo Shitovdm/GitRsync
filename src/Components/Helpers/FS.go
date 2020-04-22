@@ -36,6 +36,14 @@ func CreateNewDir(path string) error {
 	return nil
 }
 
+func RemoveDir(path string) error {
+	err := os.RemoveAll(path)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func IsFileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {

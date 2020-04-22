@@ -56,14 +56,16 @@ $('body').on('click', '.btn-edit-repository', function (e) {
 });
 
 function SetRepositoryStatus(repoObj, status) {
-    $(repoObj).parent('td').parent('tr').find('.status-name').text(status.replace('_', ' '));
-    var statusDot = $(repoObj).parent('td').parent('tr').find('.status');
+    let shortStatus = status.split('_')[0];
+    let fullStatus = status.replace('_', ' ');
+    $(repoObj).parent('td').parent('tr').find('.status-name').text(shortStatus);
+    let statusDot = $(repoObj).parent('td').parent('tr').find('.status');
     statusDot[0].removeAttribute("class");
     statusDot.addClass("status");
     statusDot.addClass("status-" + status);
 
-    var d = new Date();
-    var datestring = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+    let d = new Date();
+    let datestring = ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
         d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
 
     $(repoObj).parent('td').parent('tr').find('.updated-at').text(datestring);

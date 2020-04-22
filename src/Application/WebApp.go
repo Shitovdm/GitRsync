@@ -73,9 +73,10 @@ func WebRouter() http.Handler {
 		actions.GET("sync/", actionsController.Sync)
 		actions.GET("pull/", actionsController.Pull)
 		actions.GET("push/", actionsController.Push)
-		actions.POST("info/", actionsController.Info)
-		actions.POST("block/", actionsController.Block)
-		actions.POST("active/", actionsController.Active)
+		actions.GET("clear/", actionsController.Clear)
+		actions.GET("info/", actionsController.Info)
+		actions.GET("block/", actionsController.Block)
+		actions.GET("active/", actionsController.Active)
 	}
 
 	repositories := e.Group("/repositories")

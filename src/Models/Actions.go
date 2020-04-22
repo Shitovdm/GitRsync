@@ -8,6 +8,10 @@ type PushActionRequest struct {
 	RepositoryUuid string `json:"uuid"`
 }
 
+type CleanActionRequest struct {
+	RepositoryUuid string `json:"uuid"`
+}
+
 type BlockActionRequest struct {
 	RepositoryUuid string `json:"uuid"`
 }

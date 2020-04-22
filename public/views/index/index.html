@@ -107,17 +107,19 @@
                                     {{end}}
                                 </span>
                             </td>
-                            <td style="width: 300px">
+                            <td style="width: 350px">
                                 <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-success dashboard-table-btn btn-sync-repositories"
                                         title="Synchronize Repositories"><i class="material-icons">update</i></button>
                                 <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-warning dashboard-table-btn btn-pull-source-repository"
                                         title="Pull Source Repository"><i class="material-icons">cloud_download</i></button>
                                 <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-info dashboard-table-btn btn-push-destination-repository"
                                         title="Push Destination Repository"><i class="material-icons">cloud_upload</i></button>
-                                <button type="button" class="btn btn-primary dashboard-table-btn btn-info-repositories"
+                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-default dashboard-table-btn btn-clear-repositories"
+                                        title="Clear Runtime Data"><i class="material-icons">delete_sweep</i></button>
+                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-primary dashboard-table-btn btn-info-repositories"
                                         title="More Information"><i class="material-icons">error_outline</i></button>
-                                <button type="button" class="btn btn-danger dashboard-table-btn btn-block-repositories"
-                                        title="Block Repositories"><i class="material-icons">block</i></button>
+                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-danger dashboard-table-btn btn-block-repositories"
+                                        title="Block"><i class="material-icons">block</i></button>
                             </td>
                         </tr>
                     {{end}}

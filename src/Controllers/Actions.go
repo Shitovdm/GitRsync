@@ -17,8 +17,6 @@ type ActionsController struct{}
 
 func (ctrl ActionsController) Sync(c *gin.Context) {
 
-
-
 }
 
 func (ctrl ActionsController) Pull(c *gin.Context) {
@@ -271,6 +269,59 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_SYNCHRONIZED)
 	Msg := "Destination repository successfully pushed!"
 	Logger.Success("ActionsController/Push", Msg)
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
+	return
+}
+
+func (ctrl ActionsController) Clear(c *gin.Context) {
+
+	var cleanActionRequest Models.CleanActionRequest
+	conn, err := Helpers.WsHandler(c.Writer, c.Request, &cleanActionRequest)
+	if err != nil {
+		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+		Logger.Error("ActionsController/Clear", err.Error())
+		Logger.Warning("ActionsController/Clear", "Repository runtime data cleaning aborted!")
+		return
+	}
+
+	UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_PENDINGCLEAN)
+	Logger.Trace("ActionsController/Clear", fmt.Sprintf("Start cleaning repository with UUID %s...", cleanActionRequest.RepositoryUuid))
+
+	repositoryConfig := Configuration.GetRepositoryByUuid(cleanActionRequest.RepositoryUuid)
+	if repositoryConfig == nil {
+		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+		ErrorMsg := fmt.Sprintf("Repository with transferred UUID %s not found!", cleanActionRequest.RepositoryUuid)
+		Logger.Error("ActionsController/Clear", ErrorMsg)
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
+		Logger.Warning("ActionsController/Clear", "Repository runtime data cleaning aborted!")
+		return
+	}
+
+	platformConfig := Configuration.GetPlatformByUuid(repositoryConfig.SourcePlatformUuid)
+	if platformConfig == nil {
+		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+		ErrorMsg := fmt.Sprintf("Platform with UUID %s not found!", repositoryConfig.SourcePlatformUuid)
+		Logger.Error("ActionsController/Clear", ErrorMsg)
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
+		Logger.Warning("ActionsController/Clear", "Repository runtime data cleaning aborted!")
+		return
+	}
+
+	if Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf(`\projects\%s`, repositoryConfig.Name))) {
+		err = Helpers.RemoveDir(Configuration.BuildPlatformPath(fmt.Sprintf(`\projects\%s`, repositoryConfig.Name)))
+		if err != nil {
+			UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+			ErrorMsg := "Error deleting repository folder!"
+			Logger.Error("ActionsController/Clear", ErrorMsg)
+			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
+			Logger.Warning("ActionsController/Clear", "Repository runtime data cleaning aborted!")
+			return
+		}
+	}
+
+	UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANED)
+	Msg := "Repository runtime data successfully cleaned!"
+	Logger.Success("ActionsController/Clear", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
 	return
 }
