@@ -102,6 +102,8 @@ func WebRouter() http.Handler {
 		logsController := new(Controllers.LogsController)
 		logs.GET("/", logsController.Index)
 		logs.GET("subscribe/", logsController.Subscribe)
+		logs.GET("remove/runtime/", logsController.RemoveRuntime)
+		logs.GET("remove/all/", logsController.RemoveAll)
 	}
 
 	e.NoRoute(func(c *gin.Context) {

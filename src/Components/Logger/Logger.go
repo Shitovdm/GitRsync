@@ -1,6 +1,7 @@
 package Logger
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
 	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
@@ -11,7 +12,7 @@ import (
 
 const timeFormatStr = "2006-01-02 15:04:05"
 
-var RuntimeLogFile = "Runtime.json"
+var RuntimeLogFile = "RuntimeLogs.json"
 var sessionID = ""
 var runtimeLogNote = ""
 
@@ -59,8 +60,28 @@ func AddRuntimeLog(sessionID string, level string, category string, message stri
 	}
 }
 
-func ClearRuntimeLogs() {
-	_ = ioutil.WriteFile(GetRuntimeLogFile(), []byte(``), 0644)
+func ClearRuntimeLogs() error {
+	runtimeLogs := make([]Models.RuntimeLog, 0)
+	for _, logNote := range GetRuntimeLogs() {
+		//	Only fot current session.
+		if logNote.SessionID != GetSessionId() {
+			runtimeLogs = append(runtimeLogs, logNote)
+		}
+	}
+
+	err := Configuration.Save(RuntimeLogFile, &runtimeLogs)
+	if err != nil {
+		return errors.New("Error while saving runtime log file! ")
+	}
+	return nil
+}
+
+func ClearAllLogs() error {
+	err := ioutil.WriteFile(GetRuntimeLogFile(), []byte(``), 0644)
+	if err != nil {
+		return errors.New("Error while saving runtime log file! ")
+	}
+	return nil
 }
 
 func GetSessionId() string {
