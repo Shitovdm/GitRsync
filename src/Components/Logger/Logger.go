@@ -3,9 +3,9 @@ package Logger
 import (
 	"errors"
 	"fmt"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
-	"github.com/Shitovdm/git-repo-exporter/src/Models"
+	"github.com/Shitovdm/git-rsync/src/Components/Configuration"
+	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
+	"github.com/Shitovdm/git-rsync/src/Models"
 	"io/ioutil"
 	"time"
 )

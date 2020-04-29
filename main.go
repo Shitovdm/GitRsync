@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/Shitovdm/git-repo-exporter/public/assets/src/icon"
-	"github.com/Shitovdm/git-repo-exporter/src/Application"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
+	"github.com/Shitovdm/git-rsync/public/assets/src/icon"
+	"github.com/Shitovdm/git-rsync/src/Application"
+	"github.com/Shitovdm/git-rsync/src/Components/Configuration"
+	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
+	"github.com/Shitovdm/git-rsync/src/Components/Logger"
 	"github.com/getlantern/systray"
 	"io/ioutil"
 	"time"
@@ -20,7 +20,6 @@ func init() {
 func main() {
 
 	Application.StartServer()
-
 
 	//go Application.StartServer()
 	//systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)

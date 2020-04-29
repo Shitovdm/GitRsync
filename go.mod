@@ -1,12 +1,10 @@
-module github.com/Shitovdm/git-repo-exporter
+module github.com/Shitovdm/git-rsync
 
 go 1.13
 
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/GeertJohan/go.rice v1.0.0
-	github.com/akavel/rsrc v0.9.0 // indirect
-	github.com/cratonica/2goarray v0.0.0-20190331194516-514510793eaa // indirect
 	github.com/foolin/goview v0.2.0
 	github.com/getlantern/systray v0.0.0-20200324212034-d3ab4fd25d99
 	github.com/gin-gonic/gin v1.5.0

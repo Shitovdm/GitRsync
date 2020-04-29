@@ -42,6 +42,13 @@ var Menu = []map[string]string{
 		"active": "",
 	},
 	{
+		"slug":   "docs",
+		"href":   "/docs",
+		"icon":   "comment",
+		"text":   "Docs",
+		"active": "",
+	},
+	{
 		"slug":   "about",
 		"href":   "/about",
 		"icon":   "help",

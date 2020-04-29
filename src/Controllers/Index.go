@@ -1,9 +1,9 @@
 package Controllers
 
 import (
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Configuration"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Interface"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
+	"github.com/Shitovdm/git-rsync/src/Components/Configuration"
+	"github.com/Shitovdm/git-rsync/src/Components/Interface"
+	"github.com/Shitovdm/git-rsync/src/Components/Logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

@@ -2,9 +2,9 @@ package Application
 
 import (
 	rice "github.com/GeertJohan/go.rice"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Helpers"
-	"github.com/Shitovdm/git-repo-exporter/src/Components/Logger"
-	"github.com/Shitovdm/git-repo-exporter/src/Controllers"
+	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
+	"github.com/Shitovdm/git-rsync/src/Components/Logger"
+	"github.com/Shitovdm/git-rsync/src/Controllers"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/foolin/goview/supports/gorice"
@@ -43,12 +43,12 @@ func WebRouter() http.Handler {
 	e := gin.New()
 	riceBox := rice.MustFindBox("../../public/views")
 	ginView := ginview.New(goview.Config{
-		Root:         riceBox.Name(),
-		Extension:    ".html",
-		Master:       "layouts/master",
-		Partials:     []string{},
-		Funcs:        template.FuncMap{
-			"replace":  strings.Replace,
+		Root:      riceBox.Name(),
+		Extension: ".html",
+		Master:    "layouts/master",
+		Partials:  []string{},
+		Funcs: template.FuncMap{
+			"replace": strings.Replace,
 		},
 		DisableCache: true,
 	})
@@ -104,6 +104,12 @@ func WebRouter() http.Handler {
 		logs.GET("subscribe/", logsController.Subscribe)
 		logs.GET("remove/runtime/", logsController.RemoveRuntime)
 		logs.GET("remove/all/", logsController.RemoveAll)
+	}
+
+	docs := e.Group("/docs")
+	{
+		docsController := new(Controllers.DocsController)
+		docs.GET("/", docsController.Index)
 	}
 
 	e.NoRoute(func(c *gin.Context) {

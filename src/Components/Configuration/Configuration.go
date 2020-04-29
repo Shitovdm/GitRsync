@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/Shitovdm/git-repo-exporter/src/Models"
+	"github.com/Shitovdm/git-rsync/src/Models"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
