@@ -97,6 +97,17 @@ body {
     -webkit-animation: move 2s infinite;
 }
 
+.about-text p, h1{
+    color: #FFF;
+}
+
+.about-text b{
+    color: #9095a3;
+}
+
+.about-text a{
+    color: #5d81dc;
+}
 
 @-webkit-keyframes move {
     0% {width: 0;}

@@ -106,10 +106,22 @@ func WebRouter() http.Handler {
 		logs.GET("remove/all/", logsController.RemoveAll)
 	}
 
+	settings := e.Group("/settings")
+	{
+		settingsController := new(Controllers.SettingsController)
+		settings.GET("/", settingsController.Index)
+	}
+
 	docs := e.Group("/docs")
 	{
 		docsController := new(Controllers.DocsController)
 		docs.GET("/", docsController.Index)
+	}
+
+	about := e.Group("/about")
+	{
+		aboutController := new(Controllers.AboutController)
+		about.GET("/", aboutController.Index)
 	}
 
 	e.NoRoute(func(c *gin.Context) {
