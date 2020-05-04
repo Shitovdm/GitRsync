@@ -1,10 +1,44 @@
 {{define "content"}}
     <div class="row">
-        <div class="col-md-12"></div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-md-12">
-
+        <div class="col-md-8">
+            <div class="card docs-section">
+                <div class="card-header card-header-tabs card-header-primary">
+                    <div class="nav-tabs-navigation">
+                        <div class="nav-tabs-wrapper">
+                            <ul class="nav nav-tabs" data-tabs="tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#your_repositories" data-toggle="tab">Пункт 1</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <p>Tab content. Tab content. Tab content. Tab content.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card docs-contents">
+                <ul>
+                    <li class="docs-active-item">Пункт 1</li>
+                    <li>Пункт 2
+                        <ul>
+                            <li>Подпункт 2.1</li>
+                            <li>Подпункт 2.2
+                                <ul>
+                                    <li>Подпункт 2.2.1</li>
+                                    <li>Подпункт 2.2.2</li>
+                                </ul>
+                            </li>
+                            <li>Подпункт 2.3</li>
+                        </ul>
+                    </li>
+                    <li>Пункт 3</li>
+                </ul>
+            </div>
         </div>
     </div>
 {{end}}

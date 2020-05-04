@@ -23,50 +23,50 @@
     border-top: 1px solid #3a3a3a;
 }
 
-.dashboard-table{
+.dashboard-table {
     margin-bottom: 0px;
 }
 
-.status-cell{
-    padding-left: 20px!important;
+.status-cell {
+    padding-left: 20px !important;
     text-align: left;
     max-width: 80px;
 }
 
-.status{
+.status {
     user-select: none;
     font-size: 5em;
     vertical-align: middle;
     text-align: center;
 }
 
-.status-initiated, .status-cleared{
+.status-initiated, .status-cleared {
     color: #CCC;
 }
 
-.status-pending, .status-pending_pull, .status-pending_push, .status-pending_clear{
+.status-pending, .status-pending_pull, .status-pending_push, .status-pending_clear {
     color: #0b75c9;
 }
 
-.status-pulled, .status-pushed{
+.status-pulled, .status-pushed {
     color: #c9a400;
 }
 
-.status-expired{
+.status-expired {
     color: #000;
 }
 
-.status-failed, .status-pull_failed, .status-push_failed, .status-clear_failed{
+.status-failed, .status-pull_failed, .status-push_failed, .status-clear_failed {
     color: #c92000;
 }
 
-.status-synced{
+.status-synced {
     color: #00c93c;
 }
 
-.dashboard-table-btn{
-    margin: 0px 3px 0px 3px!important;
-    padding: 13px!important;
+.dashboard-table-btn {
+    margin: 0px 3px 0px 3px !important;
+    padding: 13px !important;
 }
 
 body {
@@ -97,21 +97,42 @@ body {
     -webkit-animation: move 2s infinite;
 }
 
-.about-text p, h1{
+.about-text p, h1 {
     color: #FFF;
 }
 
-.about-text b{
+.about-text b {
     color: #9095a3;
 }
 
-.about-text a{
+.about-text a {
     color: #5d81dc;
 }
 
+.docs-contents {
+    margin-bottom: 0px;
+    padding: 15px 0px;
+    color: #8b92a9;
+}
+
+.docs-active-item {
+    color: #FFF;
+}
+
 @-webkit-keyframes move {
-    0% {width: 0;}
-    50% {width: 100%;}
-    75% {width: 100%;}
-    100 {width: 100%;}
+    0% {
+        width: 0;
+    }
+    50% {
+        width: 100%;
+    }
+    75% {
+        width: 100%;
+    }
+
+100
+{
+    width: 100%
+;
+}
 }
