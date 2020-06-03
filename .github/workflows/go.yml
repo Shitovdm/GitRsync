@@ -31,7 +31,7 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: go build -o ./GitRsync.exe -ldflags -H=windowsgui
 
     - name: Test
       run: go test -v .

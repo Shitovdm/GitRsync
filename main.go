@@ -18,12 +18,8 @@ func init() {
 }
 
 func main() {
-
-	Application.StartServer()
-
-	//go Application.StartServer()
-	//systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
-
+	go Application.StartServer()
+	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
 }
 
 func onExit() {
@@ -61,8 +57,9 @@ func onReady() {
 		case <-mRestart.ClickedCh:
 			fmt.Println("Restarting application...")
 			systray.Quit()
+			time.Sleep(2 * time.Second)
 			systray.Run(onReady, onExit)
-			return
+			//return
 		case <-mQuit.ClickedCh:
 			fmt.Println("Closing application...")
 			systray.Quit()

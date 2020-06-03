@@ -13,5 +13,6 @@ require (
 	github.com/speedata/gogit v0.0.0-20170530073720-f25600b364f0
 	github.com/speedata/mmap-go v0.0.0-20141021215358-6c75090c5598 // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
+	golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 // indirect
 	gopkg.in/yaml.v2 v2.2.8
 )
