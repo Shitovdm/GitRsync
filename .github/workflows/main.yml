@@ -19,7 +19,3 @@ jobs:
         go-version: 1.x
     - name: Run a one-line script
       run: sudo apt-get update
-    - name: Test
-      run: make test
-    - name: Lint
-      run: make lint
