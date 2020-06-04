@@ -52,7 +52,7 @@
     color: #c9a400;
 }
 
-.status-expired {
+.status-expired, .status-blocked {
     color: #000;
 }
 
@@ -117,6 +117,10 @@ body {
 
 .docs-active-item {
     color: #FFF;
+}
+
+.hidden{
+    display: none;
 }
 
 @-webkit-keyframes move {

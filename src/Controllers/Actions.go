@@ -9,15 +9,10 @@ import (
 	"github.com/Shitovdm/git-rsync/src/Models"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"net/http"
 	"strings"
 )
 
 type ActionsController struct{}
-
-func (ctrl ActionsController) Sync(c *gin.Context) {
-
-}
 
 func (ctrl ActionsController) Pull(c *gin.Context) {
 
@@ -328,26 +323,34 @@ func (ctrl ActionsController) Clear(c *gin.Context) {
 
 func (ctrl ActionsController) Block(c *gin.Context) {
 	var blockActionRequest Models.BlockActionRequest
-	err := c.BindJSON(&blockActionRequest)
+	conn, err := Helpers.WsHandler(c.Writer, c.Request, &blockActionRequest)
 	if err != nil {
 		Logger.Error("ActionsController/Block", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		Logger.Warning("ActionsController/Block", "Repository blocking aborted!")
 		return
 	}
 
-	RespondWithSuccess(c, map[string]interface{}{})
+	UpdateRepositoryState(blockActionRequest.RepositoryUuid, Models.STATE_BLOCKED)
+	Msg := "Repository successfully blocked!"
+	Logger.Success("ActionsController/Block", Msg)
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
+	return
 }
 
-func (ctrl ActionsController) Active(c *gin.Context) {
-	var activeActionRequest Models.ActiveActionRequest
-	err := c.BindJSON(&activeActionRequest)
+func (ctrl ActionsController) Activate(c *gin.Context) {
+	var activateActionRequest Models.ActivateActionRequest
+	conn, err := Helpers.WsHandler(c.Writer, c.Request, &activateActionRequest)
 	if err != nil {
-		Logger.Error("ActionsController/Active", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		Logger.Error("ActionsController/Activate", err.Error())
+		Logger.Warning("ActionsController/Activate", "Repository activate aborted!")
 		return
 	}
 
-	RespondWithSuccess(c, map[string]interface{}{})
+	UpdateRepositoryState(activateActionRequest.RepositoryUuid, Models.STATE_ACTIVE)
+	Msg := "Repository successfully activated!"
+	Logger.Success("ActionsController/Activate", Msg)
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
+	return
 }
 
 func (ctrl ActionsController) Info(c *gin.Context) {

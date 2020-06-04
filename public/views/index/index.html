@@ -7,7 +7,8 @@
                         <i class="material-icons">store</i>
                     </div>
                     <p class="card-category">Used Platforms/Repositories</p>
-                    <h3 class="card-title">{{ len .platforms}}/{{ len .repositories}}
+                    <h3 class="card-title">{{ len .platforms}}/{{ len .active_repositories}}
+                        +{{ len .blocked_repositories}}
                         <small>PCs</small>
                     </h3>
                 </div>
@@ -74,13 +75,14 @@
     <div class="row">
         <div class="col-md-12">
             {{ $platforms := .platforms }}
-            {{ $repositories := .repositories }}
-            {{if ne 0 (len $repositories)}}<h4>Active repositories</h4>{{end}}
+            {{ $activeRepositories := .active_repositories }}
+            {{ $blockedRepositories := .blocked_repositories }}
+            {{if ne 0 (len $activeRepositories)}}<h4>Active repositories</h4>{{end}}
             <div class="card">
                 <table class="table dashboard-table">
-                    <tbody>
-                    {{range $repository := $repositories}}
-                        <tr>
+                    <tbody id="active-repositories">
+                    {{range $repository := $activeRepositories}}
+                        <tr id="repository-{{$repository.uuid}}">
                             <td class="status-cell">
                                 <span class="status status-{{$repository.status}}">&bull;</span>
                                 <span class="status-name">{{replace $repository.status "_" " " -1}}</span>
@@ -108,18 +110,86 @@
                                 </span>
                             </td>
                             <td style="width: 350px">
-                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-success dashboard-table-btn btn-sync-repositories"
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-success dashboard-table-btn btn-sync-repositories"
                                         title="Synchronize Repositories"><i class="material-icons">update</i></button>
-                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-warning dashboard-table-btn btn-pull-source-repository"
-                                        title="Pull Source Repository"><i class="material-icons">cloud_download</i></button>
-                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-info dashboard-table-btn btn-push-destination-repository"
-                                        title="Push Destination Repository"><i class="material-icons">cloud_upload</i></button>
-                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-default dashboard-table-btn btn-clear-repositories"
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-warning dashboard-table-btn btn-pull-source-repository"
+                                        title="Pull Source Repository"><i class="material-icons">cloud_download</i>
+                                </button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-info dashboard-table-btn btn-push-destination-repository"
+                                        title="Push Destination Repository"><i class="material-icons">cloud_upload</i>
+                                </button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-default dashboard-table-btn btn-clear-repositories"
                                         title="Clear Runtime Data"><i class="material-icons">delete_sweep</i></button>
-                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-primary dashboard-table-btn btn-info-repositories"
-                                        title="More Information"><i class="material-icons">error_outline</i></button>
-                                <button data-uuid="{{$repository.uuid}}" type="button" class="btn btn-danger dashboard-table-btn btn-block-repositories"
-                                        title="Block"><i class="material-icons">block</i></button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-primary dashboard-table-btn btn-info-repositories"
+                                        title="More Information"><i class="material-icons">priority_high</i></button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-danger dashboard-table-btn btn-block-repositories"
+                                        title="Block"><i class="material-icons">close</i></button>
+                            </td>
+                        </tr>
+                        <tr><td colspan="5"></td></tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            </div>
+            {{if ne 0 (len $blockedRepositories)}}<h4>Blocked repositories</h4>{{end}}
+            <div class="card">
+                <table class="table dashboard-table">
+                    <tbody id="blocked-repositories">
+                    {{range $repository := $blockedRepositories}}
+                        <tr id="repository-{{$repository.uuid}}">
+                            <td class="status-cell">
+                                <span class="status status-{{$repository.status}}">&bull;</span>
+                                <span class="status-name">{{replace $repository.status "_" " " -1}}</span>
+                            </td>
+                            <td>
+                                <span style="color: #FFF">{{$repository.name}}</span>
+                            </td>
+                            <td>
+                                <a target="_blank" style="color: #8b92a9"
+                                   href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}">
+                                    {{range $platform := $platforms}}{{if eq $platform.uuid $repository.spu}}{{$platform.address}}{{end}}{{end}}{{$repository.spp}}
+                                </a><br>
+                                <a target="_blank" style="color: #8b92a9"
+                                   href="{{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}">
+                                    {{range $platform := $platforms}}{{if eq $platform.uuid $repository.dpu}}{{$platform.address}}{{end}}{{end}}{{$repository.dpp}}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="updated-at">
+                                    {{if eq "" $repository.updated_at}}
+                                        Not updated
+                                    {{else}}
+                                        {{$repository.updated_at}}
+                                    {{end}}
+                                </span>
+                            </td>
+                            <td style="width: 350px">
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-success dashboard-table-btn btn-sync-repositories hidden"
+                                        title="Synchronize Repositories"><i class="material-icons">update</i></button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-warning dashboard-table-btn btn-pull-source-repository hidden"
+                                        title="Pull Source Repository"><i class="material-icons">cloud_download</i>
+                                </button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-info dashboard-table-btn btn-push-destination-repository hidden"
+                                        title="Push Destination Repository"><i class="material-icons">cloud_upload</i>
+                                </button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-default dashboard-table-btn btn-clear-repositories"
+                                        title="Clear Runtime Data"><i class="material-icons">delete_sweep</i></button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-primary dashboard-table-btn btn-info-repositories"
+                                        title="More Information"><i class="material-icons">priority_high</i></button>
+                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                        class="btn btn-success dashboard-table-btn btn-activate-repositories"
+                                        title="Activate"><i class="material-icons">done</i></button>
                             </td>
                         </tr>
                     {{end}}

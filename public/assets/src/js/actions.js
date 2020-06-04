@@ -47,6 +47,52 @@ $('body').on('click', '.btn-clear-repositories', function (e) {
     new ClearRepositoryRuntimeData($(this).data('uuid'), this);
 });
 
+$('body').on('click', '.btn-activate-repositories', function (e) {
+    e.preventDefault();
+    ToggleAjaxPreloader();
+    let uuid = $(this).data('uuid')
+    let repoLine = $("#repository-" + uuid);
+    let ws = webSocketConnection("ws://localhost:8888/actions/activate/");
+    ws.onopen = function () {
+        ws.send(JSON.stringify({"uuid": uuid}));
+    };
+    ws.onmessage = function (msg) {
+        ToggleAjaxPreloader()
+        let body = JSON.parse(msg.data);
+        showNotification(body["status"], body["message"]);
+        switch (body["status"]) {
+            case "success":
+                var repoLineHtml = repoLine.html();
+                repoLine.remove();
+                $("#active-repositories").append("<tr id='repository-" + uuid + "'>" + repoLineHtml + "</tr>");
+                break;
+        }
+    };
+});
+
+$('body').on('click', '.btn-block-repositories', function (e) {
+    e.preventDefault();
+    ToggleAjaxPreloader();
+    let uuid = $(this).data('uuid');
+    let repoLine = $("#repository-" + uuid);
+    let ws = webSocketConnection("ws://localhost:8888/actions/block/");
+    ws.onopen = function () {
+        ws.send(JSON.stringify({"uuid": uuid}));
+    };
+    ws.onmessage = function (msg) {
+        ToggleAjaxPreloader()
+        let body = JSON.parse(msg.data);
+        showNotification(body["status"], body["message"]);
+        switch (body["status"]) {
+            case "success":
+                var repoLineHtml = repoLine.html();
+                repoLine.remove();
+                $("#blocked-repositories").append("<tr id='repository-" + uuid + "'>" + repoLineHtml + "</tr>");
+                break;
+        }
+    };
+});
+
 function ClearRepositoryRuntimeData(uuid, repoObj) {
     let ws = webSocketConnection("ws://localhost:8888/actions/clear/");
     SetRepositoryStatus(repoObj, "pending_clear");

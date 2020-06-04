@@ -30,7 +30,6 @@ const (
 	STATUS_SYNCHRONIZED = "synced"
 	STATUS_EXPIRED      = "expired"
 	STATUS_FAILED       = "failed"
-	STATUS_BLOCKED      = "blocked"
 )
 
 var (
@@ -153,6 +152,25 @@ func UpdateRepositoryStatus(uuid string, status string) {
 				t := time.Now()
 				oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
 			}
+		}
+	}
+
+	err := Configuration.SaveRepositoriesConfig(oldRepositoriesList)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func UpdateRepositoryState(uuid string, state string) {
+
+	oldRepositoriesList := Configuration.GetRepositoriesConfig()
+	for i, repository := range oldRepositoriesList {
+		if repository.Uuid == uuid {
+			oldRepositoriesList[i].State = state
+			t := time.Now()
+			oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
 		}
 	}
 

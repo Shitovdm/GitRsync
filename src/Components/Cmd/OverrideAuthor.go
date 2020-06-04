@@ -45,7 +45,6 @@ func OverrideAuthor(path string, username string, email string) bool {
 				}
 				output := make([]byte, 256, 256)
 				_, _ = StdoutPipe.Read(output)
-				fmt.Println(string(output))
 				if string(output) == "Ref 'refs/heads/master' was rewritten" ||
 					string(output) == "WARNING: Ref 'refs/heads/master' is unchanged" {
 					finish <- true

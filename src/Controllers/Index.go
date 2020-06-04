@@ -17,7 +17,8 @@ func (ctrl IndexController) Index(c *gin.Context) {
 	templateParams["title"] = "Dashboard"
 	templateParams["config"] = Configuration.GetAppConfig()
 	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
-	templateParams["repositories"], _ = Configuration.GetRepositoriesConfigData()
+	templateParams["active_repositories"], _ = Configuration.GetActiveRepositoriesConfigData()
+	templateParams["blocked_repositories"], _ = Configuration.GetBlockedRepositoriesConfigData()
 	templateParams["log_error_count"] = Logger.CountErrorsInRuntimeLog()
 
 	c.HTML(http.StatusOK, "index/index", templateParams)

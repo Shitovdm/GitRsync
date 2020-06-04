@@ -200,6 +200,32 @@ func GetRepositoriesConfigData() ([]map[string]interface{}, error) {
 	return repositoriesConfig, nil
 }
 
+func GetActiveRepositoriesConfigData() ([]map[string]interface{}, error) {
+
+	repositoriesConfig, _ := GetRepositoriesConfigData()
+	var activeRepositories []map[string]interface{}
+	for _, repo := range repositoriesConfig {
+		if repo["state"] == Models.STATE_ACTIVE {
+			activeRepositories = append(activeRepositories, repo)
+		}
+	}
+
+	return activeRepositories, nil
+}
+
+func GetBlockedRepositoriesConfigData() ([]map[string]interface{}, error) {
+
+	repositoriesConfig, _ := GetRepositoriesConfigData()
+	var blockedRepositories []map[string]interface{}
+	for _, repo := range repositoriesConfig {
+		if repo["state"] == Models.STATE_BLOCKED {
+			blockedRepositories = append(blockedRepositories, repo)
+		}
+	}
+
+	return blockedRepositories, nil
+}
+
 func SaveRepositoriesConfig(repositories []Models.RepositoryConfig) error {
 	err := Save("Repositories.json", &repositories)
 	if err != nil {

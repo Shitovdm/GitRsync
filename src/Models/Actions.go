@@ -16,6 +16,6 @@ type BlockActionRequest struct {
 	RepositoryUuid string `json:"uuid"`
 }
 
-type ActiveActionRequest struct {
+type ActivateActionRequest struct {
 	RepositoryUuid string `json:"uuid"`
 }

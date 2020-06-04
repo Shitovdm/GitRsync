@@ -1,5 +1,10 @@
 package Models
 
+const (
+	STATE_ACTIVE  = "active"
+	STATE_BLOCKED = "blocked"
+)
+
 type RepositoryConfig struct {
 	Uuid                    string `json:"uuid"`
 	Name                    string `json:"name"`
@@ -8,6 +13,7 @@ type RepositoryConfig struct {
 	DestinationPlatformUuid string `json:"dpu"`
 	DestinationPlatformPath string `json:"dpp"`
 	Status                  string `json:"status"`
+	State                   string `json:"state"`
 	UpdatedAt               string `json:"updated_at"`
 }
 
