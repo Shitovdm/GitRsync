@@ -9,7 +9,6 @@ import (
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/foolin/goview/supports/gorice"
 	"github.com/gin-gonic/gin"
-	"github.com/gonutz/ide/w32"
 	"golang.org/x/sync/errgroup"
 	"html/template"
 	"net/http"
@@ -36,18 +35,6 @@ func StartServer() {
 
 	if err := g.Wait(); err != nil {
 		Logger.Error("StartServer", err.Error())
-	}
-
-}
-
-func HideConsole() {
-	console := w32.GetConsoleWindow()
-	if console == 0 {
-		return
-	}
-	_, consoleProcID := w32.GetWindowThreadProcessId(console)
-	if w32.GetCurrentProcessId() == consoleProcID {
-		w32.ShowWindowAsync(console, w32.SW_HIDE)
 	}
 }
 

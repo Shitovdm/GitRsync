@@ -8,7 +8,6 @@ import (
 	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
 	"github.com/Shitovdm/git-rsync/src/Components/Logger"
 	"github.com/getlantern/systray"
-	"github.com/gonutz/ide/w32"
 	"io/ioutil"
 	"time"
 )
@@ -19,9 +18,9 @@ func init() {
 }
 
 func main() {
-	//Application.StartServer()
 	go Application.StartServer()
-	Application.HideConsole()
+	//	It`s hiding command prompt during running app (only windows).
+	Helpers.HideConsole()
 	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
 }
 
