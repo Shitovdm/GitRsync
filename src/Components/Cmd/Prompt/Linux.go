@@ -1,4 +1,4 @@
-// +build !windows,!darwin
+// +build linux
 
 package Prompt
 
