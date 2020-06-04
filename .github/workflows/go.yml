@@ -19,6 +19,7 @@ jobs:
         env:
           GOOS: windows
           GOPROXY: "https://proxy.golang.org"
+          GO111MODULE: on
         run: go build .
       - name: Test
         run: go test -v .
@@ -35,6 +36,7 @@ jobs:
       - name: Build
         env:
           GOPROXY: "https://proxy.golang.org"
+          GO111MODULE: on
         run: go build .
       - name: Test
         run: go test -v .

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Shitovdm/git-rsync/public/assets/src/icon"
 	"github.com/Shitovdm/git-rsync/src/Application"
+	"github.com/Shitovdm/git-rsync/src/Components/Cmd/Prompt"
 	"github.com/Shitovdm/git-rsync/src/Components/Configuration"
 	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
 	"github.com/Shitovdm/git-rsync/src/Components/Logger"
@@ -20,13 +21,13 @@ func init() {
 func main() {
 	go Application.StartServer()
 	//	It`s hiding command prompt during running app (only windows).
-	Application.HideConsole()
+	Prompt.ChangeConsoleVisibility(false)
 	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
 }
 
 func onExit() {
 	now := time.Now()
-	ioutil.WriteFile(fmt.Sprintf(`./tmp/%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
+	_ = ioutil.WriteFile(fmt.Sprintf(`./tmp/%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
 }
 
 func onReady() {
@@ -35,6 +36,7 @@ func onReady() {
 	systray.SetTooltip("GitRsync")
 
 	mOpen := systray.AddMenuItem("Open GitRsync", "Open GitRsync UI")
+	changeConsoleVisibility := systray.AddMenuItem("Show Terminal", "Hide Terminal")
 	systray.AddSeparator()
 	mOpenGit := systray.AddMenuItem("Project Page", "Open project page")
 	mDocs := systray.AddMenuItem("Documentation", "Open documentation")
@@ -42,11 +44,24 @@ func onReady() {
 	mRestart := systray.AddMenuItem("Restart...", "Restart GitRsync")
 	mQuit := systray.AddMenuItem("Quit GitRsync", "Quit GitRsync")
 
+	terminalVisibility := false
 	for {
 		select {
 		case <-mOpen.ClickedCh:
 			fmt.Println("Opening application UI...")
 			Helpers.OpenBrowser("http://localhost:8888")
+			break
+		case <-changeConsoleVisibility.ClickedCh:
+			fmt.Println("Changing console visibility...")
+			if terminalVisibility {
+				changeConsoleVisibility.SetTitle("Show Terminal")
+				Prompt.ChangeConsoleVisibility(false)
+				terminalVisibility = false
+			} else {
+				changeConsoleVisibility.SetTitle("Hide Terminal")
+				Prompt.ChangeConsoleVisibility(true)
+				terminalVisibility = true
+			}
 			break
 		case <-mOpenGit.ClickedCh:
 			fmt.Println("Opening app GIT page...")
