@@ -20,7 +20,7 @@ func init() {
 func main() {
 	go Application.StartServer()
 	//	It`s hiding command prompt during running app (only windows).
-	Helpers.HideConsole()
+	Application.HideConsole()
 	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
 }
 
