@@ -21,7 +21,7 @@ jobs:
       - name: Build
         env:
           GOOS: windows
-          GOPROXY: "https://proxy.golang.org"
+          GOPROXY: https://proxy.golang.org
           GO111MODULE: on
         run: go build .
       - name: Test
@@ -50,8 +50,9 @@ jobs:
         run: go mod download
       - name: Build
         env:
-          GOOS: linux
-          GOPROXY: "https://proxy.golang.org"
+          GOARCH: amd64
+          GO111MODULE: on
+          GOPROXY: https://proxy.golang.org
         run: go build .
       - name: Test
         run: go test -v .
