@@ -44,6 +44,8 @@ jobs:
           fi
       - name: Download modules
         run: go mod download
+      - name: Test echo env
+        run: getenv PKG_CONFIG_PATH
       - name: Build
         env:
           GOOS: linux
