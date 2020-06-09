@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-func Log(path string, hashish string) ([]*Commit, error) {
+func Log(path string, hashish string, limit int) ([]*Commit, error) {
 
 	var cmd *exec.Cmd
 	if hashish == "" {
@@ -21,9 +21,14 @@ func Log(path string, hashish string) ([]*Commit, error) {
 
 	lineBytes := bytes.Split(output, []byte{'\n'})
 	lineBytes = lineBytes[0 : len(lineBytes)-1]
+
 	commits := make([]*Commit, len(lineBytes))
+	if limit != -1 {
+		commits = make([]*Commit, limit)
+	}
 
 	for x := 0; x < len(lineBytes); x++ {
+		if limit != -1 && x >= limit { break }
 		commit, commitErr := NewCommit(path, string(lineBytes[x]))
 		if commitErr != nil {
 			return []*Commit{}, commitErr

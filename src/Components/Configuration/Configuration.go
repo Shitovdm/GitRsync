@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/Shitovdm/git-rsync/src/Components/Cmd"
 	"github.com/Shitovdm/git-rsync/src/Models"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -13,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 type MarshalFunc func(v interface{}) ([]byte, error)
@@ -224,6 +226,42 @@ func GetBlockedRepositoriesConfigData() ([]map[string]interface{}, error) {
 	}
 
 	return blockedRepositories, nil
+}
+
+func GetRepositoryDestinationRepositoryName(repoConfig *Models.RepositoryConfig) string {
+	dpp := strings.Trim(strings.TrimRight(repoConfig.DestinationPlatformPath, "git"), ".")
+	return strings.Split(dpp, "/")[len(strings.Split(dpp, "/"))-1]
+}
+
+func GetRepositorySourceRepositoryName(repoConfig *Models.RepositoryConfig) string {
+	spp := strings.Trim(strings.TrimRight(repoConfig.SourcePlatformPath, "git"), ".")
+	return strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
+}
+
+func AddGitCommitHistoryToExistingRepositoryConfig(repositories []map[string]interface{}) ([]map[string]interface{}, error) {
+
+	for i, repo := range repositories {
+		repoConfig := new(Models.RepositoryConfig)
+		repositoryConfigByte, _ := json.Marshal(repo)
+		_ = json.Unmarshal(repositoryConfigByte, repoConfig)
+
+		destinationRepositoryName := GetRepositoryDestinationRepositoryName(repoConfig)
+		repositoryFullPath := BuildPlatformPath(fmt.Sprintf(`projects\%s`, repoConfig.Name))
+		destinationRepositoryPath := repositoryFullPath + `\destination\` + destinationRepositoryName
+
+		fmt.Println("drp" + destinationRepositoryPath)
+		commits, err := Cmd.Log(destinationRepositoryPath, "", 5)
+		if err != nil {
+			return nil, err
+		}
+
+		fmt.Println(commits)
+		fmt.Println(repositories[i])
+
+		//repositories[i] = append(repositories[i], 1)
+	}
+
+	return repositories, nil
 }
 
 func SaveRepositoriesConfig(repositories []Models.RepositoryConfig) error {

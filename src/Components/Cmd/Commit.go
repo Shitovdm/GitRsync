@@ -12,15 +12,14 @@ type Commit struct {
 	AuthorEmail string
 	ParentHash  string
 	Subject     string
-	Body        string
 	Timestamp   int
 }
 
 func (commit *Commit) String() string {
 	return fmt.Sprintf("\n+ Commit: %s\n| Author: %s <%s>\n| Parent: %s\n"+
-		"| Timestamp: %d\n| Subject: %s\n| Body: %s", commit.Hash, commit.Author,
+		"| Timestamp: %d\n| Subject: %s", commit.Hash, commit.Author,
 		commit.AuthorEmail, commit.ParentHash, commit.Timestamp,
-		commit.Subject, commit.Body)
+		commit.Subject)
 }
 
 func NewCommit(path, hashish string) (*Commit, error) {
@@ -44,7 +43,6 @@ func NewCommit(path, hashish string) (*Commit, error) {
 	}
 	commit.ParentHash = string(bytes.TrimSpace(lineBytes[4]))
 	commit.Subject = string(bytes.TrimSpace(lineBytes[5]))
-	commit.Body = string(bytes.TrimSpace(bytes.Join(lineBytes[6:], []byte{'\n'})))
 
 	return commit, nil
 }

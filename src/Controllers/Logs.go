@@ -69,7 +69,7 @@ func (ctrl LogsController) RemoveRuntime(c *gin.Context) {
 	}
 
 	Msg := "Runtime logs successfully removed!"
-	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
 	Logger.Info("LogsController/RemoveRuntime", Msg)
 	return
 }
@@ -93,7 +93,7 @@ func (ctrl LogsController) RemoveAll(c *gin.Context) {
 	}
 
 	Msg := "All logs successfully removed!"
-	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg)))
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
 	Logger.Info("LogsController/RemoveAll", Msg)
 	return
 }

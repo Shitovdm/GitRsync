@@ -123,6 +123,11 @@ body {
     display: none;
 }
 
+.repo-commit-container td{
+    padding: 5px 25px;
+    border: none;
+}
+
 @-webkit-keyframes move {
     0% {
         width: 0;

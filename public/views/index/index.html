@@ -124,7 +124,7 @@
                                 <button data-uuid="{{$repository.uuid}}" type="button"
                                         class="btn btn-default dashboard-table-btn btn-clear-repositories"
                                         title="Clear Runtime Data"><i class="material-icons">delete_sweep</i></button>
-                                <button data-uuid="{{$repository.uuid}}" type="button"
+                                <button data-uuid="{{$repository.uuid}}" data-toggle=0 type="button"
                                         class="btn btn-primary dashboard-table-btn btn-info-repositories"
                                         title="More Information"><i class="material-icons">priority_high</i></button>
                                 <button data-uuid="{{$repository.uuid}}" type="button"
@@ -132,7 +132,7 @@
                                         title="Block"><i class="material-icons">close</i></button>
                             </td>
                         </tr>
-                        <tr><td colspan="5"></td></tr>
+                        <tr id="repository-info-{{$repository.uuid}}" style="display: none"></tr>
                     {{end}}
                     </tbody>
                 </table>
