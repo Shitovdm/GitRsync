@@ -392,5 +392,8 @@ func BuildWsJsonError(message string) string {
 }
 
 func BuildWsJsonSuccess(message string, data interface{}) string {
-	return fmt.Sprintf(`{"status":"success","message":"%s","data":%v}`, message, data)
+	if data != nil {
+		return fmt.Sprintf(`{"status":"success","message":"%s","data":%v}`, message, data)
+	}
+	return fmt.Sprintf(`{"status":"success","message":"%s","data":""}`, message)
 }

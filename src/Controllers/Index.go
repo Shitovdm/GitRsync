@@ -15,7 +15,7 @@ func (ctrl IndexController) Index(c *gin.Context) {
 	menu := Interface.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Dashboard"
-	templateParams["config"] = Configuration.GetAppConfig()
+	templateParams["config"], _ = Configuration.GetAppConfigData()
 	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
 	templateParams["active_repositories"], _ = Configuration.GetActiveRepositoriesConfigData()
 	templateParams["blocked_repositories"], _ = Configuration.GetBlockedRepositoriesConfigData()

@@ -177,6 +177,16 @@ func GetAppConfig() *Models.AppConfig {
 	return &appConfig
 }
 
+func GetAppConfigData() (map[string]interface{}, error) {
+
+	var appConfig map[string]interface{}
+	err := Load("AppConfig.json", &appConfig)
+	if err != nil {
+		return map[string]interface{}{}, errors.New("unable to load app configuration")
+	}
+	return appConfig, nil
+}
+
 func GetRepositoriesConfig() []Models.RepositoryConfig {
 	repositoriesConfig := make([]Models.RepositoryConfig, 0)
 	err := Load("Repositories.json", &repositoriesConfig)
