@@ -56,9 +56,7 @@ $('body').on('click', '.btn-info-repositories', function (e) {
         info.html("");
         return
     }
-
     ToggleAjaxPreloader();
-
     let ws = webSocketConnection("ws://localhost:8888/actions/info/");
     ws.onopen = function () {
         ws.send(JSON.stringify({"uuid": uuid}));
@@ -135,6 +133,19 @@ $('body').on('click', '.btn-block-repositories', function (e) {
     };
 });
 
+function SaveConfigField(elem) {
+    ToggleAjaxPreloader();
+    let section = $(elem).data('section');
+    let field = $(elem).data('field');
+    let value = $(elem).val()
+    console.log(section, field, value)
+    let ws = webSocketConnection("ws://localhost:8888/settings/save/");
+    ws.onopen = function () {
+        ws.send(JSON.stringify({"section": section, "field": field, "value": value}));
+        ToggleAjaxPreloader();
+    };
+}
+
 function ClearRepositoryRuntimeData(uuid, repoObj) {
     let ws = webSocketConnection("ws://localhost:8888/actions/clear/");
     SetRepositoryStatus(repoObj, "pending_clear");
@@ -200,20 +211,3 @@ function PushDestinationRepository(uuid, repoObj) {
         }
     };
 }
-
-$('body').on('click', '.btn-block-repository', function (e) {
-    ToggleAjaxPreloader()
-    e.preventDefault();
-    let uuid = $(this).data('uuid');
-    let formData = JSON.stringify({uuid: uuid});
-    let request = new XMLHttpRequest();
-    request.open("POST", "actions/block", true);
-    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    request.addEventListener("readystatechange", () => {
-        if (request.readyState === 4 && request.status === 200) {
-            console.log(request.responseText);
-        }
-    });
-
-    request.send(formData);
-});

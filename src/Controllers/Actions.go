@@ -338,7 +338,8 @@ func (ctrl ActionsController) Info(c *gin.Context) {
 	destinationRepositoryName := Configuration.GetRepositoryDestinationRepositoryName(repositoryConfig)
 	repositoryFullPath := Configuration.BuildPlatformPath(fmt.Sprintf(`projects\%s`, repositoryConfig.Name))
 	destinationRepositoryPath := repositoryFullPath + `\destination\` + destinationRepositoryName
-	commits, err := Cmd.Log(destinationRepositoryPath, "", 5)
+	commitsLimit := Configuration.GetAppConfigField("Common", "RecentCommitsShown")
+	commits, err := Cmd.Log(destinationRepositoryPath, "", int(commitsLimit.Int()))
 	if err != nil {
 		ErrorMsg := fmt.Sprintf("Unable to select commits for repository %s!", destinationRepositoryName)
 		Logger.Error("ActionsController/Info", ErrorMsg)

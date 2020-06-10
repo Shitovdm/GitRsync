@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 )
@@ -185,6 +186,20 @@ func GetAppConfigData() (map[string]interface{}, error) {
 		return map[string]interface{}{}, errors.New("unable to load app configuration")
 	}
 	return appConfig, nil
+}
+
+func GetAppConfigField(section string, field string) reflect.Value {
+	var appConfig Models.AppConfig
+	_ = Load("AppConfig.json", &appConfig)
+	return reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field)
+}
+
+func SaveAppConfig(appConfig *Models.AppConfig) error {
+	err := Save("AppConfig.json", &appConfig)
+	if err != nil {
+		return errors.New(fmt.Sprintf("Error while saving app config file! %s", err.Error()))
+	}
+	return nil
 }
 
 func GetRepositoriesConfig() []Models.RepositoryConfig {

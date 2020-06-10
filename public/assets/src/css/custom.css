@@ -119,13 +119,21 @@ body {
     color: #FFF;
 }
 
-.hidden{
+.hidden {
     display: none;
 }
 
-.repo-commit-container td{
+.repo-commit-container td {
     padding: 5px 25px;
     border: none;
+}
+
+.settings-item input {
+    background-color: #20283E;
+    border: 1px solid #AAAAAA;
+    color: #AAAAAA;
+    text-align: center;
+    margin: 0px 20px;
 }
 
 @-webkit-keyframes move {

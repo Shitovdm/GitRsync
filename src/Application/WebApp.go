@@ -108,6 +108,7 @@ func WebRouter() http.Handler {
 	{
 		settingsController := new(Controllers.SettingsController)
 		settings.GET("/", settingsController.Index)
+		settings.GET("save/", settingsController.Save)
 	}
 
 	docs := e.Group("/docs")

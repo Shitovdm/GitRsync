@@ -2,19 +2,15 @@
     {{ $appconfig := .appconfig }}
     <div class="row">
         <div class="col-md-12">
-            <button type="button" class="btn btn-lg btn-success btn-save-appconfig" title="Save app config">SAVE</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
             <div class="card settings-section">
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="settings-item">
                             <label for="num_of_recent_commits_shown">Number of recent commits shown:</label>
-                                <input id="num_of_recent_commits_shown" type="number" min="0" max="20" step="1" value="{{ $appconfig.common.recent_commits_shown }}">
+                            <input id="num_of_recent_commits_shown" type="number" min="0" max="20" step="1"
+                                   data-section="Common" data-field="RecentCommitsShown" onchange="SaveConfigField(this)"
+                                   value={{ $appconfig.common.recent_commits_shown }}>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -19,6 +19,26 @@ func init() {
 }
 
 func main() {
+
+	/*section := "Common"
+	field := "RecentCommitsShown"
+	value := "12"
+
+	appConfig := Configuration.GetAppConfig()
+	fmt.Println(appConfig)
+
+	reflectValueTypeNeeded := reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Type()
+	reflectValue := reflect.ValueOf(value)
+
+
+
+	fmt.Println("reflectValueTypeNeeded: ", reflectValueTypeNeeded)
+	fmt.Println("reflectValue: ", reflectValue)
+	fmt.Println("reflectValueType: ", reflectValue.Type())
+
+
+	reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Set(reflectValue)
+	fmt.Println(appConfig)*/
 	Application.StartServer()
 
 	//go Application.StartServer()
