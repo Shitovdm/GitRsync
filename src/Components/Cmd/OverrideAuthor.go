@@ -2,11 +2,12 @@ package Cmd
 
 import (
 	"fmt"
+	"github.com/Shitovdm/git-rsync/src/Models"
 	"os/exec"
 	"time"
 )
 
-func OverrideAuthor(path string, username string, email string) bool {
+func OverrideAuthor(path string, committersRules []Models.CommittersRule) bool {
 
 	var cmd *exec.Cmd
 
@@ -24,11 +25,39 @@ func OverrideAuthor(path string, username string, email string) bool {
 		return false
 	}
 
-	gitCmd := fmt.Sprintf(
-		`git filter-branch -f --env-filter "GIT_AUTHOR_NAME='%s'; GIT_AUTHOR_EMAIL='%s'; GIT_COMMITTER_NAME='%s'; GIT_COMMITTER_EMAIL='%s';" HEAD;`,
-		username, email, username, email)
+	resultExpression := `git filter-branch --env-filter "`
+	for _, rule := range committersRules {
+		resultExpression += fmt.Sprintf(`
+if test '$GIT_AUTHOR_NAME' = '%s'
+then
+	GIT_AUTHOR_NAME='%s'
+fi
+if test '$GIT_AUTHOR_EMAIL' = '%s'
+then
+	GIT_AUTHOR_EMAIL='%s'
+fi
+if test '$GIT_COMMITTER_NAME' = '%s'
+then
+	GIT_COMMITTER_NAME='%s'
+fi
+if test '$GIT_COMMITTER_EMAIL' = "%s"
+then
+	GIT_COMMITTER_EMAIL='%s'
+fi`, rule.Old.Username, rule.New.Username, rule.Old.Email, rule.New.Email, rule.Old.Username, rule.New.Username, rule.Old.Email, rule.New.Email)
+	}
 
-	cmd = exec.Command("bash", "-c", gitCmd)
+	resultExpression += `
+" HEAD;`
+
+	fmt.Println("gitCmd:", "`"+resultExpression+"`")
+
+	//gitCmd := fmt.Sprintf(
+	//	`git filter-branch -f --env-filter "GIT_AUTHOR_NAME='%s'; GIT_AUTHOR_EMAIL='%s'; GIT_COMMITTER_NAME='%s'; GIT_COMMITTER_EMAIL='%s';" HEAD;`,
+	//	username, email, username, email)
+
+
+
+	cmd = exec.Command("bash", "-c", "`"+resultExpression+"`")
 	cmd.Dir = path
 	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
@@ -45,15 +74,20 @@ func OverrideAuthor(path string, username string, email string) bool {
 				}
 				output := make([]byte, 256, 256)
 				_, _ = StdoutPipe.Read(output)
-				if string(output) == "Ref 'refs/heads/master' was rewritten" ||
-					string(output) == "WARNING: Ref 'refs/heads/master' is unchanged" {
+				raw := string(output)
+				fmt.Println(raw)
+				if raw == "Ref 'refs/heads/master' was rewritten" ||
+					raw == "WARNING: Ref 'refs/heads/master' is unchanged" ||
+					raw == "exit status 0" ||
+					raw == "exit status 2" {
 					finish <- true
 				}
-				if string(output) == "exit status 128" {
+				if raw == "exit status 128" ||
+					raw == "exit status 1" {
 					finish <- false
 				}
 
-				time.Sleep(50 * time.Millisecond)
+				time.Sleep(10 * time.Millisecond)
 			}
 		}()
 
@@ -73,4 +107,31 @@ func OverrideAuthor(path string, username string, email string) bool {
 	breakFlag = true
 
 	return result
+}
+
+
+func BuildFilterBranchExpression(committersRules []Models.CommittersRule) string {
+	resultExpression := `git filter-branch --env-filter '`
+	for _, rule := range committersRules {
+		resultExpression += fmt.Sprintf(`
+if test "$GIT_AUTHOR_NAME" = "%s"
+then
+	GIT_AUTHOR_NAME="%s"
+fi
+if test "$GIT_AUTHOR_EMAIL" = "%s"
+then
+	GIT_AUTHOR_EMAIL=%s
+fi
+if test "$GIT_COMMITTER_NAME" = "%s"
+then
+	GIT_COMMITTER_NAME="%s"
+fi
+if test "$GIT_COMMITTER_EMAIL" = "%s"
+then
+	GIT_COMMITTER_EMAIL=%s
+fi`, rule.Old.Username, rule.New.Username, rule.Old.Email, rule.New.Email, rule.Old.Username, rule.New.Username, rule.Old.Email, rule.New.Email)
+	}
+	resultExpression += `' HEAD;`
+
+	return resultExpression
 }

@@ -51,7 +51,7 @@ $('body').on('click', '.btn-info-repositories', function (e) {
     e.preventDefault();
     let uuid = $(this).data('uuid')
     let info = $("#repository-info-" + uuid)
-    if( info.css("display") === "contents") {
+    if (info.css("display") === "contents") {
         info.css("display", "none");
         info.html("");
         return
@@ -71,11 +71,11 @@ $('body').on('click', '.btn-info-repositories', function (e) {
                     '<table class="repo-commit-container">\n'
                 body["data"].forEach(function (commit) {
                     infoHtml += '<tr>\n' +
-                        '<td>'+ commit["Hash"].substr(0,10) + "..." + commit["Hash"].substr(commit["Hash"].length - 5) +'</td>\n' +
-                        '<td>'+ commit["ParentHash"].substr(0,10) + "..." + commit["ParentHash"].substr(commit["ParentHash"].length - 5) +'</td>\n' +
-                        '<td>'+ commit["Author"] +' &lt;'+ commit["AuthorEmail"] +'&gt;</td>\n' +
-                        '<td>'+ commit["Timestamp"] +'</td>\n' +
-                        '<td>'+ commit["Subject"] +'</td>\n' +
+                        '<td>' + commit["Hash"].substr(0, 10) + "..." + commit["Hash"].substr(commit["Hash"].length - 5) + '</td>\n' +
+                        '<td>' + commit["ParentHash"].substr(0, 10) + "..." + commit["ParentHash"].substr(commit["ParentHash"].length - 5) + '</td>\n' +
+                        '<td>' + commit["Author"] + ' &lt;' + commit["AuthorEmail"] + '&gt;</td>\n' +
+                        '<td>' + commit["Timestamp"] + '</td>\n' +
+                        '<td>' + commit["Subject"] + '</td>\n' +
                         '</tr>\n'
                 })
                 infoHtml += '</table>\n' +
