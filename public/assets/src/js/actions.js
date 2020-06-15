@@ -138,6 +138,9 @@ function SaveConfigField(elem) {
     let section = $(elem).data('section');
     let field = $(elem).data('field');
     let value = $(elem).val()
+    if($(elem).attr("type") === "checkbox"){
+        value = $(elem).is(":checked")
+    }
     console.log(section, field, value)
     let ws = webSocketConnection("ws://localhost:8888/settings/save/");
     ws.onopen = function () {

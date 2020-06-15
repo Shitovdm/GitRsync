@@ -8,9 +8,37 @@
                         <div class="settings-item">
                             <label for="num_of_recent_commits_shown">Number of recent commits shown:</label>
                             <input id="num_of_recent_commits_shown" type="number" min="0" max="20" step="1"
-                                   data-section="Common" data-field="RecentCommitsShown" onchange="SaveConfigField(this)"
+                                   data-section="Common" data-field="RecentCommitsShown"
+                                   onchange="SaveConfigField(this)"
                                    value={{ $appconfig.common.recent_commits_shown }}>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card docs-section">
+                <div class="card-header card-header-tabs card-header-primary">
+                    <div class="nav-tabs-navigation">
+                        <div class="nav-tabs-wrapper">
+                            <ul class="nav nav-tabs" data-tabs="tabs">
+                                <li class="nav-item">
+                                    <b>Commits overriding</b>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="settings-item">
+                            <label for="commits_overriding__state">Enable automatic rewriting of commit
+                                authors:</label>
+                            <input id="commits_overriding__state" type="checkbox" data-section="CommitsOverriding"
+                                   data-field="State" onchange="SaveConfigField(this)"
+                                   {{if $appconfig.commits_overriding.state}}checked{{end}}>
+                        </div>
+
                     </div>
                 </div>
             </div>

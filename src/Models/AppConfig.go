@@ -25,7 +25,7 @@ type GitUser struct {
 }
 
 type SaveSettingsRequest struct {
-	Section string `json:"section"`
-	Field   string `json:"field"`
-	Value   string `json:"value"`
+	Section string      `json:"section"`
+	Field   string      `json:"field"`
+	Value   interface{} `json:"value"`
 }

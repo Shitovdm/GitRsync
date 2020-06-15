@@ -38,11 +38,20 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 
 	reflectValueTypeNeeded := reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Type().String()
 	reflectValue := reflect.ValueOf(saveSettingsRequest.Value)
-	if reflectValueTypeNeeded == "int" {
 
-		nonFractionalPart := strings.Split(saveSettingsRequest.Value, ".")
+	if reflectValueTypeNeeded == "int" {
+		nonFractionalPart := strings.Split(saveSettingsRequest.Value.(string), ".")
 		val, _ := strconv.Atoi(nonFractionalPart[0])
 		reflectValue = reflect.ValueOf(val)
+	}
+
+	if reflectValueTypeNeeded == "bool" {
+		if saveSettingsRequest.Value == "true" {
+			reflectValue = reflect.ValueOf(true)
+		}
+		if saveSettingsRequest.Value == "false" {
+			reflectValue = reflect.ValueOf(false)
+		}
 	}
 
 	reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Set(reflectValue)
