@@ -346,6 +346,7 @@ func (ctrl ActionsController) Info(c *gin.Context) {
 	commitsLimit := Configuration.GetAppConfigField("Common", "RecentCommitsShown")
 	commits, err := Cmd.Log(destinationRepositoryPath, "", int(commitsLimit.Int()))
 	if err != nil {
+		UpdateRepositoryStatus(infoActionRequest.RepositoryUuid, STATUS_FAILED)
 		ErrorMsg := fmt.Sprintf("Unable to select commits for repository %s!", destinationRepositoryName)
 		Logger.Error("ActionsController/Info", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
