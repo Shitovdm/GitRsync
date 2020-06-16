@@ -214,3 +214,43 @@ function PushDestinationRepository(uuid, repoObj) {
         }
     };
 }
+
+function RemoveCommittersRule(elem) {
+    $(elem).parent("tr").remove()
+}
+
+function AddCommittersRules(elem) {
+    $("#add-committers-rules-row").remove()
+    let html = $("#table-committers-rules").children("tbody").html()
+    console.log(html)
+    html += "<tr>" +
+        "   <td>" +
+        "       <b></b><br>" +
+        "       <span></span>" +
+        "   </td>" +
+        "   <td style=\"cursor: default\">&rarr;</td>" +
+        "   <td>" +
+        "       <b></b><br>" +
+        "       <span></span>" +
+        "   </td>" +
+        "   <td class=\"btn-remove-committers-rule\" onclick=\"RemoveCommittersRule(this)\">&times;</td>" +
+        "</tr>"
+
+
+    html += "<tr id=\"add-committers-rules-row\">" +
+        "<td colspan=\"4\" class=\"btn-add-committers-rules\" onclick=\"AddCommittersRules(this)\">&#43;</td>" +
+        "</tr>"
+    $("#table-committers-rules").html("<tbody>"+html+"</tbody>")
+}
+
+function EditCommittersRuleUser(elem) {
+    let form = $('#edit-committer-info-modal');
+    form.find('input[name=username]').val($(elem).data('username'));
+    if($(elem).data('username') !== ""){
+        form.find('input[name=username]').parent('div').addClass('is-filled');
+    }
+    form.find('input[name=email]').val($(elem).data('email'));
+    if($(elem).data('email') !== ""){
+        form.find('input[name=email]').parent('div').addClass('is-filled');
+    }
+}

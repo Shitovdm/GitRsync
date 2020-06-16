@@ -1,6 +1,14 @@
 var term;
 
 $(document).ready(function () {
+    let data = {
+        "InsuranceProductsGUID": "8a395dc5-b9e7-4864-8c18-c9244fcb5546",
+        "policeGUID": "9d539dac-f283-4ed1-92dd-0d5fb3efeee1",
+        "IIN": "4201066M072PB2",
+        "UrlResult": "aHR0cHM6Ly9kZW5naS5tdHMuYnkvc2VydmljZXMvaW5zdXJhbmNlL2t1cGFsYS9yZXN1bHQ="
+    }
+
+    //redirectWithPost("http://kupala.test.francysk.com/onlineoferta/", data)
     if (location.pathname === "/logs/") {
         if (typeof term === "undefined") {
             term = new Terminal({ cols: 178, rows: 40 });
@@ -9,6 +17,24 @@ $(document).ready(function () {
         SubscribeOnRuntimeLogs();
     }
 });
+
+function redirectWithPost(url, data) {
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+
+    for (var key in data) {
+        var input = document.createElement('input');
+        input.name = key;
+        input.value = data[key];
+        input.type = 'hidden';
+        form.appendChild(input)
+    }
+    document.body.appendChild(form);
+    form.submit();
+}
+
+
 
 $('body').on('click', '.btn-clear-logs', function (e) {
     e.preventDefault();

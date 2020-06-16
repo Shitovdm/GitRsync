@@ -39,7 +39,75 @@
                                    {{if $appconfig.commits_overriding.state}}checked{{end}}>
                         </div>
 
+                        <div class="settings-item">
+                            <table id="table-committers-rules" class="table-committers-rules">
+                                <tbody>
+                                {{ $rules := .appconfig.commits_overriding.committers_rules }}
+                                {{range $rule := $rules}}
+                                    <tr>
+                                        <td data-toggle="modal"
+                                            data-target="#edit-committer-info-modal"
+                                            data-username="{{$rule.old.username}}"
+                                            data-email="{{$rule.old.email}}"
+                                            onclick="EditCommittersRuleUser(this)">
+                                            <b>{{$rule.old.username}}</b><br>
+                                            <span>{{$rule.old.email}}</span>
+                                        </td>
+                                        <td style="cursor: default">&rarr;</td>
+                                        <td data-toggle="modal"
+                                            data-target="#edit-committer-info-modal"
+                                            data-username="{{$rule.new.username}}"
+                                            data-email="{{$rule.new.email}}"
+                                            onclick="EditCommittersRuleUser(this)">
+                                            <b>{{$rule.new.username}}</b><br>
+                                            <span>{{$rule.new.email}}</span>
+                                        </td>
+                                        <td class="btn-remove-committers-rule" onclick="RemoveCommittersRule(this)">
+                                            &times;
+                                        </td>
+                                    </tr>
+                                {{end}}
+                                <tr id="add-committers-rules-row">
+                                    <td colspan="4" class="btn-add-committers-rules" onclick="AddCommittersRules(this)">&#43;</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade dark-modal" id="edit-committer-info-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Edit committer info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="bmd-label-floating">Username:</label>
+                                <input type="text" name="username" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 ml-auto">
+                            <div class="form-group">
+                                <label class="bmd-label-floating">E-mail:</label>
+                                <input type="text" name="email" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer noborder">
+                    <button type="button" class="btn btn-secondary btn-close-committer-info" data-dismiss="modal">Close</button>
+                    <button type="button" data-uuid="" class="btn btn-success btn-save-committer-info">Save</button>
                 </div>
             </div>
         </div>
