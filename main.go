@@ -3,29 +3,26 @@ package main
 import (
 	"fmt"
 	"github.com/Shitovdm/GitRsync/public/assets/src/icon"
-	"github.com/Shitovdm/GitRsync/src/application"
-	"github.com/Shitovdm/GitRsync/src/components/cmd/prompt"
-	"github.com/Shitovdm/GitRsync/src/components/configuration"
-	"github.com/Shitovdm/GitRsync/src/components/helpers"
-	"github.com/Shitovdm/GitRsync/src/components/logger"
+	"github.com/Shitovdm/GitRsync/src/app"
+	"github.com/Shitovdm/GitRsync/src/component/cmd/prompt"
+	"github.com/Shitovdm/GitRsync/src/component/conf"
+	"github.com/Shitovdm/GitRsync/src/component/helper"
+	"github.com/Shitovdm/GitRsync/src/component/logger"
 	"github.com/getlantern/systray"
 	"io/ioutil"
 	"time"
 )
 
 func init() {
-	configuration.Init("GitRsync")
+	conf.Init("GitRsync")
 	logger.Init()
 }
 
 func main() {
-
-	application.StartServer()
-
-	//go Application.StartServer()
+	go app.Serve()
 	//	It`s hiding command prompt during running app (only windows).
 	prompt.ChangeConsoleVisibility(false)
-	//systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
+	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
 }
 
 func onExit() {
@@ -52,7 +49,7 @@ func onReady() {
 		select {
 		case <-mOpen.ClickedCh:
 			fmt.Println("Opening application UI...")
-			helpers.OpenBrowser("http://localhost:8888")
+			helper.OpenBrowser("http://localhost:8888")
 			break
 		case <-changeConsoleVisibility.ClickedCh:
 			fmt.Println("Changing console visibility...")
@@ -68,11 +65,11 @@ func onReady() {
 			break
 		case <-mOpenGit.ClickedCh:
 			fmt.Println("Opening app GIT page...")
-			helpers.OpenBrowser("https://github.com/Shitovdm/GitRsync")
+			helper.OpenBrowser("https://github.com/Shitovdm/GitRsync")
 			break
 		case <-mDocs.ClickedCh:
 			fmt.Println("Opening app specification...")
-			helpers.OpenBrowser("http://localhost:8888/docs")
+			helper.OpenBrowser("http://localhost:8888/docs")
 			break
 		case <-mRestart.ClickedCh:
 			fmt.Println("Restarting application...")
