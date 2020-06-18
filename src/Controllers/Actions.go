@@ -253,14 +253,14 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	}
 
 	//	Step 5. Pushing destination repository to remote.
-	/*Logger.Trace("ActionsController/Push", "Pushing destination repository...")
+	Logger.Trace("ActionsController/Push", "Pushing destination repository...")
 	if !Cmd.Push(destinationRepositoryPath) {
 		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
 		Logger.Error("ActionsController/Push", "Error occurred while pushing destination repository!")
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while pushing destination repository!")))
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
-	}*/
+	}
 
 	UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_SYNCHRONIZED)
 	Msg := "Destination repository successfully pushed!"
