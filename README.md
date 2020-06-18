@@ -1,6 +1,6 @@
 # GitRsync
 
-![CI](https://github.com/Shitovdm/GitRsync/workflows/CI/badge.svg)
+![Go](https://github.com/Shitovdm/GitRsync/workflows/Go/badge.svg)
 
 ### Build the project:  
 `go build -o ./GitRsync.exe -ldflags -H=windowsgui`
