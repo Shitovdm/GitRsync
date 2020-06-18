@@ -64,6 +64,7 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 		DestinationPlatformUuid: addRepositoryRequest.DestinationPlatformUuid,
 		DestinationPlatformPath: addRepositoryRequest.DestinationPlatformPath,
 		Status:                  STATUS_INITIATED,
+		State:                   "active",
 		UpdatedAt:               "",
 	})
 
@@ -97,6 +98,7 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 				DestinationPlatformUuid: editRepositoryRequest.DestinationPlatformUuid,
 				DestinationPlatformPath: editRepositoryRequest.DestinationPlatformPath,
 				Status:                  repository.Status,
+				State:                   repository.State,
 				UpdatedAt:               repository.UpdatedAt,
 			})
 			continue
