@@ -239,7 +239,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	appConfig := Configuration.GetAppConfig()
 	if appConfig.CommitsOverriding.State {
 		Logger.Trace("ActionsController/Pull", "Overriding source repository commits author...")
-		if !Cmd.OverrideAuthor(destinationRepositoryPath, appConfig.CommitsOverriding.CommittersRules) {
+		if !Cmd.OverrideAuthor(destinationRepositoryPath, appConfig.CommitsOverriding) {
 			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
 			Msg := "Error occurred while overriding destination repository commits author!"
 			Logger.Error("ActionsController/Pull", Msg)
@@ -248,7 +248,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 			return
 		}
 		Logger.Trace("ActionsController/Pull", "All commits in source repository successfully overridden!")
-	}else{
+	} else {
 		Logger.Trace("ActionsController/Pull", "Overriding source repository commits not needed!")
 	}
 

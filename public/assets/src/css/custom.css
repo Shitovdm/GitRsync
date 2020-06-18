@@ -142,23 +142,23 @@ body {
     vertical-align: middle;
 }
 
-.table-committers-rules{
+.table-committers-rules {
     min-width: 460px;
     border-collapse: collapse;
     border: 1px solid #6a6a6a;
 }
 
-.table-committers-rules tr{
+.table-committers-rules tr {
     height: 59px;
 }
 
-.table-committers-rules tr td{
+.table-committers-rules tr td {
     padding: 5px 20px;
     border: 1px solid #6a6a6a;
     cursor: pointer;
 }
 
-.table-committers-rules tr:last-child td{
+.table-committers-rules tr:last-child td {
     padding: 15px 15px;
 }
 
@@ -169,8 +169,8 @@ body {
     cursor: pointer;
 }
 
-.noborder{
-    border: none!important;
+.noborder {
+    border: none !important;
 }
 
 @-webkit-keyframes move {

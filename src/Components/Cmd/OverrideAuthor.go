@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func OverrideAuthor(path string, committersRules []Models.CommittersRule) bool {
+func OverrideAuthor(path string, CommitsOverridingConfig Models.CommitsOverriding) bool {
 
 	var cmd *exec.Cmd
 
@@ -25,11 +25,18 @@ func OverrideAuthor(path string, committersRules []Models.CommittersRule) bool {
 		return false
 	}
 
-	/*gitCmd := fmt.Sprintf(
-	`git filter-branch -f --env-filter "GIT_AUTHOR_NAME='%s'; GIT_AUTHOR_EMAIL='%s'; GIT_COMMITTER_NAME='%s'; GIT_COMMITTER_EMAIL='%s';" HEAD;`,
-	username, email, username, email)*/
+	gitCmd := ``
+	if CommitsOverridingConfig.OverrideCommitsWithOneAuthor {
+		username := CommitsOverridingConfig.MasterUser.Username
+		email := CommitsOverridingConfig.MasterUser.Email
+		gitCmd = fmt.Sprintf(
+			`git filter-branch -f --env-filter "GIT_AUTHOR_NAME='%s'; GIT_AUTHOR_EMAIL='%s'; GIT_COMMITTER_NAME='%s'; GIT_COMMITTER_EMAIL='%s';" HEAD;`,
+			username, email, username, email)
+	} else {
+		gitCmd = fmt.Sprintf("`%s`", BuildFilterBranchExpression(CommitsOverridingConfig.CommittersRules))
+	}
 
-	cmd = exec.Command("bash", "-c", fmt.Sprintf("`%s`", BuildFilterBranchExpression(committersRules)))
+	cmd = exec.Command("bash", "-c", gitCmd)
 	cmd.Dir = path
 	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
