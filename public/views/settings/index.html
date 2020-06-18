@@ -38,37 +38,62 @@
                                    data-field="State" onchange="SaveConfigField(this)"
                                    {{if $appconfig.commits_overriding.state}}checked{{end}}>
                         </div>
-
                         <div class="settings-item">
+                            <label for="commits_overriding__state">Overwrite commits with one author:</label>
+                            <input id="commits_overriding__override_commits_with_one_author" type="checkbox"
+                                   data-section="CommitsOverriding"
+                                   data-field="OverrideCommitsWithOneAuthor" onchange="SaveConfigField(this)"
+                                   {{if $appconfig.commits_overriding.override_commits_with_one_author}}checked{{end}}>
+                        </div>
+                        <div class="settings-item master-user {{if ne true $appconfig.commits_overriding.override_commits_with_one_author}}hidden{{end}}">
+                            {{ $masterUser := .appconfig.commits_overriding.master_user }}
+                            <label for="commits_overriding__state"><b>Master user:</b></label><br>
+                            <label for="commits_overriding__master_user_username">Username:</label>
+                            <input id="commits_overriding__master_user_username" type="text"
+                                   data-section="CommitsOverriding"
+                                   data-field="MasterUser" onchange="SaveConfigField(this)"
+                                   value="{{$masterUser.username}}">
+                            <label for="commits_overriding__master_user_email">Email:</label>
+                            <input id="commits_overriding__master_user_email" type="text"
+                                   data-section="CommitsOverriding"
+                                   data-field="MasterUser" onchange="SaveConfigField(this)"
+                                   value="{{$masterUser.email}}">
+                        </div>
+                        <div class="settings-item committers-rules {{if $appconfig.commits_overriding.override_commits_with_one_author}}hidden{{end}}">
+                            <label for="committers"><b>Committers rules:</b></label><br>
                             <table id="table-committers-rules" class="table-committers-rules">
                                 <tbody>
                                 {{ $rules := .appconfig.commits_overriding.committers_rules }}
+                                {{ $i := 0 }}
                                 {{range $rule := $rules}}
                                     <tr>
-                                        <td data-toggle="modal"
+                                        <td class="btn-edit-committer-info"
+                                            data-toggle="modal"
                                             data-target="#edit-committer-info-modal"
+                                            data-item="{{$i}}"
+                                            data-type="old"
                                             data-username="{{$rule.old.username}}"
-                                            data-email="{{$rule.old.email}}"
-                                            onclick="EditCommittersRuleUser(this)">
+                                            data-email="{{$rule.old.email}}">
                                             <b>{{$rule.old.username}}</b><br>
                                             <span>{{$rule.old.email}}</span>
                                         </td>
                                         <td style="cursor: default">&rarr;</td>
-                                        <td data-toggle="modal"
+                                        <td class="btn-edit-committer-info"
+                                            data-toggle="modal"
                                             data-target="#edit-committer-info-modal"
+                                            data-item="{{$i}}"
+                                            data-type="new"
                                             data-username="{{$rule.new.username}}"
-                                            data-email="{{$rule.new.email}}"
-                                            onclick="EditCommittersRuleUser(this)">
+                                            data-email="{{$rule.new.email}}">
                                             <b>{{$rule.new.username}}</b><br>
                                             <span>{{$rule.new.email}}</span>
                                         </td>
-                                        <td class="btn-remove-committers-rule" onclick="RemoveCommittersRule(this)">
-                                            &times;
-                                        </td>
+                                        <td class="btn-remove-committer-rule">&times;</td>
                                     </tr>
+                                    {{$i = add $i 1}}
                                 {{end}}
                                 <tr id="add-committers-rules-row">
-                                    <td colspan="4" class="btn-add-committers-rules" onclick="AddCommittersRules(this)">&#43;</td>
+                                    <td colspan="4" class="btn-add-committer-rule">&#43;</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -78,7 +103,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade dark-modal" id="edit-committer-info-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade dark-modal" id="edit-committer-info-modal" tabindex="-1" role="dialog"
+         aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -104,10 +130,15 @@
                             </div>
                         </div>
                     </div>
+                    <input type="text" name="type" hidden>
+                    <input type="text" name="item" hidden>
                 </div>
                 <div class="modal-footer noborder">
-                    <button type="button" class="btn btn-secondary btn-close-committer-info" data-dismiss="modal">Close</button>
-                    <button type="button" data-uuid="" class="btn btn-success btn-save-committer-info">Save</button>
+                    <button type="button" class="btn btn-secondary btn-close-committer-info" data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" data-dismiss="modal" class="btn btn-success btn-save-committer-info">Save
+                    </button>
                 </div>
             </div>
         </div>

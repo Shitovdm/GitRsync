@@ -155,14 +155,15 @@ body {
 .table-committers-rules tr td{
     padding: 5px 20px;
     border: 1px solid #6a6a6a;
+    cursor: pointer;
 }
 
 .table-committers-rules tr:last-child td{
     padding: 15px 15px;
 }
 
-.btn-remove-committers-rule,
-.btn-add-committers-rules {
+.btn-add-committer-rule,
+.btn-remove-committer-rule {
     text-align: center;
     font-size: 2em;
     cursor: pointer;

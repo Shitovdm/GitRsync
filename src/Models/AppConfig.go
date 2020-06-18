@@ -10,8 +10,10 @@ type Common struct {
 }
 
 type CommitsOverriding struct {
-	State           bool             `json:"state"`
-	CommittersRules []CommittersRule `json:"committers_rules"`
+	State                        bool             `json:"state"`
+	OverrideCommitsWithOneAuthor bool             `json:"override_commits_with_one_author"`
+	MasterUser                   GitUser          `json:"master_user"`
+	CommittersRules              []CommittersRule `json:"committers_rules"`
 }
 
 type CommittersRule struct {

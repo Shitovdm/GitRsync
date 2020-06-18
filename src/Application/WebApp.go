@@ -48,6 +48,7 @@ func WebRouter() http.Handler {
 		Partials:  []string{},
 		Funcs: template.FuncMap{
 			"replace": strings.Replace,
+			"add": Helpers.Add,
 		},
 		DisableCache: true,
 	})
