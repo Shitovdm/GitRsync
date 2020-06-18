@@ -1,4 +1,4 @@
-module github.com/Shitovdm/git-rsync
+module github.com/Shitovdm/GitRsync
 
 go 1.13
 
