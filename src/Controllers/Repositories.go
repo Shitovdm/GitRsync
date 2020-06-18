@@ -16,20 +16,18 @@ import (
 type RepositoriesController struct{}
 
 const (
-	STATUS_INITIATED    = "initiated"
-	STATUS_PENDINGPULL  = "pending_pull"
-	STATUS_PULLED       = "pulled"
-	STATUS_PULLFAILED   = "pull_failed"
-	STATUS_PENDINGPUSH  = "pending_push"
-	STATUS_PUSHED       = "pushed"
-	STATUS_PUSHFAILED   = "push_failed"
-	STATUS_PENDINGCLEAN = "pending_clear"
-	STATUS_CLEANED      = "cleared"
-	STATUS_CLEANFAILED  = "clear_failed"
-	STATUS_PENDING      = "pending"
-	STATUS_SYNCHRONIZED = "synced"
-	STATUS_EXPIRED      = "expired"
-	STATUS_FAILED       = "failed"
+	StatusInitiated    = "initiated"
+	StatusPendingPull  = "pending_pull"
+	StatusPulled       = "pulled"
+	StatusPullFailed   = "pull_failed"
+	StatusPendingPush  = "pending_push"
+	StatusPushed       = "pushed"
+	StatusPushFailed   = "push_failed"
+	StatusPendingClean = "pending_clear"
+	StatusCleaned      = "cleared"
+	StatusCleanFailed  = "clear_failed"
+	StatusSynchronized = "synced"
+	StatusFailed       = "failed"
 )
 
 var (
@@ -63,7 +61,7 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 		SourcePlatformPath:      addRepositoryRequest.SourcePlatformPath,
 		DestinationPlatformUuid: addRepositoryRequest.DestinationPlatformUuid,
 		DestinationPlatformPath: addRepositoryRequest.DestinationPlatformPath,
-		Status:                  STATUS_INITIATED,
+		Status:                  StatusInitiated,
 		State:                   "active",
 		UpdatedAt:               "",
 	})
@@ -150,7 +148,7 @@ func UpdateRepositoryStatus(uuid string, status string) {
 	for i, repository := range oldRepositoriesList {
 		if repository.Uuid == uuid {
 			oldRepositoriesList[i].Status = status
-			if status == STATUS_PULLED || status == STATUS_PUSHED || status == STATUS_SYNCHRONIZED {
+			if status == StatusPulled || status == StatusPushed || status == StatusSynchronized {
 				t := time.Now()
 				oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
 			}

@@ -19,18 +19,18 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 	var pullActionRequest Models.PullActionRequest
 	conn, err := Helpers.WsHandler(c.Writer, c.Request, &pullActionRequest)
 	if err != nil {
-		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, STATUS_PULLFAILED)
+		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, StatusPullFailed)
 		Logger.Error("ActionsController/Pull", err.Error())
 		Logger.Warning("ActionsController/Pull", "Fetching source repository aborted!")
 		return
 	}
 
-	UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, STATUS_PENDINGPULL)
+	UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, StatusPendingPull)
 	Logger.Trace("ActionsController/Pull", fmt.Sprintf("Start pulling repository with UUID %s...", pullActionRequest.RepositoryUuid))
 
 	repositoryConfig := Configuration.GetRepositoryByUuid(pullActionRequest.RepositoryUuid)
 	if repositoryConfig == nil {
-		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, STATUS_PULLFAILED)
+		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, StatusPullFailed)
 		ErrorMsg := fmt.Sprintf("Repository with transferred UUID %s not found!", pullActionRequest.RepositoryUuid)
 		Logger.Error("ActionsController/Pull", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -40,7 +40,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 
 	platformConfig := Configuration.GetPlatformByUuid(repositoryConfig.SourcePlatformUuid)
 	if platformConfig == nil {
-		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, STATUS_PULLFAILED)
+		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, StatusPullFailed)
 		ErrorMsg := fmt.Sprintf("Platform with UUID %s not found!", repositoryConfig.SourcePlatformUuid)
 		Logger.Error("ActionsController/Pull", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -56,7 +56,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		Logger.Trace("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
 		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf(`\projects\%s\source`, repositoryConfig.Name)))
 		if err != nil {
-			UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, STATUS_PULLFAILED)
+			UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, StatusPullFailed)
 			ErrorMsg := fmt.Sprintf(`Error while creating new folder .\projects\%s\source`, repositoryConfig.Name)
 			Logger.Error("ActionsController/Pull", ErrorMsg)
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -101,7 +101,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 
 	fetchRes := <-finishFetching
 	if !fetchRes {
-		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, STATUS_PULLFAILED)
+		UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, StatusPullFailed)
 		Msg := "Error occurred while fetching source repository!"
 		Logger.Error("ActionsController/Pull", Msg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(Msg)))
@@ -109,7 +109,7 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 		return
 	}
 
-	UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, STATUS_PULLED)
+	UpdateRepositoryStatus(pullActionRequest.RepositoryUuid, StatusPulled)
 	Msg := "Source repository fetched successfully!"
 	Logger.Success("ActionsController/Pull", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
@@ -121,18 +121,18 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	var pushActionRequest Models.PushActionRequest
 	conn, err := Helpers.WsHandler(c.Writer, c.Request, &pushActionRequest)
 	if err != nil {
-		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 		Logger.Error("ActionsController/Push", err.Error())
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
 	}
 
-	UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PENDINGPUSH)
+	UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPendingPush)
 	Logger.Trace("ActionsController/Push", fmt.Sprintf("Start pushing repository with UUID %s...", pushActionRequest.RepositoryUuid))
 
 	repositoryConfig := Configuration.GetRepositoryByUuid(pushActionRequest.RepositoryUuid)
 	if repositoryConfig == nil {
-		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 		ErrorMsg := fmt.Sprintf("Repository with transferred UUID %s not found!", pushActionRequest.RepositoryUuid)
 		Logger.Error("ActionsController/Push", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -142,7 +142,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 
 	platformConfig := Configuration.GetPlatformByUuid(repositoryConfig.DestinationPlatformUuid)
 	if platformConfig == nil {
-		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 		ErrorMsg := fmt.Sprintf("Platform with UUID %s not found!", repositoryConfig.DestinationPlatformUuid)
 		Logger.Error("ActionsController/Push", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -160,7 +160,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 		Logger.Trace("ActionsController/Push", fmt.Sprintf("Repository %s has not been initialized earlier! Initializing...", repositoryConfig.Name))
 		err = Helpers.CreateNewDir(Configuration.BuildPlatformPath(fmt.Sprintf(`\projects\%s\destination`, repositoryConfig.Name)))
 		if err != nil {
-			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 			ErrorMsg := fmt.Sprintf("Error while creating new folder ./projects/%s/destination", repositoryConfig.Name)
 			Logger.Error("ActionsController/Push", ErrorMsg)
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -204,7 +204,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 
 	fetchRes := <-finishFetching
 	if !fetchRes {
-		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while fetching destination repository!")))
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
@@ -213,7 +213,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	//	Step 2. Copying all files from source to destination repositories dir`s.
 	Logger.Trace("ActionsController/Push", "Start copying all repository files...")
 	if !Cmd.CopyRepository(repositoryFullPath, destinationRepositoryName, sourceRepositoryName) {
-		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 		Logger.Error("ActionsController/Push", "Error occurred while copying repository files!")
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while copying repository files!")))
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
@@ -227,7 +227,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	commits, err := Cmd.Log(destinationRepositoryPath, "origin/master..HEAD", -1)
 	if err == nil {
 		if len(commits) == 0 {
-			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_SYNCHRONIZED)
+			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusSynchronized)
 			Logger.Debug("ActionsController/Push", "Destination repository does not need to be updated, all changes are pushed earlier!")
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess("Destination repository does not need to be updated!", nil)))
 			return
@@ -240,7 +240,7 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	if appConfig.CommitsOverriding.State {
 		Logger.Trace("ActionsController/Pull", "Overriding source repository commits author...")
 		if !Cmd.OverrideAuthor(destinationRepositoryPath, appConfig.CommitsOverriding) {
-			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 			Msg := "Error occurred while overriding destination repository commits author!"
 			Logger.Error("ActionsController/Pull", Msg)
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(Msg)))
@@ -255,14 +255,14 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	//	Step 5. Pushing destination repository to remote.
 	Logger.Trace("ActionsController/Push", "Pushing destination repository...")
 	if !Cmd.Push(destinationRepositoryPath) {
-		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusPushFailed)
 		Logger.Error("ActionsController/Push", "Error occurred while pushing destination repository!")
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError("Error occurred while pushing destination repository!")))
 		Logger.Warning("ActionsController/Push", "Remote repository update aborted!")
 		return
 	}
 
-	UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_SYNCHRONIZED)
+	UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, StatusSynchronized)
 	Msg := "Destination repository successfully pushed!"
 	Logger.Success("ActionsController/Push", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
@@ -274,18 +274,18 @@ func (ctrl ActionsController) Clear(c *gin.Context) {
 	var cleanActionRequest Models.CleanActionRequest
 	conn, err := Helpers.WsHandler(c.Writer, c.Request, &cleanActionRequest)
 	if err != nil {
-		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, StatusCleanFailed)
 		Logger.Error("ActionsController/Clear", err.Error())
 		Logger.Warning("ActionsController/Clear", "Repository runtime data cleaning aborted!")
 		return
 	}
 
-	UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_PENDINGCLEAN)
+	UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, StatusPendingClean)
 	Logger.Trace("ActionsController/Clear", fmt.Sprintf("Start cleaning repository with UUID %s...", cleanActionRequest.RepositoryUuid))
 
 	repositoryConfig := Configuration.GetRepositoryByUuid(cleanActionRequest.RepositoryUuid)
 	if repositoryConfig == nil {
-		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, StatusCleanFailed)
 		ErrorMsg := fmt.Sprintf("Repository with transferred UUID %s not found!", cleanActionRequest.RepositoryUuid)
 		Logger.Error("ActionsController/Clear", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -295,7 +295,7 @@ func (ctrl ActionsController) Clear(c *gin.Context) {
 
 	platformConfig := Configuration.GetPlatformByUuid(repositoryConfig.SourcePlatformUuid)
 	if platformConfig == nil {
-		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+		UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, StatusCleanFailed)
 		ErrorMsg := fmt.Sprintf("Platform with UUID %s not found!", repositoryConfig.SourcePlatformUuid)
 		Logger.Error("ActionsController/Clear", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -306,7 +306,7 @@ func (ctrl ActionsController) Clear(c *gin.Context) {
 	if Helpers.IsDirExists(Configuration.BuildPlatformPath(fmt.Sprintf(`\projects\%s`, repositoryConfig.Name))) {
 		err = Helpers.RemoveDir(Configuration.BuildPlatformPath(fmt.Sprintf(`\projects\%s`, repositoryConfig.Name)))
 		if err != nil {
-			UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
+			UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, StatusCleanFailed)
 			ErrorMsg := "Error deleting project folder! Check if the folder is used by other programs and try again."
 			Logger.Error("ActionsController/Clear", ErrorMsg)
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -315,7 +315,7 @@ func (ctrl ActionsController) Clear(c *gin.Context) {
 		}
 	}
 
-	UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANED)
+	UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, StatusCleaned)
 	Msg := "Repository runtime data successfully cleaned!"
 	Logger.Success("ActionsController/Clear", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
@@ -346,7 +346,7 @@ func (ctrl ActionsController) Info(c *gin.Context) {
 	commitsLimit := Configuration.GetAppConfigField("Common", "RecentCommitsShown")
 	commits, err := Cmd.Log(destinationRepositoryPath, "", int(commitsLimit.Int()))
 	if err != nil {
-		UpdateRepositoryStatus(infoActionRequest.RepositoryUuid, STATUS_FAILED)
+		UpdateRepositoryStatus(infoActionRequest.RepositoryUuid, StatusFailed)
 		ErrorMsg := fmt.Sprintf("Unable to select commits for repository %s!", destinationRepositoryName)
 		Logger.Error("ActionsController/Info", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
