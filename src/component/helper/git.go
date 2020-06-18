@@ -9,10 +9,12 @@ import (
 	"regexp"
 )
 
+// Repo contain repository object.
 type Repo struct {
 	repository *gogit.Repository
 }
 
+// isEqual compares commits.
 func isEqual(c1, c2 *gogit.Commit) bool {
 	return c1.Oid == c2.Oid &&
 		c1.Author.Name == c2.Author.Name &&
@@ -23,6 +25,7 @@ func isEqual(c1, c2 *gogit.Commit) bool {
 		c1.Committer.When == c2.Committer.When
 }
 
+// logCommit returns commit log.
 func logCommit(ci *gogit.Commit) {
 	log.Printf("commit %s\n", ci.Oid)
 	log.Printf("Author        : %s <%s>\n", ci.Author.Name, ci.Author.Email)
@@ -31,6 +34,7 @@ func logCommit(ci *gogit.Commit) {
 	log.Printf("Committer Date: %s\n", ci.Committer.When)
 }
 
+// getCommitChainLength returns commit chain len.
 func getCommitChainLength(ci *gogit.Commit, n int) int {
 	for i := 1; i < n; i++ {
 		ci = ci.Parent(0)
@@ -42,11 +46,13 @@ func getCommitChainLength(ci *gogit.Commit, n int) int {
 	return n
 }
 
+// runGitGc runs git GC.
 func runGitGc() {
 	exec.Command("git", "gc")
 	return
 }
 
+// OpenRepository opens repository path.
 func OpenRepository(path string) (*Repo, error) {
 
 	err := os.Chdir(path)
@@ -58,8 +64,6 @@ func OpenRepository(path string) (*Repo, error) {
 	// from Deltas
 	runGitGc()
 
-	//repository, err := gogit.OpenRepository(filepath.Join(wd, path + "/.git"))
-
 	repository, err := gogit.OpenRepository(path + "/.git")
 	if err != nil {
 		return nil, err
@@ -70,6 +74,7 @@ func OpenRepository(path string) (*Repo, error) {
 	}, nil
 }
 
+// GetLog returns log.
 func (r *Repo) GetLog(n int) ([]*gogit.Commit, error) {
 	ref, err := r.repository.LookupReference("HEAD")
 	if err != nil {
@@ -96,6 +101,7 @@ func (r *Repo) GetLog(n int) ([]*gogit.Commit, error) {
 	return commitList, nil
 }
 
+// IsDirty returns diff "dirty" flag.
 func (r *Repo) IsDirty() bool {
 	gitCmd := `[[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] && echo "dirty"`
 	cmd := exec.Command("bash", "-c", gitCmd)
@@ -105,7 +111,7 @@ func (r *Repo) IsDirty() bool {
 	return re.Match(output)
 }
 
-// Returns the ref of change and error
+// SaveCommitIfModified returns the ref of change and error.
 func (r *Repo) SaveCommitIfModified(commit *gogit.Commit) (string, error) {
 	original, err := r.repository.LookupCommit(commit.Oid)
 	if err != nil {
@@ -121,6 +127,7 @@ func (r *Repo) SaveCommitIfModified(commit *gogit.Commit) (string, error) {
 	return "", nil
 }
 
+// SaveCommit save commit meta.
 func (r *Repo) SaveCommit(commit *gogit.Commit) (string, error) {
 	scope := ""
 	if commit.Parent(0) != nil {

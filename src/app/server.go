@@ -18,7 +18,7 @@ import (
 
 var g errgroup.Group
 
-//
+// Serve runs web server.
 func Serve() {
 	gin.SetMode(gin.ReleaseMode)
 	serverWeb := &http.Server{
@@ -39,7 +39,7 @@ func Serve() {
 	}
 }
 
-//	Router
+// Router describe all app routes.
 func Router() http.Handler {
 	e := gin.New()
 	riceBox := rice.MustFindBox("../../public/views")

@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Menu describes left menu bar items.
 var Menu = []map[string]string{
 	{
 		"slug":   "",
@@ -57,6 +58,7 @@ var Menu = []map[string]string{
 	},
 }
 
+// GetMenu gets menu items.
 func GetMenu(c *gin.Context) []map[string]string {
 	path := strings.Split(strings.Trim(c.Request.URL.Path, "/"), "/")
 	for _, menuItem := range Menu {

@@ -13,8 +13,6 @@ import (
 	"time"
 )
 
-type RepositoriesController struct{}
-
 const (
 	StatusInitiated    = "initiated"
 	StatusPendingPull  = "pending_pull"
@@ -34,6 +32,10 @@ var (
 	timeFormat = "02-01-2006 15:04"
 )
 
+// RepositoriesController struct describes repositories section controller.
+type RepositoriesController struct{}
+
+// Index describes repositories index page.
 func (ctrl RepositoriesController) Index(c *gin.Context) {
 	menu := gui.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
@@ -43,6 +45,7 @@ func (ctrl RepositoriesController) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "repositories/index", templateParams)
 }
 
+// Add describes add repository action.
 func (ctrl RepositoriesController) Add(c *gin.Context) {
 
 	var addRepositoryRequest model.AddRepositoryRequest
@@ -72,9 +75,9 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 	}
 
 	logger.Info("RepositoriesController/Add", fmt.Sprintf("New repository with name %s added successfully!", addRepositoryRequest.Name))
-	return
 }
 
+// Edit describes edit repository action.
 func (ctrl RepositoriesController) Edit(c *gin.Context) {
 
 	var editRepositoryRequest model.EditRepositoryRequest
@@ -110,9 +113,9 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 	}
 
 	logger.Info("RepositoriesController/Edit", fmt.Sprintf("Repository with name %s successfully edited!", editRepositoryRequest.Name))
-	return
 }
 
+// Remove describes remove repository action.
 func (ctrl RepositoriesController) Remove(c *gin.Context) {
 
 	var removeRepositoryRequest model.RemoveRepositoryRequest
@@ -139,9 +142,9 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 	}
 
 	logger.Info("RepositoriesController/Remove", fmt.Sprintf("Repository with name %s successfully removed!", removedRepositoryName))
-	return
 }
 
+// UpdateRepositoryStatus describes update repository status action.
 func UpdateRepositoryStatus(uuid string, status string) {
 
 	oldRepositoriesList := conf.GetRepositoriesConfig()
@@ -159,10 +162,9 @@ func UpdateRepositoryStatus(uuid string, status string) {
 	if err != nil {
 		return
 	}
-
-	return
 }
 
+// UpdateRepositoryState describes update repository state action.
 func UpdateRepositoryState(uuid string, state string) {
 
 	oldRepositoriesList := conf.GetRepositoriesConfig()
@@ -178,6 +180,4 @@ func UpdateRepositoryState(uuid string, state string) {
 	if err != nil {
 		return
 	}
-
-	return
 }

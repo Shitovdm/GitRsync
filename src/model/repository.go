@@ -5,6 +5,7 @@ const (
 	StateBlocked = "blocked"
 )
 
+// RepositoryConfig struct describes repository config.
 type RepositoryConfig struct {
 	UUID                    string `json:"uuid"`
 	Name                    string `json:"name"`
@@ -17,6 +18,7 @@ type RepositoryConfig struct {
 	UpdatedAt               string `json:"updated_at"`
 }
 
+// AddRepositoryRequest struct describes add repository request model.
 type AddRepositoryRequest struct {
 	Name                    string `json:"name"`
 	SourcePlatformUUID      string `json:"spu"`
@@ -25,6 +27,7 @@ type AddRepositoryRequest struct {
 	DestinationPlatformPath string `json:"dpp"`
 }
 
+// EditRepositoryRequest struct describes edit repository request model.
 type EditRepositoryRequest struct {
 	UUID                    string `json:"uuid"`
 	Name                    string `json:"name"`
@@ -34,6 +37,7 @@ type EditRepositoryRequest struct {
 	DestinationPlatformPath string `json:"dpp"`
 }
 
+// RemoveRepositoryRequest struct describes remove repository request model.
 type RemoveRepositoryRequest struct {
 	UUID string `json:"uuid"`
 }

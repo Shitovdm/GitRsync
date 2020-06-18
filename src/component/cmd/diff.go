@@ -2,17 +2,16 @@ package cmd
 
 import (
 	"bytes"
-	"os/exec"
 )
 
+// Diff returns git diff.
 func Diff(path string) bool {
 
 	if path == "" {
 		return false
 	}
 
-	var cmd *exec.Cmd
-	cmd = command("git", "diff")
+	cmd := command("git", "diff")
 	cmd.Dir = path
 	output, err := cmd.Output()
 	if err != nil {

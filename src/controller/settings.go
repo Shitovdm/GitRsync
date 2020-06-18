@@ -14,8 +14,10 @@ import (
 	"strings"
 )
 
+// SettingsController struct describes settings section controller.
 type SettingsController struct{}
 
+// Index describes settings index page.
 func (ctrl SettingsController) Index(c *gin.Context) {
 	menu := gui.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
@@ -24,6 +26,7 @@ func (ctrl SettingsController) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "settings/index", templateParams)
 }
 
+// Save describes save settings action.
 func (ctrl SettingsController) Save(c *gin.Context) {
 	var saveSettingsRequest model.SaveSettingsRequest
 	_, err := helper.WsHandler(c.Writer, c.Request, &saveSettingsRequest)
@@ -70,7 +73,6 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 			reflectValue = reflect.ValueOf(val)
 			break
 		}
-		break
 	}
 
 	reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Set(reflectValue)
@@ -79,6 +81,4 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 		logger.Error("SettingsController/Save", err.Error())
 		return
 	}
-
-	return
 }

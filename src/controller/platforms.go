@@ -12,8 +12,10 @@ import (
 	"net/http"
 )
 
+// PlatformsController struct describes platforms section controller.
 type PlatformsController struct{}
 
+// Index describes platforms index page.
 func (ctrl PlatformsController) Index(c *gin.Context) {
 	menu := gui.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
@@ -22,6 +24,7 @@ func (ctrl PlatformsController) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "platforms/index", templateParams)
 }
 
+// Add describes add platform action.
 func (ctrl PlatformsController) Add(c *gin.Context) {
 
 	var addPlatformRequest model.AddPlatformRequest
@@ -47,9 +50,9 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 	}
 
 	logger.Info("PlatformsController/Add", fmt.Sprintf("New platform with name %s added successfully!", addPlatformRequest.Name))
-	return
 }
 
+// Edit describes edit platform action.
 func (ctrl PlatformsController) Edit(c *gin.Context) {
 
 	var editPlatformRequest model.EditPlatformRequest
@@ -81,9 +84,9 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 	}
 
 	logger.Info("PlatformsController/Edit", fmt.Sprintf("Platform with name %s successfully edited!", editPlatformRequest.Name))
-	return
 }
 
+// Remove describes remove platform action.
 func (ctrl PlatformsController) Remove(c *gin.Context) {
 
 	var removePlatformRequest model.RemovePlatformRequest
@@ -110,5 +113,4 @@ func (ctrl PlatformsController) Remove(c *gin.Context) {
 	}
 
 	logger.Info("PlatformsController/Remove", fmt.Sprintf("Platform with name %s successfully removed!", removedPlatformName))
-	return
 }

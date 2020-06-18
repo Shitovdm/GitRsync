@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 )
 
+// GetCurrentPath returns current location path.
 func GetCurrentPath() string {
 	ex, err := os.Executable()
 	if err != nil {
@@ -19,6 +20,7 @@ func GetCurrentPath() string {
 	return exPath
 }
 
+// IsDirExists returns dir exists flag.
 func IsDirExists(dirPath string) bool {
 	info, err := os.Stat(dirPath)
 	if os.IsNotExist(err) {
@@ -28,6 +30,7 @@ func IsDirExists(dirPath string) bool {
 	return info.IsDir()
 }
 
+// CreateNewDir creates new folder in current file system.
 func CreateNewDir(path string) error {
 	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
@@ -36,6 +39,7 @@ func CreateNewDir(path string) error {
 	return nil
 }
 
+// RemoveDir removes folder from current file system.
 func RemoveDir(path string) error {
 	err := os.RemoveAll(path)
 	if err != nil {
@@ -44,6 +48,7 @@ func RemoveDir(path string) error {
 	return nil
 }
 
+// RemoveDir returns is file exists flag.
 func IsFileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
@@ -53,10 +58,12 @@ func IsFileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+// WriteFile writes file data.
 func WriteFile(filename string, content string) {
 	_ = ioutil.WriteFile(filename, []byte(content), 0644)
 }
 
+// Move moves file to new location.
 func Move(oldLocation string, newLocation string) error {
 
 	err := os.Rename(oldLocation, newLocation)
@@ -67,6 +74,7 @@ func Move(oldLocation string, newLocation string) error {
 	return nil
 }
 
+// CopyFile creates file copy.
 func CopyFile(src, dst string) error {
 	var err error
 	var srcfd *os.File
@@ -92,6 +100,7 @@ func CopyFile(src, dst string) error {
 	return os.Chmod(dst, srcinfo.Mode())
 }
 
+// CopyDirContent copies dir content.
 func CopyDirContent(src string, dst string) error {
 	var err error
 	var fds []os.FileInfo

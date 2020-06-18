@@ -1,25 +1,18 @@
 package cmd
 
-import (
-	"fmt"
-	"os/exec"
-)
-
+// ResetHard resets hard repository.
 func ResetHard(path string) bool {
 
 	if path == "" {
 		return false
 	}
 
-	var cmd *exec.Cmd
-	cmd = command("git", "reset --hard")
+	cmd := command("git", "reset --hard")
 	cmd.Dir = path
-	out, err := cmd.Output()
+	_, err := cmd.Output()
 	if err != nil {
-		fmt.Println(err.Error())
 		return false
 	}
 
-	fmt.Println(fmt.Sprintf("%s", out))
 	return true
 }

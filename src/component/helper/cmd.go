@@ -10,6 +10,7 @@ import (
 	"sync"
 )
 
+// Exec execute the shell command.
 func Exec(command string) {
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -17,6 +18,7 @@ func Exec(command string) {
 	wg.Wait()
 }
 
+// execCmd runs custom shell command.
 func execCmd(command string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	args := strings.Fields(command)
@@ -30,6 +32,7 @@ func execCmd(command string, wg *sync.WaitGroup) {
 	}
 }
 
+// OpenBrowser opens web browser in different platforms.
 func OpenBrowser(url string) {
 	var err error
 

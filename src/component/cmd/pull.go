@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"os/exec"
 	"time"
 )
 
+// Pull fetch latest repository.
 func Pull(path string) bool {
-	var cmd *exec.Cmd
-	cmd = command("git", "pull")
+
+	cmd := command("git", "pull")
 	cmd.Dir = path
 	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
@@ -22,7 +22,7 @@ func Pull(path string) bool {
 				if breakFlag {
 					break
 				}
-				output := make([]byte, 128, 128)
+				output := make([]byte, 128, 128) //nolint:gosimple
 				_, _ = StdoutPipe.Read(output)
 				if string(output) == "fatal: destination path 'rpc' already exists and is not an empty directory." ||
 					string(output) == "exit status 128" {

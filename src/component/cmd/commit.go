@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// Commit contains commit metadata.
 type Commit struct {
 	Hash        string
 	Author      string
@@ -15,6 +16,7 @@ type Commit struct {
 	Timestamp   int
 }
 
+// String returns commit metadata as string.
 func (commit *Commit) String() string {
 	return fmt.Sprintf("\n+ Commit: %s\n| Author: %s <%s>\n| Parent: %s\n"+
 		"| Timestamp: %d\n| Subject: %s", commit.Hash, commit.Author,
@@ -22,6 +24,7 @@ func (commit *Commit) String() string {
 		commit.Subject)
 }
 
+// NewCommit returns commit metadata in Commit struct.
 func NewCommit(path, hashish string) (*Commit, error) {
 	logFormat := "%H%n%an%n%ae%n%ct%n%P%n%s%n%b"
 	commit := &Commit{}

@@ -1,25 +1,18 @@
 package cmd
 
-import (
-	"fmt"
-	"os/exec"
-)
-
+// RmCached flushes cache.
 func RmCached(path string) bool {
 
 	if path == "" {
 		return false
 	}
 
-	var cmd *exec.Cmd
-	cmd = command("git", "rm --cached -r .")
+	cmd := command("git", "rm --cached -r .")
 	cmd.Dir = path
-	out, err := cmd.Output()
+	_, err := cmd.Output()
 	if err != nil {
-		fmt.Println(err.Error())
 		return false
 	}
 
-	fmt.Println(fmt.Sprintf("%s", out))
 	return true
 }

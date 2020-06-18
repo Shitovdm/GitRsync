@@ -12,8 +12,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// ActionsController struct describes main actions section controller.
 type ActionsController struct{}
 
+// Pull describes pull repository action.
 func (ctrl ActionsController) Pull(c *gin.Context) {
 
 	var pullActionRequest model.PullActionRequest
@@ -113,9 +115,9 @@ func (ctrl ActionsController) Pull(c *gin.Context) {
 	Msg := "Source repository fetched successfully!"
 	logger.Success("ActionsController/Pull", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
-	return
 }
 
+// Push describes push repository action.
 func (ctrl ActionsController) Push(c *gin.Context) {
 
 	var pushActionRequest model.PushActionRequest
@@ -266,9 +268,9 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	Msg := "Destination repository successfully pushed!"
 	logger.Success("ActionsController/Push", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
-	return
 }
 
+// Clear describes clear repository data action.
 func (ctrl ActionsController) Clear(c *gin.Context) {
 
 	var cleanActionRequest model.CleanActionRequest
@@ -319,9 +321,9 @@ func (ctrl ActionsController) Clear(c *gin.Context) {
 	Msg := "Repository runtime data successfully cleaned!"
 	logger.Success("ActionsController/Clear", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
-	return
 }
 
+// Info describes repository info action.
 func (ctrl ActionsController) Info(c *gin.Context) {
 	var infoActionRequest model.InfoActionRequest
 	conn, err := helper.WsHandler(c.Writer, c.Request, &infoActionRequest)
@@ -358,9 +360,9 @@ func (ctrl ActionsController) Info(c *gin.Context) {
 	Msg := "Repository commits list selected successfully!"
 	logger.Success("ActionsController/Info", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, string(commitsJson))))
-	return
 }
 
+// Block describes block repository action.
 func (ctrl ActionsController) Block(c *gin.Context) {
 	var blockActionRequest model.BlockActionRequest
 	conn, err := helper.WsHandler(c.Writer, c.Request, &blockActionRequest)
@@ -374,9 +376,9 @@ func (ctrl ActionsController) Block(c *gin.Context) {
 	Msg := "Repository successfully blocked!"
 	logger.Success("ActionsController/Block", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
-	return
 }
 
+// Activate describes activate repository action.
 func (ctrl ActionsController) Activate(c *gin.Context) {
 	var activateActionRequest model.ActivateActionRequest
 	conn, err := helper.WsHandler(c.Writer, c.Request, &activateActionRequest)
@@ -390,13 +392,14 @@ func (ctrl ActionsController) Activate(c *gin.Context) {
 	Msg := "Repository successfully activated!"
 	logger.Success("ActionsController/Activate", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
-	return
 }
 
+// BuildWsJsonError returns json formatted error response.
 func BuildWsJsonError(message string) string {
 	return fmt.Sprintf(`{"status":"error","message":"%s"}`, message)
 }
 
+// BuildWsJsonSuccess returns json formatted success response.
 func BuildWsJsonSuccess(message string, data interface{}) string {
 	if data != nil {
 		return fmt.Sprintf(`{"status":"success","message":"%s","data":%v}`, message, data)

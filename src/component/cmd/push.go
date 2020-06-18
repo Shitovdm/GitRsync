@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"os/exec"
 	"time"
 )
 
+// Push updates remote repository.
 func Push(path string) bool {
 
-	var cmd *exec.Cmd
-	cmd = command("git", "push", "origin", "master:master")
+	cmd := command("git", "push", "origin", "master:master")
 	cmd.Dir = path
 	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
@@ -23,7 +22,7 @@ func Push(path string) bool {
 				if breakFlag {
 					break
 				}
-				output := make([]byte, 128, 128)
+				output := make([]byte, 128, 128) //nolint:gosimple
 				_, _ = StdoutPipe.Read(output)
 
 				if string(output)[:5] == "error" || string(output)[:5] == "fatal" || string(output)[:4] == "exit" {

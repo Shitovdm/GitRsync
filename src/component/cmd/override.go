@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// OverrideAuthor overrides commits authors.
 func OverrideAuthor(path string, CommitsOverridingConfig model.CommitsOverriding) bool {
 
 	var cmd *exec.Cmd
@@ -25,7 +26,7 @@ func OverrideAuthor(path string, CommitsOverridingConfig model.CommitsOverriding
 		return false
 	}
 
-	gitCmd := ``
+	gitCmd := `` //nolint:ineffassign
 	if CommitsOverridingConfig.OverrideCommitsWithOneAuthor {
 		username := CommitsOverridingConfig.MasterUser.Username
 		email := CommitsOverridingConfig.MasterUser.Email
@@ -51,7 +52,7 @@ func OverrideAuthor(path string, CommitsOverridingConfig model.CommitsOverriding
 				if breakFlag {
 					break
 				}
-				output := make([]byte, 256, 256)
+				output := make([]byte, 256, 256) //nolint:gosimple
 				_, _ = StdoutPipe.Read(output)
 				raw := string(output)
 				if raw == "Ref 'refs/heads/master' was rewritten" ||
@@ -72,7 +73,6 @@ func OverrideAuthor(path string, CommitsOverridingConfig model.CommitsOverriding
 
 		err = cmd.Run()
 		if err != nil {
-			fmt.Println("running error!" + err.Error())
 			breakFlag = true
 			//finish <- false
 			finish <- true

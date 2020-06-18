@@ -5,6 +5,7 @@ import (
 	"os/exec"
 )
 
+// Log returns git log.
 func Log(path string, hashish string, limit int) ([]*Commit, error) {
 
 	var cmd *exec.Cmd

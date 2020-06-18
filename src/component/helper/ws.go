@@ -8,20 +8,25 @@ import (
 	"net/http"
 )
 
+// MarshalFunc returns byte data.
 type MarshalFunc func(v interface{}) ([]byte, error)
 
+// UnmarshalFunc gets byte data.
 type UnmarshalFunc func(data []byte, v interface{}) error
 
+// format returns new UUID in v4 format.
 type format struct {
 	m  MarshalFunc
 	um UnmarshalFunc
 }
 
+// WebSocketUpgrade buffer size.
 var WebSocketUpgrade = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
 
+// WsHandler handles stream messages.
 func WsHandler(w http.ResponseWriter, r *http.Request, body interface{}) (*websocket.Conn, error) {
 	conn, err := WebSocketUpgrade.Upgrade(w, r, nil)
 	if err != nil {

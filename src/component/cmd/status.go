@@ -2,18 +2,16 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
-	"os/exec"
 )
 
+// Status returns git status.
 func Status(path string) bool {
 
 	if path == "" {
 		return false
 	}
 
-	var cmd *exec.Cmd
-	cmd = command("git", "status")
+	cmd := command("git", "status")
 	cmd.Dir = path
 	output, err := cmd.Output()
 	if err != nil {
@@ -24,7 +22,6 @@ func Status(path string) bool {
 	lineBytes = lineBytes[0 : len(lineBytes)-1]
 
 	for x := 0; x < len(lineBytes); x++ {
-		fmt.Println(string(lineBytes[x]))
 		if string(lineBytes[x]) == "nothing to commit, working tree clean" {
 			return true
 		}

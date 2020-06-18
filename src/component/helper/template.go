@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-// add returns the sum of a and b.
+// Add sums up the numbers in the pattern.
 func Add(b, a interface{}) (interface{}, error) {
 	av := reflect.ValueOf(a)
 	bv := reflect.ValueOf(b)

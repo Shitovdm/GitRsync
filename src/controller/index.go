@@ -8,8 +8,10 @@ import (
 	"net/http"
 )
 
+// IndexController struct describes index section controller.
 type IndexController struct{}
 
+// Index describes index index page.
 func (ctrl IndexController) Index(c *gin.Context) {
 
 	menu := gui.GetMenu(c)

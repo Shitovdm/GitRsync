@@ -12,16 +12,22 @@ import (
 	"time"
 )
 
+// LogsController struct describes logs section controller.
 type LogsController struct{}
 
+// Index describes logs index page.
 func (ctrl LogsController) Index(c *gin.Context) {
+
 	menu := gui.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Logs"
+
 	c.HTML(http.StatusOK, "logs/index", templateParams)
 }
 
+// Subscribe describes subscribe to log action.
 func (ctrl LogsController) Subscribe(c *gin.Context) {
+
 	var subsctibeToLogRequest model.RuntimeLogsRequest
 	conn, err := helper.WsHandler(c.Writer, c.Request, &subsctibeToLogRequest)
 	if err != nil {
@@ -50,6 +56,7 @@ func (ctrl LogsController) Subscribe(c *gin.Context) {
 	}
 }
 
+// RemoveRuntime describes remove runtime logs action.
 func (ctrl LogsController) RemoveRuntime(c *gin.Context) {
 
 	var removeRuntimeLogsRequest model.RuntimeLogsRequest
@@ -71,9 +78,9 @@ func (ctrl LogsController) RemoveRuntime(c *gin.Context) {
 	Msg := "Runtime logs successfully removed!"
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
 	logger.Info("LogsController/RemoveRuntime", Msg)
-	return
 }
 
+// RemoveAll describes remove all logs action.
 func (ctrl LogsController) RemoveAll(c *gin.Context) {
 
 	var removeAllLogsRequest model.RuntimeLogsRequest
@@ -95,5 +102,4 @@ func (ctrl LogsController) RemoveAll(c *gin.Context) {
 	Msg := "All logs successfully removed!"
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
 	logger.Info("LogsController/RemoveAll", Msg)
-	return
 }

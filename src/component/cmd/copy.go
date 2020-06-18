@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// CopyRepository copies repository.
 func CopyRepository(repositoryFullPath string, destinationRepositoryName string, sourceRepositoryName string) bool {
 
 	//	Moving .git to temporary folder.
@@ -33,19 +34,17 @@ func CopyRepository(repositoryFullPath string, destinationRepositoryName string,
 
 	//	Restore .git folder for source repository.
 	err = RestoreGitFolder(repositoryFullPath, sourceRepositoryName)
-	if err != nil {
+	if err != nil { //nolint:gosimple
 		return false
 	}
 
 	//	Remove temporary folder.
 	err = RemoveTemporaryGitFolder(repositoryFullPath)
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }
 
+// TemporaryMoveGitFolder moves git folder.
 func TemporaryMoveGitFolder(repositoryFullPath string, sourceRepositoryName string) error {
 	if !helper.IsDirExists(repositoryFullPath + "/tmp/.git") {
 		err := helper.CreateNewDir(repositoryFullPath + "/tmp/.git")
@@ -61,6 +60,7 @@ func TemporaryMoveGitFolder(repositoryFullPath string, sourceRepositoryName stri
 	return nil
 }
 
+// RestoreGitFolder restores git folder.
 func RestoreGitFolder(repositoryFullPath string, sourceRepositoryName string) error {
 
 	if !helper.IsDirExists(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git") {
@@ -77,6 +77,7 @@ func RestoreGitFolder(repositoryFullPath string, sourceRepositoryName string) er
 	return nil
 }
 
+// RemoveTemporaryGitFolder removes temp git folder.
 func RemoveTemporaryGitFolder(repositoryFullPath string) error {
 	err := os.RemoveAll(repositoryFullPath + "/tmp")
 	if err != nil {
@@ -85,6 +86,7 @@ func RemoveTemporaryGitFolder(repositoryFullPath string) error {
 	return nil
 }
 
+// RewriteGitFiles rewrites git files.
 func RewriteGitFiles(repositoryFullPath string, destinationRepositoryName string) error {
 	tmpGitFolder := repositoryFullPath + "/tmp/.git"
 	destinationGitFolder := repositoryFullPath + "/destination/" + destinationRepositoryName + "/.git"

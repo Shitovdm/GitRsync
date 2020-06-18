@@ -16,18 +16,18 @@ var RuntimeLogFile = "RuntimeLogs.json"
 var sessionID = ""
 var runtimeLogNote = ""
 
-//	Init
+// Init initializes runtime log for new session.
 func Init() {
 	sessionID = helper.GenerateUUID()
 	runtimeLogNote = ""
 }
 
-//
+// GetRuntimeLogFile gets runtime log file.
 func GetRuntimeLogFile() string {
 	return conf.BuildPlatformPath(RuntimeLogFile)
 }
 
-//
+// GetRuntimeLogs gets runtime logs.
 func GetRuntimeLogs() []model.RuntimeLog {
 	runtimeLogs := make([]model.RuntimeLog, 0)
 	err := conf.Load(RuntimeLogFile, &runtimeLogs)
@@ -42,6 +42,7 @@ func GetRuntimeLogs() []model.RuntimeLog {
 	return runtimeLogs
 }
 
+// AddRuntimeLog adds runtime log.
 func AddRuntimeLog(sessionID string, level string, category string, message string) {
 
 	runtimeLog := model.RuntimeLog{
@@ -63,6 +64,7 @@ func AddRuntimeLog(sessionID string, level string, category string, message stri
 	}
 }
 
+// ClearRuntimeLogs removes only runtime logs for current session.
 func ClearRuntimeLogs() error {
 	runtimeLogs := make([]model.RuntimeLog, 0)
 	for _, logNote := range GetRuntimeLogs() {
@@ -79,6 +81,7 @@ func ClearRuntimeLogs() error {
 	return nil
 }
 
+// ClearAllLogs removes all runtime logs.
 func ClearAllLogs() error {
 	err := ioutil.WriteFile(GetRuntimeLogFile(), []byte(``), 0644)
 	if err != nil {
@@ -87,18 +90,22 @@ func ClearAllLogs() error {
 	return nil
 }
 
+// GetSessionId gets session ID.
 func GetSessionId() string {
 	return sessionID
 }
 
+// GetRuntimeLogNote gets runtime log note.
 func GetRuntimeLogNote() string {
 	return runtimeLogNote
 }
 
+// ResetRuntimeLogNote resets runtime log note.
 func ResetRuntimeLogNote() {
 	runtimeLogNote = ""
 }
 
+// BuildRuntimeLogNote returns runtime log note.
 func BuildRuntimeLogNote(logNote model.RuntimeLog) string {
 	runtimeLog := "[" + logNote.Time + "]"
 	runtimeLog += "[" + logNote.Level + "]"
@@ -108,6 +115,7 @@ func BuildRuntimeLogNote(logNote model.RuntimeLog) string {
 	return SetLogLevel(logNote.Level, runtimeLog)
 }
 
+// SetLogLevel returns different colors by log category.
 func SetLogLevel(level string, str string) string {
 	switch level {
 	case "info":
@@ -127,6 +135,7 @@ func SetLogLevel(level string, str string) string {
 	}
 }
 
+// CountErrorsInRuntimeLog returns count of errors in runtime log.
 func CountErrorsInRuntimeLog() int {
 	count := 0
 	for _, logNote := range GetRuntimeLogs() {

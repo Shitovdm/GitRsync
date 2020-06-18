@@ -1,17 +1,16 @@
 package cmd
 
 import (
-	"os/exec"
 	"time"
 )
 
+// Clone clones repository to local.
 func Clone(path string, url string) bool {
 	if url == "" {
 		return false
 	}
 
-	var cmd *exec.Cmd
-	cmd = command("git", "clone", url)
+	cmd := command("git", "clone", url)
 	cmd.Dir = path
 	StdoutPipe, err := cmd.StderrPipe()
 	if err != nil {
@@ -26,7 +25,7 @@ func Clone(path string, url string) bool {
 				if breakFlag {
 					break
 				}
-				output := make([]byte, 128, 128)
+				output := make([]byte, 128, 128) //nolint:gosimple
 				_, _ = StdoutPipe.Read(output)
 				if string(output) == "fatal: destination path 'rpc' already exists and is not an empty directory." ||
 					string(output) == "exit status 128" {
@@ -43,7 +42,6 @@ func Clone(path string, url string) bool {
 		}
 
 		_ = cmd.Wait()
-
 		finish <- true
 	}()
 
