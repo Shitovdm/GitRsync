@@ -1,7 +1,9 @@
 package model
 
 const (
-	StateActive  = "active"
+	// StateActive describe state "active"
+	StateActive = "active"
+	// StateBlocked describe state "blocked"
 	StateBlocked = "blocked"
 )
 

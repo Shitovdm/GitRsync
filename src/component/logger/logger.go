@@ -12,7 +12,7 @@ import (
 
 const timeFormatStr = "2006-01-02 15:04:05"
 
-// Describes log file name.
+// RuntimeLogFile log file name.
 var RuntimeLogFile = "RuntimeLogs.json"
 var sessionID = ""
 var runtimeLogNote = ""
@@ -92,7 +92,7 @@ func ClearAllLogs() error {
 	return nil
 }
 
-// GetSessionId gets session ID.
+// GetSessionID gets session ID.
 func GetSessionID() string {
 	return sessionID
 }
