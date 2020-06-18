@@ -236,16 +236,21 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	Logger.Trace("ActionsController/Push", "Remote destination repository needs updating, have unpushed changes!")
 
 	//	Step 4. Rewriting commits author (if needed).
-	Logger.Trace("ActionsController/Pull", "Overriding source repository commits author...")
-	if !Cmd.OverrideAuthor(destinationRepositoryPath, "Shitov Dmitry", "shitov.dm@gmail.com") {
-		UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
-		Msg := "Error occurred while overriding destination repository commits author!"
-		Logger.Error("ActionsController/Pull", Msg)
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(Msg)))
-		Logger.Warning("ActionsController/Pull", "Fetching source repository aborted!")
-		return
+	appConfig := Configuration.GetAppConfig()
+	if appConfig.CommitsOverriding.State {
+		Logger.Trace("ActionsController/Pull", "Overriding source repository commits author...")
+		if !Cmd.OverrideAuthor(destinationRepositoryPath, appConfig.CommitsOverriding) {
+			UpdateRepositoryStatus(pushActionRequest.RepositoryUuid, STATUS_PUSHFAILED)
+			Msg := "Error occurred while overriding destination repository commits author!"
+			Logger.Error("ActionsController/Pull", Msg)
+			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(Msg)))
+			Logger.Warning("ActionsController/Pull", "Fetching source repository aborted!")
+			return
+		}
+		Logger.Trace("ActionsController/Pull", "All commits in source repository successfully overridden!")
+	} else {
+		Logger.Trace("ActionsController/Pull", "Overriding source repository commits not needed!")
 	}
-	Logger.Trace("ActionsController/Pull", "All commits in source repository successfully overridden!")
 
 	//	Step 5. Pushing destination repository to remote.
 	Logger.Trace("ActionsController/Push", "Pushing destination repository...")
@@ -302,7 +307,7 @@ func (ctrl ActionsController) Clear(c *gin.Context) {
 		err = Helpers.RemoveDir(Configuration.BuildPlatformPath(fmt.Sprintf(`\projects\%s`, repositoryConfig.Name)))
 		if err != nil {
 			UpdateRepositoryStatus(cleanActionRequest.RepositoryUuid, STATUS_CLEANFAILED)
-			ErrorMsg := "Error deleting repository folder!"
+			ErrorMsg := "Error deleting project folder! Check if the folder is used by other programs and try again."
 			Logger.Error("ActionsController/Clear", ErrorMsg)
 			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
 			Logger.Warning("ActionsController/Clear", "Repository runtime data cleaning aborted!")
@@ -341,6 +346,7 @@ func (ctrl ActionsController) Info(c *gin.Context) {
 	commitsLimit := Configuration.GetAppConfigField("Common", "RecentCommitsShown")
 	commits, err := Cmd.Log(destinationRepositoryPath, "", int(commitsLimit.Int()))
 	if err != nil {
+		UpdateRepositoryStatus(infoActionRequest.RepositoryUuid, STATUS_FAILED)
 		ErrorMsg := fmt.Sprintf("Unable to select commits for repository %s!", destinationRepositoryName)
 		Logger.Error("ActionsController/Info", ErrorMsg)
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(ErrorMsg)))
@@ -349,7 +355,6 @@ func (ctrl ActionsController) Info(c *gin.Context) {
 	}
 
 	commitsJson, _ := json.Marshal(commits)
-	fmt.Println(string(commitsJson))
 	Msg := "Repository commits list selected successfully!"
 	Logger.Success("ActionsController/Info", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, string(commitsJson))))

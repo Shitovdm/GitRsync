@@ -136,6 +136,43 @@ body {
     margin: 0px 20px;
 }
 
+.settings-item input[type=checkbox] {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+.table-committers-rules {
+    min-width: 460px;
+    border-collapse: collapse;
+    border: 1px solid #6a6a6a;
+}
+
+.table-committers-rules tr {
+    height: 59px;
+}
+
+.table-committers-rules tr td {
+    padding: 5px 20px;
+    border: 1px solid #6a6a6a;
+    cursor: pointer;
+}
+
+.table-committers-rules tr:last-child td {
+    padding: 15px 15px;
+}
+
+.btn-add-committer-rule,
+.btn-remove-committer-rule {
+    text-align: center;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.noborder {
+    border: none !important;
+}
+
 @-webkit-keyframes move {
     0% {
         width: 0;
