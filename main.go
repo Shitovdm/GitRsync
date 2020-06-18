@@ -19,18 +19,19 @@ func init() {
 }
 
 func main() {
-	go app.Serve()
+	app.Serve()
+	//go app.Serve()
 	//	It`s hiding command prompt during running app (only windows).
-	prompt.ChangeConsoleVisibility(false)
-	systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
+	//prompt.ChangeConsoleVisibility(false)
+	//systray.RunWithAppWindow("GitRsync", 1024, 768, ready, exit)
 }
 
-func onExit() {
+func exit() {
 	now := time.Now()
 	_ = ioutil.WriteFile(fmt.Sprintf(`./tmp/%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
 }
 
-func onReady() {
+func ready() {
 	systray.SetTemplateIcon(icon.Data, icon.Data)
 	systray.SetTitle("GitRsync")
 	systray.SetTooltip("GitRsync")
@@ -75,7 +76,7 @@ func onReady() {
 			fmt.Println("Restarting application...")
 			systray.Quit()
 			time.Sleep(2 * time.Second)
-			systray.Run(onReady, onExit)
+			systray.Run(ready, exit)
 			//return
 		case <-mQuit.ClickedCh:
 			fmt.Println("Closing application...")

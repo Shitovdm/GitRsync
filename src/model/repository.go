@@ -6,11 +6,11 @@ const (
 )
 
 type RepositoryConfig struct {
-	Uuid                    string `json:"uuid"`
+	UUID                    string `json:"uuid"`
 	Name                    string `json:"name"`
-	SourcePlatformUuid      string `json:"spu"`
+	SourcePlatformUUID      string `json:"spu"`
 	SourcePlatformPath      string `json:"spp"`
-	DestinationPlatformUuid string `json:"dpu"`
+	DestinationPlatformUUID string `json:"dpu"`
 	DestinationPlatformPath string `json:"dpp"`
 	Status                  string `json:"status"`
 	State                   string `json:"state"`
@@ -19,21 +19,21 @@ type RepositoryConfig struct {
 
 type AddRepositoryRequest struct {
 	Name                    string `json:"name"`
-	SourcePlatformUuid      string `json:"spu"`
+	SourcePlatformUUID      string `json:"spu"`
 	SourcePlatformPath      string `json:"spp"`
-	DestinationPlatformUuid string `json:"dpu"`
+	DestinationPlatformUUID string `json:"dpu"`
 	DestinationPlatformPath string `json:"dpp"`
 }
 
 type EditRepositoryRequest struct {
-	Uuid                    string `json:"uuid"`
+	UUID                    string `json:"uuid"`
 	Name                    string `json:"name"`
-	SourcePlatformUuid      string `json:"spu"`
+	SourcePlatformUUID      string `json:"spu"`
 	SourcePlatformPath      string `json:"spp"`
-	DestinationPlatformUuid string `json:"dpu"`
+	DestinationPlatformUUID string `json:"dpu"`
 	DestinationPlatformPath string `json:"dpp"`
 }
 
 type RemoveRepositoryRequest struct {
-	Uuid string `json:"uuid"`
+	UUID string `json:"uuid"`
 }

@@ -16,15 +16,18 @@ var RuntimeLogFile = "RuntimeLogs.json"
 var sessionID = ""
 var runtimeLogNote = ""
 
+//	Init
 func Init() {
-	sessionID = helper.GenerateUuid()
+	sessionID = helper.GenerateUUID()
 	runtimeLogNote = ""
 }
 
+//
 func GetRuntimeLogFile() string {
 	return conf.BuildPlatformPath(RuntimeLogFile)
 }
 
+//
 func GetRuntimeLogs() []model.RuntimeLog {
 	runtimeLogs := make([]model.RuntimeLog, 0)
 	err := conf.Load(RuntimeLogFile, &runtimeLogs)

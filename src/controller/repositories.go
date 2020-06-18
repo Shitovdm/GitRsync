@@ -52,14 +52,14 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 		return
 	}
 
-	newRepositoryUuid, _ := uuid.NewV4()
+	newRepositoryUUID, _ := uuid.NewV4()
 	repositories := conf.GetRepositoriesConfig()
 	repositories = append(repositories, model.RepositoryConfig{
-		Uuid:                    newRepositoryUuid.String(),
+		UUID:                    newRepositoryUUID.String(),
 		Name:                    addRepositoryRequest.Name,
-		SourcePlatformUuid:      addRepositoryRequest.SourcePlatformUuid,
+		SourcePlatformUUID:      addRepositoryRequest.SourcePlatformUUID,
 		SourcePlatformPath:      addRepositoryRequest.SourcePlatformPath,
-		DestinationPlatformUuid: addRepositoryRequest.DestinationPlatformUuid,
+		DestinationPlatformUUID: addRepositoryRequest.DestinationPlatformUUID,
 		DestinationPlatformPath: addRepositoryRequest.DestinationPlatformPath,
 		Status:                  StatusInitiated,
 		State:                   "active",
@@ -87,13 +87,13 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 	oldRepositoriesList := conf.GetRepositoriesConfig()
 	newRepositoriesList := make([]model.RepositoryConfig, 0)
 	for _, repository := range oldRepositoriesList {
-		if repository.Uuid == editRepositoryRequest.Uuid {
+		if repository.UUID == editRepositoryRequest.UUID {
 			newRepositoriesList = append(newRepositoriesList, model.RepositoryConfig{
-				Uuid:                    repository.Uuid,
+				UUID:                    repository.UUID,
 				Name:                    editRepositoryRequest.Name,
-				SourcePlatformUuid:      editRepositoryRequest.SourcePlatformUuid,
+				SourcePlatformUUID:      editRepositoryRequest.SourcePlatformUUID,
 				SourcePlatformPath:      editRepositoryRequest.SourcePlatformPath,
-				DestinationPlatformUuid: editRepositoryRequest.DestinationPlatformUuid,
+				DestinationPlatformUUID: editRepositoryRequest.DestinationPlatformUUID,
 				DestinationPlatformPath: editRepositoryRequest.DestinationPlatformPath,
 				Status:                  repository.Status,
 				State:                   repository.State,
@@ -126,7 +126,7 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 	oldRepositoriesList := conf.GetRepositoriesConfig()
 	newRepositoriesList := make([]model.RepositoryConfig, 0)
 	for _, repository := range oldRepositoriesList {
-		if repository.Uuid != removeRepositoryRequest.Uuid {
+		if repository.UUID != removeRepositoryRequest.UUID {
 			newRepositoriesList = append(newRepositoriesList, repository)
 		} else {
 			removedRepositoryName = repository.Name
@@ -146,7 +146,7 @@ func UpdateRepositoryStatus(uuid string, status string) {
 
 	oldRepositoriesList := conf.GetRepositoriesConfig()
 	for i, repository := range oldRepositoriesList {
-		if repository.Uuid == uuid {
+		if repository.UUID == uuid {
 			oldRepositoriesList[i].Status = status
 			if status == StatusPulled || status == StatusPushed || status == StatusSynchronized {
 				t := time.Now()
@@ -167,7 +167,7 @@ func UpdateRepositoryState(uuid string, state string) {
 
 	oldRepositoriesList := conf.GetRepositoriesConfig()
 	for i, repository := range oldRepositoriesList {
-		if repository.Uuid == uuid {
+		if repository.UUID == uuid {
 			oldRepositoriesList[i].State = state
 			t := time.Now()
 			oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)

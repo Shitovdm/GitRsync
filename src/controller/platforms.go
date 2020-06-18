@@ -34,7 +34,7 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 	newPlatformUuid, _ := uuid.NewV4()
 	platforms := conf.GetPlatformsConfig()
 	platforms = append(platforms, model.PlatformConfig{
-		Uuid:     newPlatformUuid.String(),
+		UUID:     newPlatformUuid.String(),
 		Name:     addPlatformRequest.Name,
 		Address:  addPlatformRequest.Address,
 		Username: addPlatformRequest.Username,
@@ -62,9 +62,9 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 	oldPlatformsList := conf.GetPlatformsConfig()
 	newPlatformsList := make([]model.PlatformConfig, 0)
 	for _, platform := range oldPlatformsList {
-		if platform.Uuid == editPlatformRequest.Uuid {
+		if platform.UUID == editPlatformRequest.UUID {
 			newPlatformsList = append(newPlatformsList, model.PlatformConfig{
-				Uuid:     platform.Uuid,
+				UUID:     platform.UUID,
 				Name:     editPlatformRequest.Name,
 				Address:  editPlatformRequest.Address,
 				Username: editPlatformRequest.Username,
@@ -97,7 +97,7 @@ func (ctrl PlatformsController) Remove(c *gin.Context) {
 	oldPlatformsList := conf.GetPlatformsConfig()
 	newPlatformsList := make([]model.PlatformConfig, 0)
 	for _, platform := range oldPlatformsList {
-		if platform.Uuid != removePlatformRequest.Uuid {
+		if platform.UUID != removePlatformRequest.UUID {
 			newPlatformsList = append(newPlatformsList, platform)
 		} else {
 			removedPlatformName = platform.Name

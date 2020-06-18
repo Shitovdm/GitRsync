@@ -1,7 +1,7 @@
 package model
 
 type PlatformConfig struct {
-	Uuid     string `json:"uuid"`
+	UUID     string `json:"uuid"`
 	Name     string `json:"name"`
 	Address  string `json:"address"`
 	Username string `json:"username"`
@@ -16,7 +16,7 @@ type AddPlatformRequest struct {
 }
 
 type EditPlatformRequest struct {
-	Uuid     string `json:"uuid"`
+	UUID     string `json:"uuid"`
 	Address  string `json:"address"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
@@ -24,5 +24,5 @@ type EditPlatformRequest struct {
 }
 
 type RemovePlatformRequest struct {
-	Uuid string `json:"uuid"`
+	UUID string `json:"uuid"`
 }
