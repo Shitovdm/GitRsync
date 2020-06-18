@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/Shitovdm/GitRsync/public/assets/src/icon"
-	"github.com/Shitovdm/GitRsync/src/Components/cmd/prompt"
 	"github.com/Shitovdm/GitRsync/src/application"
+	"github.com/Shitovdm/GitRsync/src/components/cmd/prompt"
 	"github.com/Shitovdm/GitRsync/src/components/configuration"
 	"github.com/Shitovdm/GitRsync/src/components/helpers"
 	"github.com/Shitovdm/GitRsync/src/components/logger"
