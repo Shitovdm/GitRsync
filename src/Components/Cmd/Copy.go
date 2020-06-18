@@ -1,7 +1,7 @@
 package Cmd
 
 import (
-	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
+	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
 	"os"
 )
 

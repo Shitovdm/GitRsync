@@ -2,9 +2,9 @@ package Application
 
 import (
 	rice "github.com/GeertJohan/go.rice"
-	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
-	"github.com/Shitovdm/git-rsync/src/Components/Logger"
-	"github.com/Shitovdm/git-rsync/src/Controllers"
+	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
+	"github.com/Shitovdm/GitRsync/src/Components/Logger"
+	"github.com/Shitovdm/GitRsync/src/Controllers"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/foolin/goview/supports/gorice"

@@ -1,7 +1,7 @@
 package Controllers
 
 import (
-	"github.com/Shitovdm/git-rsync/src/Components/Interface"
+	"github.com/Shitovdm/GitRsync/src/Components/Interface"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

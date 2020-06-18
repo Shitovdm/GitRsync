@@ -3,11 +3,11 @@ package Controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Shitovdm/git-rsync/src/Components/Cmd"
-	"github.com/Shitovdm/git-rsync/src/Components/Configuration"
-	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
-	"github.com/Shitovdm/git-rsync/src/Components/Logger"
-	"github.com/Shitovdm/git-rsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/Components/Cmd"
+	"github.com/Shitovdm/GitRsync/src/Components/Configuration"
+	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
+	"github.com/Shitovdm/GitRsync/src/Components/Logger"
+	"github.com/Shitovdm/GitRsync/src/Models"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )

@@ -2,10 +2,10 @@ package Controllers
 
 import (
 	"fmt"
-	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
-	"github.com/Shitovdm/git-rsync/src/Components/Interface"
-	"github.com/Shitovdm/git-rsync/src/Components/Logger"
-	"github.com/Shitovdm/git-rsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
+	"github.com/Shitovdm/GitRsync/src/Components/Interface"
+	"github.com/Shitovdm/GitRsync/src/Components/Logger"
+	"github.com/Shitovdm/GitRsync/src/Models"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"

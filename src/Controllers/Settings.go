@@ -2,11 +2,11 @@ package Controllers
 
 import (
 	"encoding/json"
-	"github.com/Shitovdm/git-rsync/src/Components/Configuration"
-	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
-	"github.com/Shitovdm/git-rsync/src/Components/Interface"
-	"github.com/Shitovdm/git-rsync/src/Components/Logger"
-	"github.com/Shitovdm/git-rsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/Components/Configuration"
+	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
+	"github.com/Shitovdm/GitRsync/src/Components/Interface"
+	"github.com/Shitovdm/GitRsync/src/Components/Logger"
+	"github.com/Shitovdm/GitRsync/src/Models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"reflect"

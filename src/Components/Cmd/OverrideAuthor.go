@@ -2,7 +2,7 @@ package Cmd
 
 import (
 	"fmt"
-	"github.com/Shitovdm/git-rsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/Models"
 	"os/exec"
 	"time"
 )

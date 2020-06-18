@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/Shitovdm/git-rsync/public/assets/src/icon"
-	"github.com/Shitovdm/git-rsync/src/Application"
-	"github.com/Shitovdm/git-rsync/src/Components/Cmd/Prompt"
-	"github.com/Shitovdm/git-rsync/src/Components/Configuration"
-	"github.com/Shitovdm/git-rsync/src/Components/Helpers"
-	"github.com/Shitovdm/git-rsync/src/Components/Logger"
+	"github.com/Shitovdm/GitRsync/public/assets/src/icon"
+	"github.com/Shitovdm/GitRsync/src/Application"
+	"github.com/Shitovdm/GitRsync/src/Components/Cmd/Prompt"
+	"github.com/Shitovdm/GitRsync/src/Components/Configuration"
+	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
+	"github.com/Shitovdm/GitRsync/src/Components/Logger"
 	"github.com/getlantern/systray"
 	"io/ioutil"
 	"time"
@@ -20,25 +20,6 @@ func init() {
 
 func main() {
 
-	/*section := "Common"
-	field := "RecentCommitsShown"
-	value := "12"
-
-	appConfig := Configuration.GetAppConfig()
-	fmt.Println(appConfig)
-
-	reflectValueTypeNeeded := reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Type()
-	reflectValue := reflect.ValueOf(value)
-
-
-
-	fmt.Println("reflectValueTypeNeeded: ", reflectValueTypeNeeded)
-	fmt.Println("reflectValue: ", reflectValue)
-	fmt.Println("reflectValueType: ", reflectValue.Type())
-
-
-	reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Set(reflectValue)
-	fmt.Println(appConfig)*/
 	Application.StartServer()
 
 	//go Application.StartServer()
