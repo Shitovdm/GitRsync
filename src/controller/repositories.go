@@ -14,18 +14,18 @@ import (
 )
 
 const (
-	StatusInitiated    = "initiated"
-	StatusPendingPull  = "pending_pull"
-	StatusPulled       = "pulled"
-	StatusPullFailed   = "pull_failed"
-	StatusPendingPush  = "pending_push"
-	StatusPushed       = "pushed"
-	StatusPushFailed   = "push_failed"
-	StatusPendingClean = "pending_clear"
-	StatusCleaned      = "cleared"
-	StatusCleanFailed  = "clear_failed"
-	StatusSynchronized = "synced"
-	StatusFailed       = "failed"
+	StatusInitiated    = "initiated"     // StatusInitiated describe status "initiated"
+	StatusPendingPull  = "pending_pull"  // StatusPendingPull describe status "pending_pull"
+	StatusPulled       = "pulled"        // StatusPulled describe status "pulled"
+	StatusPullFailed   = "pull_failed"   // StatusPullFailed describe status "pull_failed"
+	StatusPendingPush  = "pending_push"  // StatusPendingPush describe status "pending_push"
+	StatusPushed       = "pushed"        // StatusPushed describe status "pushed"
+	StatusPushFailed   = "push_failed"   // StatusPushFailed describe status "push_failed"
+	StatusPendingClean = "pending_clear" // StatusPendingClean describe status "pending_clear"
+	StatusCleaned      = "cleared"       // StatusCleaned describe status "cleared"
+	StatusCleanFailed  = "clear_failed"  // StatusCleanFailed describe status "clear_failed"
+	StatusSynchronized = "synced"        // StatusSynchronized describe status "synced"
+	StatusFailed       = "failed"        // StatusFailed describe status "failed"
 )
 
 var (

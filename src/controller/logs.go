@@ -40,7 +40,7 @@ func (ctrl LogsController) Subscribe(c *gin.Context) {
 		_ = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("\x1b[92m%s\x1b[0m", " GitRsync (C) Shitov Dmitry")))
 		for _, logNote := range logger.GetRuntimeLogs() {
 			//	Only fot current session.
-			if logNote.SessionID == logger.GetSessionId() {
+			if logNote.SessionID == logger.GetSessionID() {
 				_ = conn.WriteMessage(websocket.TextMessage, []byte(logger.BuildRuntimeLogNote(logNote)))
 			}
 		}
@@ -69,14 +69,14 @@ func (ctrl LogsController) RemoveRuntime(c *gin.Context) {
 
 	err = logger.ClearRuntimeLogs()
 	if err != nil {
-		Msg := fmt.Sprintf("%s", err.Error())
+		Msg := fmt.Sprintf("Error while cleaning runtime logs! %s", err.Error())
 		logger.Error("LogsController/RemoveRuntime", Msg)
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(Msg)))
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONError(Msg)))
 		return
 	}
 
 	Msg := "Runtime logs successfully removed!"
-	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONSuccess(Msg, nil)))
 	logger.Info("LogsController/RemoveRuntime", Msg)
 }
 
@@ -93,13 +93,13 @@ func (ctrl LogsController) RemoveAll(c *gin.Context) {
 
 	err = logger.ClearAllLogs()
 	if err != nil {
-		Msg := fmt.Sprintf("%s", err.Error())
+		Msg := fmt.Sprintf("Error while cleaning all logs! %s", err.Error())
 		logger.Error("LogsController/RemoveAll", Msg)
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonError(Msg)))
+		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONError(Msg)))
 		return
 	}
 
 	Msg := "All logs successfully removed!"
-	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJsonSuccess(Msg, nil)))
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONSuccess(Msg, nil)))
 	logger.Info("LogsController/RemoveAll", Msg)
 }

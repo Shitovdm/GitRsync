@@ -48,7 +48,7 @@ func RemoveDir(path string) error {
 	return nil
 }
 
-// RemoveDir returns is file exists flag.
+// IsFileExists returns is file exists flag.
 func IsFileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {

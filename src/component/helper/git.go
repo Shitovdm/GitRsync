@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/speedata/gogit"
 	"log"
-	"os"
 	"os/exec"
 	"regexp"
 )
@@ -25,15 +24,6 @@ func isEqual(c1, c2 *gogit.Commit) bool {
 		c1.Committer.When == c2.Committer.When
 }
 
-// logCommit returns commit log.
-func logCommit(ci *gogit.Commit) {
-	log.Printf("commit %s\n", ci.Oid)
-	log.Printf("Author        : %s <%s>\n", ci.Author.Name, ci.Author.Email)
-	log.Printf("Date          : %s\n", ci.Author.When)
-	log.Printf("Committer     : %s <%s>\n", ci.Committer.Name, ci.Committer.Email)
-	log.Printf("Committer Date: %s\n", ci.Committer.When)
-}
-
 // getCommitChainLength returns commit chain len.
 func getCommitChainLength(ci *gogit.Commit, n int) int {
 	for i := 1; i < n; i++ {
@@ -44,34 +34,6 @@ func getCommitChainLength(ci *gogit.Commit, n int) int {
 	}
 
 	return n
-}
-
-// runGitGc runs git GC.
-func runGitGc() {
-	exec.Command("git", "gc")
-	return
-}
-
-// OpenRepository opens repository path.
-func OpenRepository(path string) (*Repo, error) {
-
-	err := os.Chdir(path)
-	if err != nil {
-		return nil, err
-	}
-
-	// Run git gc before running glt as speedata/gogit does not implement reading
-	// from Deltas
-	runGitGc()
-
-	repository, err := gogit.OpenRepository(path + "/.git")
-	if err != nil {
-		return nil, err
-	}
-
-	return &Repo{
-		repository: repository,
-	}, nil
 }
 
 // GetLog returns log.
@@ -115,13 +77,11 @@ func (r *Repo) IsDirty() bool {
 func (r *Repo) SaveCommitIfModified(commit *gogit.Commit) (string, error) {
 	original, err := r.repository.LookupCommit(commit.Oid)
 	if err != nil {
-		return "", fmt.Errorf("Error finding matching commit: %s", err)
+		return "", fmt.Errorf("Error finding matching commit: %s ", err)
 	}
 
 	if !isEqual(commit, original) {
 		return r.SaveCommit(commit)
-	} else {
-		log.Println("Before and after are equal, not saving.")
 	}
 
 	return "", nil
@@ -163,8 +123,8 @@ func (r *Repo) SaveCommit(commit *gogit.Commit) (string, error) {
 	}
 
 	if len(match) == 0 {
-		return "", fmt.Errorf("Git rewrite failed due to no change")
-	} else {
-		return match[1], nil
+		return "", fmt.Errorf("Git rewrite failed due to no change ")
 	}
+
+	return match[1], nil
 }

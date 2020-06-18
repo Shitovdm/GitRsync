@@ -162,7 +162,7 @@ func GetApplicationName() string {
 	return applicationName
 }
 
-// GetMenu gets menu items.
+// GetAppConfig gets app config model.
 func GetAppConfig() *model.AppConfig {
 	var appConfig model.AppConfig
 	err := Load("AppConfig.json", &appConfig)

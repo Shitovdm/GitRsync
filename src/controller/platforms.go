@@ -17,10 +17,12 @@ type PlatformsController struct{}
 
 // Index describes platforms index page.
 func (ctrl PlatformsController) Index(c *gin.Context) {
+
 	menu := gui.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Platforms"
 	templateParams["platforms"], _ = conf.GetPlatformsConfigData()
+
 	c.HTML(http.StatusOK, "platforms/index", templateParams)
 }
 
@@ -34,10 +36,10 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 		return
 	}
 
-	newPlatformUuid, _ := uuid.NewV4()
+	newPlatformUUID, _ := uuid.NewV4()
 	platforms := conf.GetPlatformsConfig()
 	platforms = append(platforms, model.PlatformConfig{
-		UUID:     newPlatformUuid.String(),
+		UUID:     newPlatformUUID.String(),
 		Name:     addPlatformRequest.Name,
 		Address:  addPlatformRequest.Address,
 		Username: addPlatformRequest.Username,

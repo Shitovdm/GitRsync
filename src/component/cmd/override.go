@@ -88,6 +88,7 @@ func OverrideAuthor(path string, CommitsOverridingConfig model.CommitsOverriding
 	return result
 }
 
+// BuildFilterBranchExpression returns filter branch expression.
 func BuildFilterBranchExpression(committersRules []model.CommittersRule) string {
 	resultExpression := `git filter-branch --env-filter '`
 	for _, rule := range committersRules {
