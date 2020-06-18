@@ -1,6 +1,6 @@
 // +build windows
 
-package Prompt
+package prompt
 
 import "syscall"
 

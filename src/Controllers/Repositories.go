@@ -1,12 +1,12 @@
-package Controllers
+package controllers
 
 import (
 	"fmt"
-	"github.com/Shitovdm/GitRsync/src/Components/Configuration"
-	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
-	"github.com/Shitovdm/GitRsync/src/Components/Interface"
-	"github.com/Shitovdm/GitRsync/src/Components/Logger"
-	"github.com/Shitovdm/GitRsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/components/configuration"
+	"github.com/Shitovdm/GitRsync/src/components/helpers"
+	"github.com/Shitovdm/GitRsync/src/components/interface"
+	"github.com/Shitovdm/GitRsync/src/components/logger"
+	"github.com/Shitovdm/GitRsync/src/models"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"net/http"
@@ -38,23 +38,23 @@ func (ctrl RepositoriesController) Index(c *gin.Context) {
 	menu := Interface.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Repositories"
-	templateParams["repositories"], _ = Configuration.GetRepositoriesConfigData()
-	templateParams["platforms"], _ = Configuration.GetPlatformsConfigData()
+	templateParams["repositories"], _ = configuration.GetRepositoriesConfigData()
+	templateParams["platforms"], _ = configuration.GetPlatformsConfigData()
 	c.HTML(http.StatusOK, "repositories/index", templateParams)
 }
 
 func (ctrl RepositoriesController) Add(c *gin.Context) {
 
-	var addRepositoryRequest Models.AddRepositoryRequest
-	_, err := Helpers.WsHandler(c.Writer, c.Request, &addRepositoryRequest)
+	var addRepositoryRequest models.AddRepositoryRequest
+	_, err := helpers.WsHandler(c.Writer, c.Request, &addRepositoryRequest)
 	if err != nil {
-		Logger.Error("RepositoriesController/Add", err.Error())
+		logger.Error("RepositoriesController/Add", err.Error())
 		return
 	}
 
 	newRepositoryUuid, _ := uuid.NewV4()
-	repositories := Configuration.GetRepositoriesConfig()
-	repositories = append(repositories, Models.RepositoryConfig{
+	repositories := configuration.GetRepositoriesConfig()
+	repositories = append(repositories, models.RepositoryConfig{
 		Uuid:                    newRepositoryUuid.String(),
 		Name:                    addRepositoryRequest.Name,
 		SourcePlatformUuid:      addRepositoryRequest.SourcePlatformUuid,
@@ -66,29 +66,29 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 		UpdatedAt:               "",
 	})
 
-	err = Configuration.SaveRepositoriesConfig(repositories)
+	err = configuration.SaveRepositoriesConfig(repositories)
 	if err != nil {
-		Logger.Error("RepositoriesController/Add", err.Error())
+		logger.Error("RepositoriesController/Add", err.Error())
 	}
 
-	Logger.Info("RepositoriesController/Add", fmt.Sprintf("New repository with name %s added successfully!", addRepositoryRequest.Name))
+	logger.Info("RepositoriesController/Add", fmt.Sprintf("New repository with name %s added successfully!", addRepositoryRequest.Name))
 	return
 }
 
 func (ctrl RepositoriesController) Edit(c *gin.Context) {
 
-	var editRepositoryRequest Models.EditRepositoryRequest
-	_, err := Helpers.WsHandler(c.Writer, c.Request, &editRepositoryRequest)
+	var editRepositoryRequest models.EditRepositoryRequest
+	_, err := helpers.WsHandler(c.Writer, c.Request, &editRepositoryRequest)
 	if err != nil {
-		Logger.Error("RepositoriesController/Edit", err.Error())
+		logger.Error("RepositoriesController/Edit", err.Error())
 		return
 	}
 
-	oldRepositoriesList := Configuration.GetRepositoriesConfig()
-	newRepositoriesList := make([]Models.RepositoryConfig, 0)
+	oldRepositoriesList := configuration.GetRepositoriesConfig()
+	newRepositoriesList := make([]models.RepositoryConfig, 0)
 	for _, repository := range oldRepositoriesList {
 		if repository.Uuid == editRepositoryRequest.Uuid {
-			newRepositoriesList = append(newRepositoriesList, Models.RepositoryConfig{
+			newRepositoriesList = append(newRepositoriesList, models.RepositoryConfig{
 				Uuid:                    repository.Uuid,
 				Name:                    editRepositoryRequest.Name,
 				SourcePlatformUuid:      editRepositoryRequest.SourcePlatformUuid,
@@ -104,27 +104,27 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 		newRepositoriesList = append(newRepositoriesList, repository)
 	}
 
-	err = Configuration.SaveRepositoriesConfig(newRepositoriesList)
+	err = configuration.SaveRepositoriesConfig(newRepositoriesList)
 	if err != nil {
-		Logger.Error("RepositoriesController/Edit", err.Error())
+		logger.Error("RepositoriesController/Edit", err.Error())
 	}
 
-	Logger.Info("RepositoriesController/Edit", fmt.Sprintf("Repository with name %s successfully edited!", editRepositoryRequest.Name))
+	logger.Info("RepositoriesController/Edit", fmt.Sprintf("Repository with name %s successfully edited!", editRepositoryRequest.Name))
 	return
 }
 
 func (ctrl RepositoriesController) Remove(c *gin.Context) {
 
-	var removeRepositoryRequest Models.RemoveRepositoryRequest
-	_, err := Helpers.WsHandler(c.Writer, c.Request, &removeRepositoryRequest)
+	var removeRepositoryRequest models.RemoveRepositoryRequest
+	_, err := helpers.WsHandler(c.Writer, c.Request, &removeRepositoryRequest)
 	if err != nil {
-		Logger.Error("RepositoriesController/Remove", err.Error())
+		logger.Error("RepositoriesController/Remove", err.Error())
 		return
 	}
 
 	removedRepositoryName := ""
-	oldRepositoriesList := Configuration.GetRepositoriesConfig()
-	newRepositoriesList := make([]Models.RepositoryConfig, 0)
+	oldRepositoriesList := configuration.GetRepositoriesConfig()
+	newRepositoriesList := make([]models.RepositoryConfig, 0)
 	for _, repository := range oldRepositoriesList {
 		if repository.Uuid != removeRepositoryRequest.Uuid {
 			newRepositoriesList = append(newRepositoriesList, repository)
@@ -133,18 +133,18 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 		}
 	}
 
-	err = Configuration.SaveRepositoriesConfig(newRepositoriesList)
+	err = configuration.SaveRepositoriesConfig(newRepositoriesList)
 	if err != nil {
-		Logger.Error("RepositoriesController/Remove", err.Error())
+		logger.Error("RepositoriesController/Remove", err.Error())
 	}
 
-	Logger.Info("RepositoriesController/Remove", fmt.Sprintf("Repository with name %s successfully removed!", removedRepositoryName))
+	logger.Info("RepositoriesController/Remove", fmt.Sprintf("Repository with name %s successfully removed!", removedRepositoryName))
 	return
 }
 
 func UpdateRepositoryStatus(uuid string, status string) {
 
-	oldRepositoriesList := Configuration.GetRepositoriesConfig()
+	oldRepositoriesList := configuration.GetRepositoriesConfig()
 	for i, repository := range oldRepositoriesList {
 		if repository.Uuid == uuid {
 			oldRepositoriesList[i].Status = status
@@ -155,7 +155,7 @@ func UpdateRepositoryStatus(uuid string, status string) {
 		}
 	}
 
-	err := Configuration.SaveRepositoriesConfig(oldRepositoriesList)
+	err := configuration.SaveRepositoriesConfig(oldRepositoriesList)
 	if err != nil {
 		return
 	}
@@ -165,7 +165,7 @@ func UpdateRepositoryStatus(uuid string, status string) {
 
 func UpdateRepositoryState(uuid string, state string) {
 
-	oldRepositoriesList := Configuration.GetRepositoriesConfig()
+	oldRepositoriesList := configuration.GetRepositoriesConfig()
 	for i, repository := range oldRepositoriesList {
 		if repository.Uuid == uuid {
 			oldRepositoriesList[i].State = state
@@ -174,7 +174,7 @@ func UpdateRepositoryState(uuid string, state string) {
 		}
 	}
 
-	err := Configuration.SaveRepositoriesConfig(oldRepositoriesList)
+	err := configuration.SaveRepositoriesConfig(oldRepositoriesList)
 	if err != nil {
 		return
 	}

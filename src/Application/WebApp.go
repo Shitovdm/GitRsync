@@ -1,10 +1,10 @@
-package Application
+package application
 
 import (
 	rice "github.com/GeertJohan/go.rice"
-	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
-	"github.com/Shitovdm/GitRsync/src/Components/Logger"
-	"github.com/Shitovdm/GitRsync/src/Controllers"
+	"github.com/Shitovdm/GitRsync/src/components/helpers"
+	"github.com/Shitovdm/GitRsync/src/components/logger"
+	"github.com/Shitovdm/GitRsync/src/controllers"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/foolin/goview/supports/gorice"
@@ -27,14 +27,14 @@ func StartServer() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	Helpers.OpenBrowser("http://localhost:8888")
+	helpers.OpenBrowser("http://localhost:8888")
 
 	g.Go(func() error {
 		return serverWeb.ListenAndServe()
 	})
 
 	if err := g.Wait(); err != nil {
-		Logger.Error("StartServer", err.Error())
+		logger.Error("StartServer", err.Error())
 	}
 }
 
@@ -48,7 +48,7 @@ func WebRouter() http.Handler {
 		Partials:  []string{},
 		Funcs: template.FuncMap{
 			"replace": strings.Replace,
-			"add": Helpers.Add,
+			"add":     helpers.Add,
 		},
 		DisableCache: true,
 	})
@@ -64,12 +64,12 @@ func WebRouter() http.Handler {
 		staticFileServer.ServeHTTP(context.Writer, context.Request)
 	})
 
-	indexController := new(Controllers.IndexController)
+	indexController := new(controllers.IndexController)
 	e.GET("/", indexController.Index)
 
 	actions := e.Group("/actions")
 	{
-		actionsController := new(Controllers.ActionsController)
+		actionsController := new(controllers.ActionsController)
 		actions.GET("pull/", actionsController.Pull)
 		actions.GET("push/", actionsController.Push)
 		actions.GET("clear/", actionsController.Clear)
@@ -80,7 +80,7 @@ func WebRouter() http.Handler {
 
 	repositories := e.Group("/repositories")
 	{
-		repositoriesController := new(Controllers.RepositoriesController)
+		repositoriesController := new(controllers.RepositoriesController)
 		repositories.GET("/", repositoriesController.Index)
 		repositories.GET("add/", repositoriesController.Add)
 		repositories.GET("edit/", repositoriesController.Edit)
@@ -89,7 +89,7 @@ func WebRouter() http.Handler {
 
 	platforms := e.Group("/platforms")
 	{
-		platformsController := new(Controllers.PlatformsController)
+		platformsController := new(controllers.PlatformsController)
 		platforms.GET("/", platformsController.Index)
 		platforms.GET("add/", platformsController.Add)
 		platforms.GET("edit/", platformsController.Edit)
@@ -98,7 +98,7 @@ func WebRouter() http.Handler {
 
 	logs := e.Group("/logs")
 	{
-		logsController := new(Controllers.LogsController)
+		logsController := new(controllers.LogsController)
 		logs.GET("/", logsController.Index)
 		logs.GET("subscribe/", logsController.Subscribe)
 		logs.GET("remove/runtime/", logsController.RemoveRuntime)
@@ -107,20 +107,20 @@ func WebRouter() http.Handler {
 
 	settings := e.Group("/settings")
 	{
-		settingsController := new(Controllers.SettingsController)
+		settingsController := new(controllers.SettingsController)
 		settings.GET("/", settingsController.Index)
 		settings.GET("save/", settingsController.Save)
 	}
 
 	docs := e.Group("/docs")
 	{
-		docsController := new(Controllers.DocsController)
+		docsController := new(controllers.DocsController)
 		docs.GET("/", docsController.Index)
 	}
 
 	about := e.Group("/about")
 	{
-		aboutController := new(Controllers.AboutController)
+		aboutController := new(controllers.AboutController)
 		about.GET("/", aboutController.Index)
 	}
 

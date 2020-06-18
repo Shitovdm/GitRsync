@@ -1,13 +1,13 @@
-package Cmd
+package cmd
 
 import (
 	"fmt"
-	"github.com/Shitovdm/GitRsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/models"
 	"os/exec"
 	"time"
 )
 
-func OverrideAuthor(path string, CommitsOverridingConfig Models.CommitsOverriding) bool {
+func OverrideAuthor(path string, CommitsOverridingConfig models.CommitsOverriding) bool {
 
 	var cmd *exec.Cmd
 
@@ -88,7 +88,7 @@ func OverrideAuthor(path string, CommitsOverridingConfig Models.CommitsOverridin
 	return result
 }
 
-func BuildFilterBranchExpression(committersRules []Models.CommittersRule) string {
+func BuildFilterBranchExpression(committersRules []models.CommittersRule) string {
 	resultExpression := `git filter-branch --env-filter '`
 	for _, rule := range committersRules {
 		resultExpression += fmt.Sprintf(`

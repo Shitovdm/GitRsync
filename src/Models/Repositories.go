@@ -1,8 +1,8 @@
-package Models
+package models
 
 const (
-	STATE_ACTIVE  = "active"
-	STATE_BLOCKED = "blocked"
+	StateActive  = "active"
+	StateBlocked = "blocked"
 )
 
 type RepositoryConfig struct {

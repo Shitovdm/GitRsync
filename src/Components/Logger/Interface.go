@@ -1,4 +1,4 @@
-package Logger
+package logger
 
 func Trace(category string, message string) {
 	AddRuntimeLog(sessionID, "trace", category, message)

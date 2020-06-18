@@ -1,4 +1,4 @@
-package Cmd
+package cmd
 
 import (
 	"os/exec"
@@ -26,12 +26,10 @@ func Push(path string) bool {
 				output := make([]byte, 128, 128)
 				_, _ = StdoutPipe.Read(output)
 
-				//if string(output) == "fatal: destination path 'rpc' already exists and is not an empty directory." ||
-				//	string(output) == "exit status 128" {
 				if string(output)[:5] == "error" || string(output)[:5] == "fatal" || string(output)[:4] == "exit" {
 					finish <- false
 				}
-				time.Sleep(500 * time.Millisecond)
+				time.Sleep(50 * time.Millisecond)
 			}
 		}()
 

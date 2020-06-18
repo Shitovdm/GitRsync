@@ -1,11 +1,11 @@
-package Logger
+package logger
 
 import (
 	"errors"
 	"fmt"
-	"github.com/Shitovdm/GitRsync/src/Components/Configuration"
-	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
-	"github.com/Shitovdm/GitRsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/components/configuration"
+	"github.com/Shitovdm/GitRsync/src/components/helpers"
+	"github.com/Shitovdm/GitRsync/src/models"
 	"io/ioutil"
 	"time"
 )
@@ -17,23 +17,23 @@ var sessionID = ""
 var runtimeLogNote = ""
 
 func Init() {
-	sessionID = Helpers.GenerateUuid()
+	sessionID = helpers.GenerateUuid()
 	runtimeLogNote = ""
 }
 
 func GetRuntimeLogFile() string {
-	return Configuration.BuildPlatformPath(RuntimeLogFile)
+	return configuration.BuildPlatformPath(RuntimeLogFile)
 }
 
-func GetRuntimeLogs() []Models.RuntimeLog {
-	runtimeLogs := make([]Models.RuntimeLog, 0)
-	err := Configuration.Load(RuntimeLogFile, &runtimeLogs)
+func GetRuntimeLogs() []models.RuntimeLog {
+	runtimeLogs := make([]models.RuntimeLog, 0)
+	err := configuration.Load(RuntimeLogFile, &runtimeLogs)
 	if err != nil {
-		err = Configuration.Save("Runtime.json", []map[string]interface{}{})
+		err = configuration.Save("Runtime.json", []map[string]interface{}{})
 		if err != nil {
 			panic(fmt.Sprintf("Error while creating new runtime log file! %s", err.Error()))
 		}
-		return []Models.RuntimeLog{}
+		return []models.RuntimeLog{}
 	}
 
 	return runtimeLogs
@@ -41,7 +41,7 @@ func GetRuntimeLogs() []Models.RuntimeLog {
 
 func AddRuntimeLog(sessionID string, level string, category string, message string) {
 
-	runtimeLog := Models.RuntimeLog{
+	runtimeLog := models.RuntimeLog{
 		SessionID: sessionID,
 		Time:      time.Now().Format(timeFormatStr),
 		Level:     level,
@@ -54,14 +54,14 @@ func AddRuntimeLog(sessionID string, level string, category string, message stri
 	runtimeLogs = append(runtimeLogs, runtimeLog)
 
 	fmt.Println(fmt.Sprintf("[%s][%s][%s] %s", runtimeLog.Time, runtimeLog.Level, runtimeLog.Category, runtimeLog.Message))
-	err := Configuration.Save(RuntimeLogFile, &runtimeLogs)
+	err := configuration.Save(RuntimeLogFile, &runtimeLogs)
 	if err != nil {
 		panic("Error while saving runtime log!")
 	}
 }
 
 func ClearRuntimeLogs() error {
-	runtimeLogs := make([]Models.RuntimeLog, 0)
+	runtimeLogs := make([]models.RuntimeLog, 0)
 	for _, logNote := range GetRuntimeLogs() {
 		//	Only fot current session.
 		if logNote.SessionID != GetSessionId() {
@@ -69,7 +69,7 @@ func ClearRuntimeLogs() error {
 		}
 	}
 
-	err := Configuration.Save(RuntimeLogFile, &runtimeLogs)
+	err := configuration.Save(RuntimeLogFile, &runtimeLogs)
 	if err != nil {
 		return errors.New("Error while saving runtime log file! ")
 	}
@@ -96,11 +96,10 @@ func ResetRuntimeLogNote() {
 	runtimeLogNote = ""
 }
 
-func BuildRuntimeLogNote(logNote Models.RuntimeLog) string {
-	runtimeLog := "[" + logNote.Time + "]" // + "\t"
-	//runtimeLog += logNote.SessionID + "\t"
-	runtimeLog += "[" + logNote.Level + "]"    // + "\t"
-	runtimeLog += "[" + logNote.Category + "]" // + "\t"
+func BuildRuntimeLogNote(logNote models.RuntimeLog) string {
+	runtimeLog := "[" + logNote.Time + "]"
+	runtimeLog += "[" + logNote.Level + "]"
+	runtimeLog += "[" + logNote.Category + "]"
 	runtimeLog += " " + logNote.Message
 
 	return SetLogLevel(logNote.Level, runtimeLog)
@@ -128,7 +127,6 @@ func SetLogLevel(level string, str string) string {
 func CountErrorsInRuntimeLog() int {
 	count := 0
 	for _, logNote := range GetRuntimeLogs() {
-		//	Only fot current session.
 		if logNote.SessionID == GetSessionId() && logNote.Level == "error" {
 			count++
 		}

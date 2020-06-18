@@ -1,4 +1,4 @@
-package Cmd
+package cmd
 
 import (
 	"os/exec"

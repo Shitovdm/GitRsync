@@ -1,7 +1,7 @@
-package Cmd
+package cmd
 
 import (
-	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
+	"github.com/Shitovdm/GitRsync/src/components/helpers"
 	"os"
 )
 
@@ -20,7 +20,7 @@ func CopyRepository(repositoryFullPath string, destinationRepositoryName string,
 	}
 
 	//	Copy all repository files from source repo to destination repo.
-	err = Helpers.CopyDirContent(repositoryFullPath+"/source/"+sourceRepositoryName, repositoryFullPath+"/destination/"+destinationRepositoryName)
+	err = helpers.CopyDirContent(repositoryFullPath+"/source/"+sourceRepositoryName, repositoryFullPath+"/destination/"+destinationRepositoryName)
 	if err != nil {
 		return false
 	}
@@ -47,14 +47,14 @@ func CopyRepository(repositoryFullPath string, destinationRepositoryName string,
 }
 
 func TemporaryMoveGitFolder(repositoryFullPath string, sourceRepositoryName string) error {
-	if !Helpers.IsDirExists(repositoryFullPath + "/tmp/.git") {
-		err := Helpers.CreateNewDir(repositoryFullPath + "/tmp/.git")
+	if !helpers.IsDirExists(repositoryFullPath + "/tmp/.git") {
+		err := helpers.CreateNewDir(repositoryFullPath + "/tmp/.git")
 		if err != nil {
 			return err
 		}
 	}
 
-	err := Helpers.CopyDirContent(repositoryFullPath+"/source/"+sourceRepositoryName+"/.git", repositoryFullPath+"/tmp/.git")
+	err := helpers.CopyDirContent(repositoryFullPath+"/source/"+sourceRepositoryName+"/.git", repositoryFullPath+"/tmp/.git")
 	if err != nil {
 		return err
 	}
@@ -63,14 +63,14 @@ func TemporaryMoveGitFolder(repositoryFullPath string, sourceRepositoryName stri
 
 func RestoreGitFolder(repositoryFullPath string, sourceRepositoryName string) error {
 
-	if !Helpers.IsDirExists(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git") {
-		err := Helpers.CreateNewDir(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git")
+	if !helpers.IsDirExists(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git") {
+		err := helpers.CreateNewDir(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git")
 		if err != nil {
 			return err
 		}
 	}
 
-	err := Helpers.CopyDirContent(repositoryFullPath+"/tmp/.git", repositoryFullPath+"/source/"+sourceRepositoryName+"/.git")
+	err := helpers.CopyDirContent(repositoryFullPath+"/tmp/.git", repositoryFullPath+"/source/"+sourceRepositoryName+"/.git")
 	if err != nil {
 		return err
 	}
@@ -90,15 +90,15 @@ func RewriteGitFiles(repositoryFullPath string, destinationRepositoryName string
 	destinationGitFolder := repositoryFullPath + "/destination/" + destinationRepositoryName + "/.git"
 
 	//	Rewrite folders.
-	_ = Helpers.CopyDirContent(tmpGitFolder+"/logs", destinationGitFolder+"/logs")
-	_ = Helpers.CopyDirContent(tmpGitFolder+"/objects", destinationGitFolder+"/objects")
-	_ = Helpers.CopyDirContent(tmpGitFolder+"/smartgit", destinationGitFolder+"/smartgit")
-	_ = Helpers.CopyDirContent(tmpGitFolder+"/refs/heads", destinationGitFolder+"/refs/heads")
-	_ = Helpers.CopyDirContent(tmpGitFolder+"/refs/tags", destinationGitFolder+"/refs/tags")
+	_ = helpers.CopyDirContent(tmpGitFolder+"/logs", destinationGitFolder+"/logs")
+	_ = helpers.CopyDirContent(tmpGitFolder+"/objects", destinationGitFolder+"/objects")
+	_ = helpers.CopyDirContent(tmpGitFolder+"/smartgit", destinationGitFolder+"/smartgit")
+	_ = helpers.CopyDirContent(tmpGitFolder+"/refs/heads", destinationGitFolder+"/refs/heads")
+	_ = helpers.CopyDirContent(tmpGitFolder+"/refs/tags", destinationGitFolder+"/refs/tags")
 
 	//	Rewrite files.
-	_ = Helpers.CopyFile(tmpGitFolder+"/index", destinationGitFolder+"/index")
-	_ = Helpers.CopyFile(tmpGitFolder+"/HEAD", destinationGitFolder+"/HEAD")
+	_ = helpers.CopyFile(tmpGitFolder+"/index", destinationGitFolder+"/index")
+	_ = helpers.CopyFile(tmpGitFolder+"/HEAD", destinationGitFolder+"/HEAD")
 
 	return nil
 }

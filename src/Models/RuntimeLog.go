@@ -1,4 +1,4 @@
-package Models
+package models
 
 type RuntimeLog struct {
 	SessionID string `json:"session_id"`

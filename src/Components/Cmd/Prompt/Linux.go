@@ -1,6 +1,6 @@
 // +build linux
 
-package Prompt
+package prompt
 
 func ChangeConsoleVisibility(visibility bool) {
 	return

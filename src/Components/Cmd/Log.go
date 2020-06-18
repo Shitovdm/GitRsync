@@ -1,4 +1,4 @@
-package Cmd
+package cmd
 
 import (
 	"bytes"
@@ -28,7 +28,9 @@ func Log(path string, hashish string, limit int) ([]*Commit, error) {
 	}
 
 	for x := 0; x < len(lineBytes); x++ {
-		if limit != -1 && x >= limit { break }
+		if limit != -1 && x >= limit {
+			break
+		}
 		commit, commitErr := NewCommit(path, string(lineBytes[x]))
 		if commitErr != nil {
 			return []*Commit{}, commitErr

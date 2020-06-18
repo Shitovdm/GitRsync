@@ -1,4 +1,4 @@
-package Models
+package models
 
 type AppConfig struct {
 	Common            Common            `json:"common"`

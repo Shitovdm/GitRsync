@@ -1,12 +1,12 @@
-package Controllers
+package controllers
 
 import (
 	"encoding/json"
-	"github.com/Shitovdm/GitRsync/src/Components/Configuration"
-	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
-	"github.com/Shitovdm/GitRsync/src/Components/Interface"
-	"github.com/Shitovdm/GitRsync/src/Components/Logger"
-	"github.com/Shitovdm/GitRsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/components/configuration"
+	"github.com/Shitovdm/GitRsync/src/components/helpers"
+	"github.com/Shitovdm/GitRsync/src/components/interface"
+	"github.com/Shitovdm/GitRsync/src/components/logger"
+	"github.com/Shitovdm/GitRsync/src/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"reflect"
@@ -20,19 +20,19 @@ func (ctrl SettingsController) Index(c *gin.Context) {
 	menu := Interface.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Settings"
-	templateParams["appconfig"], _ = Configuration.GetAppConfigData()
+	templateParams["appconfig"], _ = configuration.GetAppConfigData()
 	c.HTML(http.StatusOK, "settings/index", templateParams)
 }
 
 func (ctrl SettingsController) Save(c *gin.Context) {
-	var saveSettingsRequest Models.SaveSettingsRequest
-	_, err := Helpers.WsHandler(c.Writer, c.Request, &saveSettingsRequest)
+	var saveSettingsRequest models.SaveSettingsRequest
+	_, err := helpers.WsHandler(c.Writer, c.Request, &saveSettingsRequest)
 	if err != nil {
-		Logger.Error("SettingsController/Save", err.Error())
+		logger.Error("SettingsController/Save", err.Error())
 		return
 	}
 
-	appConfig := Configuration.GetAppConfig()
+	appConfig := configuration.GetAppConfig()
 	section := saveSettingsRequest.Section
 	field := saveSettingsRequest.Field
 
@@ -60,12 +60,12 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 		byteData, _ := json.Marshal(saveSettingsRequest.Value)
 		switch reflectValueTypeNeeded.String() {
 		case "[]Models.CommittersRule":
-			val := make([]Models.CommittersRule, 0)
+			val := make([]models.CommittersRule, 0)
 			_ = json.Unmarshal(byteData, &val)
 			reflectValue = reflect.ValueOf(val)
 			break
 		case "Models.GitUser":
-			val := Models.GitUser{}
+			val := models.GitUser{}
 			_ = json.Unmarshal(byteData, &val)
 			reflectValue = reflect.ValueOf(val)
 			break
@@ -74,9 +74,9 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 	}
 
 	reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field).Set(reflectValue)
-	err = Configuration.SaveAppConfig(appConfig)
+	err = configuration.SaveAppConfig(appConfig)
 	if err != nil {
-		Logger.Error("SettingsController/Save", err.Error())
+		logger.Error("SettingsController/Save", err.Error())
 		return
 	}
 

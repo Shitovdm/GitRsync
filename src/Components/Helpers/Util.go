@@ -1,4 +1,4 @@
-package Helpers
+package helpers
 
 import "github.com/gofrs/uuid"
 

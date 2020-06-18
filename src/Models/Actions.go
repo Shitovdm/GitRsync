@@ -1,4 +1,4 @@
-package Models
+package models
 
 type PullActionRequest struct {
 	RepositoryUuid string `json:"uuid"`

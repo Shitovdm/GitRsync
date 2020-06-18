@@ -1,7 +1,7 @@
-package Controllers
+package controllers
 
 import (
-	"github.com/Shitovdm/GitRsync/src/Components/Interface"
+	"github.com/Shitovdm/GitRsync/src/components/interface"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

@@ -1,4 +1,4 @@
-package Configuration
+package configuration
 
 import (
 	"bytes"
@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/Shitovdm/GitRsync/src/Components/Cmd"
-	"github.com/Shitovdm/GitRsync/src/Models"
+	"github.com/Shitovdm/GitRsync/src/components/cmd"
+	"github.com/Shitovdm/GitRsync/src/models"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -163,16 +163,16 @@ func GetApplicationName() string {
 	return applicationName
 }
 
-func GetAppConfig() *Models.AppConfig {
-	var appConfig Models.AppConfig
+func GetAppConfig() *models.AppConfig {
+	var appConfig models.AppConfig
 	err := Load("AppConfig.json", &appConfig)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error while loading app config file! %s", err.Error()))
-		err = Save("AppConfig.json", &Models.AppConfig{})
+		err = Save("AppConfig.json", &models.AppConfig{})
 		if err != nil {
 			log.Println(fmt.Sprintf("Error while creating new app config file! %s", err.Error()))
 		}
-		return &Models.AppConfig{}
+		return &models.AppConfig{}
 	}
 
 	return &appConfig
@@ -189,12 +189,12 @@ func GetAppConfigData() (map[string]interface{}, error) {
 }
 
 func GetAppConfigField(section string, field string) reflect.Value {
-	var appConfig Models.AppConfig
+	var appConfig models.AppConfig
 	_ = Load("AppConfig.json", &appConfig)
 	return reflect.Indirect(reflect.ValueOf(appConfig)).FieldByName(section).FieldByName(field)
 }
 
-func SaveAppConfig(appConfig *Models.AppConfig) error {
+func SaveAppConfig(appConfig *models.AppConfig) error {
 	err := Save("AppConfig.json", &appConfig)
 	if err != nil {
 		return errors.New(fmt.Sprintf("Error while saving app config file! %s", err.Error()))
@@ -202,8 +202,8 @@ func SaveAppConfig(appConfig *Models.AppConfig) error {
 	return nil
 }
 
-func GetRepositoriesConfig() []Models.RepositoryConfig {
-	repositoriesConfig := make([]Models.RepositoryConfig, 0)
+func GetRepositoriesConfig() []models.RepositoryConfig {
+	repositoriesConfig := make([]models.RepositoryConfig, 0)
 	err := Load("Repositories.json", &repositoriesConfig)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error while loading repositories config file! %s", err.Error()))
@@ -211,7 +211,7 @@ func GetRepositoriesConfig() []Models.RepositoryConfig {
 		if err != nil {
 			log.Println(fmt.Sprintf("Error while creating new repositories config file! %s", err.Error()))
 		}
-		return []Models.RepositoryConfig{}
+		return []models.RepositoryConfig{}
 	}
 
 	return repositoriesConfig
@@ -232,7 +232,7 @@ func GetActiveRepositoriesConfigData() ([]map[string]interface{}, error) {
 	repositoriesConfig, _ := GetRepositoriesConfigData()
 	var activeRepositories []map[string]interface{}
 	for _, repo := range repositoriesConfig {
-		if repo["state"] == Models.STATE_ACTIVE {
+		if repo["state"] == models.StateActive {
 			activeRepositories = append(activeRepositories, repo)
 		}
 	}
@@ -245,7 +245,7 @@ func GetBlockedRepositoriesConfigData() ([]map[string]interface{}, error) {
 	repositoriesConfig, _ := GetRepositoriesConfigData()
 	var blockedRepositories []map[string]interface{}
 	for _, repo := range repositoriesConfig {
-		if repo["state"] == Models.STATE_BLOCKED {
+		if repo["state"] == models.StateBlocked {
 			blockedRepositories = append(blockedRepositories, repo)
 		}
 	}
@@ -253,12 +253,12 @@ func GetBlockedRepositoriesConfigData() ([]map[string]interface{}, error) {
 	return blockedRepositories, nil
 }
 
-func GetRepositoryDestinationRepositoryName(repoConfig *Models.RepositoryConfig) string {
+func GetRepositoryDestinationRepositoryName(repoConfig *models.RepositoryConfig) string {
 	dpp := strings.Trim(strings.TrimRight(repoConfig.DestinationPlatformPath, "git"), ".")
 	return strings.Split(dpp, "/")[len(strings.Split(dpp, "/"))-1]
 }
 
-func GetRepositorySourceRepositoryName(repoConfig *Models.RepositoryConfig) string {
+func GetRepositorySourceRepositoryName(repoConfig *models.RepositoryConfig) string {
 	spp := strings.Trim(strings.TrimRight(repoConfig.SourcePlatformPath, "git"), ".")
 	return strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
 }
@@ -266,7 +266,7 @@ func GetRepositorySourceRepositoryName(repoConfig *Models.RepositoryConfig) stri
 func AddGitCommitHistoryToExistingRepositoryConfig(repositories []map[string]interface{}) ([]map[string]interface{}, error) {
 
 	for i, repo := range repositories {
-		repoConfig := new(Models.RepositoryConfig)
+		repoConfig := new(models.RepositoryConfig)
 		repositoryConfigByte, _ := json.Marshal(repo)
 		_ = json.Unmarshal(repositoryConfigByte, repoConfig)
 
@@ -275,7 +275,7 @@ func AddGitCommitHistoryToExistingRepositoryConfig(repositories []map[string]int
 		destinationRepositoryPath := repositoryFullPath + `\destination\` + destinationRepositoryName
 
 		fmt.Println("drp" + destinationRepositoryPath)
-		commits, err := Cmd.Log(destinationRepositoryPath, "", 5)
+		commits, err := cmd.Log(destinationRepositoryPath, "", 5)
 		if err != nil {
 			return nil, err
 		}
@@ -289,7 +289,7 @@ func AddGitCommitHistoryToExistingRepositoryConfig(repositories []map[string]int
 	return repositories, nil
 }
 
-func SaveRepositoriesConfig(repositories []Models.RepositoryConfig) error {
+func SaveRepositoriesConfig(repositories []models.RepositoryConfig) error {
 	err := Save("Repositories.json", &repositories)
 	if err != nil {
 		return errors.New(fmt.Sprintf("Error while saving repositories config file! %s", err.Error()))
@@ -297,8 +297,8 @@ func SaveRepositoriesConfig(repositories []Models.RepositoryConfig) error {
 	return nil
 }
 
-func GetPlatformsConfig() []Models.PlatformConfig {
-	platformsConfig := make([]Models.PlatformConfig, 0)
+func GetPlatformsConfig() []models.PlatformConfig {
+	platformsConfig := make([]models.PlatformConfig, 0)
 	err := Load("Platforms.json", &platformsConfig)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error while loading platforms config file! %s", err.Error()))
@@ -306,7 +306,7 @@ func GetPlatformsConfig() []Models.PlatformConfig {
 		if err != nil {
 			log.Println(fmt.Sprintf("Error while creating new platforms config file! %s", err.Error()))
 		}
-		return []Models.PlatformConfig{}
+		return []models.PlatformConfig{}
 	}
 
 	return platformsConfig
@@ -322,7 +322,7 @@ func GetPlatformsConfigData() ([]map[string]interface{}, error) {
 	return platformsConfig, nil
 }
 
-func SavePlatformsConfig(platforms []Models.PlatformConfig) error {
+func SavePlatformsConfig(platforms []models.PlatformConfig) error {
 	err := Save("Platforms.json", &platforms)
 	if err != nil {
 		return errors.New(fmt.Sprintf("Error while saving platforms config file! %s", err.Error()))
@@ -330,7 +330,7 @@ func SavePlatformsConfig(platforms []Models.PlatformConfig) error {
 	return nil
 }
 
-func GetPlatformByUuid(uuid string) *Models.PlatformConfig {
+func GetPlatformByUuid(uuid string) *models.PlatformConfig {
 	platformsList := GetPlatformsConfig()
 	for _, platform := range platformsList {
 		if platform.Uuid == uuid {
@@ -341,7 +341,7 @@ func GetPlatformByUuid(uuid string) *Models.PlatformConfig {
 	return nil
 }
 
-func GetRepositoryByUuid(uuid string) *Models.RepositoryConfig {
+func GetRepositoryByUuid(uuid string) *models.RepositoryConfig {
 	repositoriesList := GetRepositoriesConfig()
 	for _, repository := range repositoriesList {
 		if repository.Uuid == uuid {

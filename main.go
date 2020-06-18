@@ -3,28 +3,28 @@ package main
 import (
 	"fmt"
 	"github.com/Shitovdm/GitRsync/public/assets/src/icon"
-	"github.com/Shitovdm/GitRsync/src/Application"
-	"github.com/Shitovdm/GitRsync/src/Components/Cmd/Prompt"
-	"github.com/Shitovdm/GitRsync/src/Components/Configuration"
-	"github.com/Shitovdm/GitRsync/src/Components/Helpers"
-	"github.com/Shitovdm/GitRsync/src/Components/Logger"
+	"github.com/Shitovdm/GitRsync/src/Components/cmd/prompt"
+	"github.com/Shitovdm/GitRsync/src/application"
+	"github.com/Shitovdm/GitRsync/src/components/configuration"
+	"github.com/Shitovdm/GitRsync/src/components/helpers"
+	"github.com/Shitovdm/GitRsync/src/components/logger"
 	"github.com/getlantern/systray"
 	"io/ioutil"
 	"time"
 )
 
 func init() {
-	Configuration.Init("GitRsync")
-	Logger.Init()
+	configuration.Init("GitRsync")
+	logger.Init()
 }
 
 func main() {
 
-	Application.StartServer()
+	application.StartServer()
 
 	//go Application.StartServer()
 	//	It`s hiding command prompt during running app (only windows).
-	//Prompt.ChangeConsoleVisibility(false)
+	prompt.ChangeConsoleVisibility(false)
 	//systray.RunWithAppWindow("GitRsync", 1024, 768, onReady, onExit)
 }
 
@@ -52,27 +52,27 @@ func onReady() {
 		select {
 		case <-mOpen.ClickedCh:
 			fmt.Println("Opening application UI...")
-			Helpers.OpenBrowser("http://localhost:8888")
+			helpers.OpenBrowser("http://localhost:8888")
 			break
 		case <-changeConsoleVisibility.ClickedCh:
 			fmt.Println("Changing console visibility...")
 			if terminalVisibility {
 				changeConsoleVisibility.SetTitle("Show Terminal")
-				Prompt.ChangeConsoleVisibility(false)
+				prompt.ChangeConsoleVisibility(false)
 				terminalVisibility = false
 			} else {
 				changeConsoleVisibility.SetTitle("Hide Terminal")
-				Prompt.ChangeConsoleVisibility(true)
+				prompt.ChangeConsoleVisibility(true)
 				terminalVisibility = true
 			}
 			break
 		case <-mOpenGit.ClickedCh:
 			fmt.Println("Opening app GIT page...")
-			Helpers.OpenBrowser("https://github.com/Shitovdm/GitRsync")
+			helpers.OpenBrowser("https://github.com/Shitovdm/GitRsync")
 			break
 		case <-mDocs.ClickedCh:
 			fmt.Println("Opening app specification...")
-			Helpers.OpenBrowser("http://localhost:8888/docs")
+			helpers.OpenBrowser("http://localhost:8888/docs")
 			break
 		case <-mRestart.ClickedCh:
 			fmt.Println("Restarting application...")
