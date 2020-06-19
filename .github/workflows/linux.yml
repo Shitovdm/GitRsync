@@ -31,7 +31,7 @@ jobs:
       - name: Updating packages
         run: sudo apt-get update
 
-      - name: Installing new packages
+      - name: Installing required packages
         run: sudo apt-get install libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev gir1.2-appindicator3-0.1
 
       - name: Set up Go
@@ -46,16 +46,13 @@ jobs:
         run: go mod download
 
       - name: Run Unit tests.
-        run: make test
+        run: make test-coverage
 
-      #- name: Run Unit tests.
-      #  run: make test-coverage
-
-      #- name: Upload Coverage report to CodeCov
-      #  uses: codecov/codecov-action@v1.0.0
-      #  with:
-      #    token: ${{secrets.CODECOV_TOKEN}}
-      #    file: ./coverage.txt
+      - name: Upload coverage report to CodeCov
+        uses: codecov/codecov-action@v1.0.0
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: ./coverage.txt
 
   build:
     name: Build
@@ -65,7 +62,7 @@ jobs:
       - name: Updating packages
         run: sudo apt-get update
 
-      - name: Installing new packages
+      - name: Installing required packages
         run: sudo apt-get install libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev gir1.2-appindicator3-0.1
 
       - name: Set up Go
@@ -79,9 +76,17 @@ jobs:
       - name: Download modules
         run: go mod download
 
+      - name: Install tool for embedding binary resources in Go program
+        run: go get github.com/akavel/rsrc
+
+      - name: Embedding binary resources
+        run: rsrc -manifest x64.manifest -o rsrc.syso -ico="./public/assets/src/icon/iconwin.ico" -arch amd64
+
       - name: Build
         env:
           GOOS: linux
+          GOARCH: amd64
           GOPROXY: https://proxy.golang.org
           GO111MODULE: on
+          CGO_ENABLED: 1
         run: go build .
