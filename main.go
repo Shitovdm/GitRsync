@@ -1,9 +1,16 @@
 package main
 
 import (
+	"fmt"
+	"github.com/Shitovdm/GitRsync/public/assets/src/icon"
 	"github.com/Shitovdm/GitRsync/src/app"
+	"github.com/Shitovdm/GitRsync/src/component/cmd/prompt"
 	"github.com/Shitovdm/GitRsync/src/component/conf"
+	"github.com/Shitovdm/GitRsync/src/component/helper"
 	"github.com/Shitovdm/GitRsync/src/component/logger"
+	"github.com/getlantern/systray"
+	"io/ioutil"
+	"time"
 )
 
 func init() {
@@ -12,13 +19,13 @@ func init() {
 }
 
 func main() {
-	app.Serve()
+	go app.Serve()
 	//	It`s hiding command prompt during running app (only windows).
-	//prompt.ChangeConsoleVisibility(false)
-	//systray.RunWithAppWindow("GitRsync", 1024, 768, ready, exit)
+	prompt.ChangeConsoleVisibility(false)
+	systray.RunWithAppWindow("GitRsync", 1024, 768, ready, exit)
 }
 
-/*func exit() {
+func exit() {
 	now := time.Now()
 	_ = ioutil.WriteFile(fmt.Sprintf(`./tmp/%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
 }
@@ -76,4 +83,4 @@ func ready() {
 			return
 		}
 	}
-}*/
+}
