@@ -46,9 +46,6 @@ jobs:
         run: go mod download
 
       - name: Run Unit tests.
-        run: make test
-
-      - name: Run Unit tests.
         run: make test-coverage
 
       - name: Upload Coverage report to CodeCov

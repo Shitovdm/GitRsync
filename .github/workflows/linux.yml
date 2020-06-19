@@ -80,4 +80,8 @@ jobs:
         run: go mod download
 
       - name: Build
-        run: make build
+        env:
+          GOOS: linux
+          GOPROXY: https://proxy.golang.org
+          GO111MODULE: on
+        run: go build .
