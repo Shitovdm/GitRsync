@@ -16,6 +16,7 @@ func init() {
 func main() {
 	// Adding application icon to system tray (macos, windows).
 	go systray.Init()
+
 	// It`s hiding command prompt during running app (only windows).
 	prompt.ChangeConsoleVisibility(false)
 	// Start serve application backend server.
