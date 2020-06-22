@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/Shitovdm/GitRsync/src/app"
-	"github.com/Shitovdm/GitRsync/src/app/systray"
 	"github.com/Shitovdm/GitRsync/src/component/cmd/prompt"
 	"github.com/Shitovdm/GitRsync/src/component/conf"
 	"github.com/Shitovdm/GitRsync/src/component/logger"
@@ -15,7 +14,7 @@ func init() {
 
 func main() {
 	// Adding application icon to system tray (macos, windows).
-	go systray.Init()
+	//go systray.Init()
 
 	// It`s hiding command prompt during running app (only windows).
 	prompt.ChangeConsoleVisibility(false)
