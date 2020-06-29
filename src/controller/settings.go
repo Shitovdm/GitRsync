@@ -44,12 +44,10 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 	switch reflectValueTypeNeeded.String() {
 	case "string":
 
-		break
 	case "int":
 		nonFractionalPart := strings.Split(saveSettingsRequest.Value.(string), ".")
 		val, _ := strconv.Atoi(nonFractionalPart[0])
 		reflectValue = reflect.ValueOf(val)
-		break
 	case "bool":
 		if saveSettingsRequest.Value == "true" {
 			reflectValue = reflect.ValueOf(true)
@@ -57,21 +55,18 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 		if saveSettingsRequest.Value == "false" {
 			reflectValue = reflect.ValueOf(false)
 		}
-		break
 	default:
 		//	structs
 		byteData, _ := json.Marshal(saveSettingsRequest.Value)
 		switch reflectValueTypeNeeded.String() {
-		case "[]Models.CommittersRule":
+		case "[]model.CommittersRule":
 			val := make([]model.CommittersRule, 0)
 			_ = json.Unmarshal(byteData, &val)
 			reflectValue = reflect.ValueOf(val)
-			break
-		case "Models.GitUser":
+		case "model.GitUser":
 			val := model.GitUser{}
 			_ = json.Unmarshal(byteData, &val)
 			reflectValue = reflect.ValueOf(val)
-			break
 		}
 	}
 
@@ -81,4 +76,14 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 		logger.Error("SettingsController/Save", err.Error())
 		return
 	}
+}
+
+// OpenRawConfig opens raw config file.
+func (ctrl SettingsController) OpenRawConfig(_ *gin.Context) {
+	helper.ExploreDir(conf.BuildPlatformPath(``))
+}
+
+// ExploreConfigDir opens config dir in explorer.
+func (ctrl SettingsController) ExploreConfigDir(_ *gin.Context) {
+	helper.ExploreDir(conf.BuildPlatformPath(`projects`))
 }

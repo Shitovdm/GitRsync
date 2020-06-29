@@ -112,6 +112,8 @@ func Router() http.Handler {
 		settingsController := new(controller.SettingsController)
 		settings.GET("/", settingsController.Index)
 		settings.GET("save/", settingsController.Save)
+		settings.GET("open-raw-config/", settingsController.OpenRawConfig)
+		settings.GET("explore-config-dir/", settingsController.ExploreConfigDir)
 	}
 
 	docs := e.Group("/docs")
