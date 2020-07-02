@@ -78,6 +78,7 @@ func Router() http.Handler {
 		actions.GET("info/", actionsController.Info)
 		actions.GET("block/", actionsController.Block)
 		actions.GET("activate/", actionsController.Activate)
+		actions.GET("open/dir/", actionsController.OpenDir)
 	}
 
 	repositories := e.Group("/repositories")
@@ -112,8 +113,6 @@ func Router() http.Handler {
 		settingsController := new(controller.SettingsController)
 		settings.GET("/", settingsController.Index)
 		settings.GET("save/", settingsController.Save)
-		settings.GET("open-raw-config/", settingsController.OpenRawConfig)
-		settings.GET("explore-config-dir/", settingsController.ExploreConfigDir)
 	}
 
 	docs := e.Group("/docs")

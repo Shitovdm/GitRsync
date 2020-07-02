@@ -383,8 +383,8 @@ func (ctrl ActionsController) Activate(c *gin.Context) {
 	var activateActionRequest model.ActivateActionRequest
 	conn, err := helper.WsHandler(c.Writer, c.Request, &activateActionRequest)
 	if err != nil {
+		logger.Error("ActionsController/Activate", "Repository activate aborted!")
 		logger.Error("ActionsController/Activate", err.Error())
-		logger.Warning("ActionsController/Activate", "Repository activate aborted!")
 		return
 	}
 
@@ -392,6 +392,20 @@ func (ctrl ActionsController) Activate(c *gin.Context) {
 	Msg := "Repository successfully activated!"
 	logger.Success("ActionsController/Activate", Msg)
 	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONSuccess(Msg, nil)))
+}
+
+// OpenDir opens fs dir in explorer.
+func (ctrl ActionsController) OpenDir(c *gin.Context) {
+	var openDirActionRequest model.OpenDirActionRequest
+	_, err := helper.WsHandler(c.Writer, c.Request, &openDirActionRequest)
+	if err != nil {
+		logger.Warning("ActionsController/OpenDir", "Opening file system folder aborted!")
+		logger.Error("ActionsController/OpenDir", err.Error())
+		return
+	}
+
+	logger.Success("ActionsController/OpenDir", "Opening file system folder "+openDirActionRequest.Path+" in explorer...")
+	helper.ExploreDir(conf.BuildPlatformPath(openDirActionRequest.Path))
 }
 
 // BuildWsJSONError returns json formatted error response.

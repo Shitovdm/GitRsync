@@ -59,6 +59,7 @@ func AddRuntimeLog(sessionID string, level string, category string, message stri
 	runtimeLogs := GetRuntimeLogs()
 	runtimeLogs = append(runtimeLogs, runtimeLog)
 	err := conf.Save(RuntimeLogFile, &runtimeLogs)
+	PrintRuntimeLogToConsole(level, category, message)
 	if err != nil {
 		panic("Error while saving runtime log!")
 	}
@@ -150,4 +151,34 @@ func CountErrorsInRuntimeLog() int {
 	}
 
 	return count
+}
+
+// PrintRuntimeLogToConsole prints log note to console.
+func PrintRuntimeLogToConsole(level string, category string, message string) {
+
+	runtimeLog := model.RuntimeLog{
+		SessionID: sessionID,
+		Time:      time.Now().Format(timeFormatStr),
+		Level:     level,
+		Category:  category,
+		Message:   message,
+	}
+	str := BuildRuntimeLogNote(runtimeLog)
+
+	switch level {
+	case "info":
+		fmt.Printf("%s\n", str)
+	case "trace":
+		fmt.Printf("%s\n", str)
+	case "debug":
+		fmt.Printf("%s\n", str)
+	case "warning":
+		fmt.Printf("%s\n", str)
+	case "error":
+		fmt.Printf("%s\n", str)
+	case "success":
+		fmt.Printf("%s\n", str)
+	default:
+		fmt.Printf("%s\n", str)
+	}
 }

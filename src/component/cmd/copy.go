@@ -101,6 +101,7 @@ func RewriteGitFiles(repositoryFullPath string, destinationRepositoryName string
 	//	Rewrite files.
 	_ = helper.CopyFile(tmpGitFolder+"/index", destinationGitFolder+"/index")
 	_ = helper.CopyFile(tmpGitFolder+"/HEAD", destinationGitFolder+"/HEAD")
+	//_ = helper.CopyFile(tmpGitFolder+"/packed-refs", destinationGitFolder+"/packed-refs")
 
 	return nil
 }

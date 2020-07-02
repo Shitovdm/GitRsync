@@ -7,7 +7,8 @@
                         <i class="material-icons">store</i>
                     </div>
                     <p class="card-category">Used Platforms/Repositories</p>
-                    <h3 class="card-title">{{ len .platforms}}/{{ len .active_repositories}}+{{ len .blocked_repositories}}
+                    <h3 class="card-title">{{ len .platforms}}/{{ len .active_repositories}}
+                        +{{ len .blocked_repositories}}
                         <small>PCs</small>
                     </h3>
                 </div>
@@ -88,6 +89,13 @@
                             </td>
                             <td>
                                 <span style="color: #FFF">{{$repository.name}}</span>
+                                <button type="button"
+                                        class="btn btn-white btn-link btn-sm btn-open-repo-dir"
+                                        data-repository="{{$repository.name}}"
+                                        data-original-title="Open Repository Folder"
+                                        title="Open Repository Folder">
+                                    <i class="material-icons">folder</i>
+                                </button>
                             </td>
                             <td>
                                 <a target="_blank" style="color: #8b92a9"

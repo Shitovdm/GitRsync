@@ -29,3 +29,8 @@ type BlockActionRequest struct {
 type ActivateActionRequest struct {
 	RepositoryUUID string `json:"uuid"`
 }
+
+// OpenDirActionRequest struct describes open fs dir action request.
+type OpenDirActionRequest struct {
+	Path string `json:"path"`
+}

@@ -133,6 +133,15 @@ $('body').on('click', '.btn-block-repositories', function (e) {
     };
 });
 
+$('body').on('click', '.btn-open-repo-dir', function (e) {
+    e.preventDefault();
+    let ws = webSocketConnection("ws://localhost:8888/actions/open/dir/");
+    let repository = $(this).data('repository');
+    ws.onopen = function () {
+        ws.send(JSON.stringify({"path": 'projects\\' + repository + '\\source\\'}));
+    };
+});
+
 function SaveConfigField(elem) {
     let section = $(elem).data('section');
     let field = $(elem).data('field');

@@ -77,13 +77,3 @@ func (ctrl SettingsController) Save(c *gin.Context) {
 		return
 	}
 }
-
-// OpenRawConfig opens raw config file.
-func (ctrl SettingsController) OpenRawConfig(_ *gin.Context) {
-	helper.ExploreDir(conf.BuildPlatformPath(``))
-}
-
-// ExploreConfigDir opens config dir in explorer.
-func (ctrl SettingsController) ExploreConfigDir(_ *gin.Context) {
-	helper.ExploreDir(conf.BuildPlatformPath(`projects`))
-}
