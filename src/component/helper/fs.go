@@ -135,7 +135,7 @@ func CopyDirContent(src string, dst string) error {
 	return nil
 }
 
-// ExplorerDir opens dir in Explorer.
+// ExploreDir opens dir in Explorer.
 func ExploreDir(path string) {
 	cmd := exec.Command(`explorer`, `/select,`, path)
 	_ = cmd.Run()

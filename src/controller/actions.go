@@ -408,6 +408,45 @@ func (ctrl ActionsController) OpenDir(c *gin.Context) {
 	helper.ExploreDir(conf.BuildPlatformPath(openDirActionRequest.Path))
 }
 
+// OpenDir opens fs dir in explorer.
+func (ctrl ActionsController) SyncTags(c *gin.Context) {
+	var syncTagsActionRequest model.SyncTagsActionRequest
+	conn, err := helper.WsHandler(c.Writer, c.Request, &syncTagsActionRequest)
+	if err != nil {
+		logger.Warning("ActionsController/SyncTags", "Syncing repositories tags aborted!")
+		logger.Error("ActionsController/SyncTags", err.Error())
+		return
+	}
+
+
+
+
+	sourcePath := `C:\Users\Дмитрий\AppData\Roaming\GitRsync\projects\serv-queue-proxy\source\serv-queue-proxy`
+	destinationPath := `C:\Users\Дмитрий\AppData\Roaming\GitRsync\projects\serv-queue-proxy\destination\serv-queue-proxy`
+
+	sourceTags, err := cmd.GetTags(sourcePath, -1)
+	if err != nil {
+
+	}
+	sourceCommits, err := cmd.Log(sourcePath, "", -1)
+	if err != nil {
+
+	}
+	destinationCommits, err := cmd.Log(destinationPath, "", -1)
+	if err != nil {
+
+	}
+
+	sourceTags = cmd.ConvertTagsMeta(sourceCommits, destinationCommits, sourceTags)
+	_ = cmd.MakeTags(`C:\Users\Дмитрий\AppData\Roaming\GitRsync\projects\serv-queue-proxy\destination\serv-queue-proxy`, sourceTags)
+
+
+
+	Msg := "Repository tags successfully synchronized!"
+	logger.Success("ActionsController/SyncTags", Msg)
+	_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONSuccess(Msg, nil)))
+}
+
 // BuildWsJSONError returns json formatted error response.
 func BuildWsJSONError(message string) string {
 	return fmt.Sprintf(`{"status":"error","message":"%s"}`, message)

@@ -34,3 +34,8 @@ type ActivateActionRequest struct {
 type OpenDirActionRequest struct {
 	Path string `json:"path"`
 }
+
+// SyncTagsActionRequest struct describes sync tags action request.
+type SyncTagsActionRequest struct {
+	RepositoryUUID string `json:"uuid"`
+}

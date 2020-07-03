@@ -49,3 +49,20 @@ func NewCommit(path, hashish string) (*Commit, error) {
 
 	return commit, nil
 }
+
+// GetCommitHashByBodyAndTime commit hash by commit subject and time.
+func GetCommitHashByBodyAndTime(path, subject string, timestamp int) (*string, error) {
+
+	commits, err := Log(path, "origin/master..HEAD", -1)
+	if err == nil {
+		return nil, err
+	}
+
+	for _, commit := range commits {
+		if commit.Subject == subject && commit.Timestamp == timestamp {
+			return &commit.Hash, nil
+		}
+	}
+
+	return nil, nil
+}
