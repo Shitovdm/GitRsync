@@ -7,41 +7,9 @@ import (
 	"github.com/Shitovdm/GitRsync/src/component/helper"
 	"github.com/Shitovdm/GitRsync/src/component/logger"
 	"github.com/Shitovdm/GitRsync/src/model"
+	"github.com/Shitovdm/GitRsync/src/model/repository"
 	"github.com/gin-gonic/gin"
-	"github.com/gofrs/uuid"
 	"net/http"
-	"time"
-)
-
-const (
-	// StatusInitiated describe status "initiated"
-	StatusInitiated = "initiated"
-	// StatusPendingPull describe status "pending_pull"
-	StatusPendingPull = "pending_pull"
-	// StatusPulled describe status "pulled"
-	StatusPulled = "pulled"
-	// StatusPullFailed describe status "pull_failed"
-	StatusPullFailed = "pull_failed"
-	// StatusPendingPush describe status "pending_push"
-	StatusPendingPush = "pending_push"
-	// StatusPushed describe status "pushed"
-	StatusPushed = "pushed"
-	// StatusPushFailed describe status "push_failed"
-	StatusPushFailed = "push_failed"
-	// StatusPendingClean describe status "pending_clear"
-	StatusPendingClean = "pending_clear"
-	// StatusCleaned describe status "cleared"
-	StatusCleaned = "cleared"
-	// StatusCleanFailed describe status "clear_failed"
-	StatusCleanFailed = "clear_failed"
-	// StatusSynchronized describe status "synced"
-	StatusSynchronized = "synced"
-	// StatusFailed describe status "failed"
-	StatusFailed = "failed"
-)
-
-var (
-	timeFormat = "02-01-2006 15:04"
 )
 
 // RepositoriesController struct describes repositories section controller.
@@ -60,30 +28,23 @@ func (ctrl RepositoriesController) Index(c *gin.Context) {
 // Add describes add repository action.
 func (ctrl RepositoriesController) Add(c *gin.Context) {
 
-	var addRepositoryRequest model.AddRepositoryRequest
+	var addRepositoryRequest repository.AddRepositoryRequest
 	_, err := helper.WsHandler(c.Writer, c.Request, &addRepositoryRequest)
 	if err != nil {
 		logger.Error("RepositoriesController/Add", err.Error())
 		return
 	}
 
-	newRepositoryUUID, _ := uuid.NewV4()
-	repositories := conf.GetRepositoriesConfig()
-	repositories = append(repositories, model.RepositoryConfig{
-		UUID:                    newRepositoryUUID.String(),
+	err = repository.Create(&repository.Repository{
 		Name:                    addRepositoryRequest.Name,
 		SourcePlatformUUID:      addRepositoryRequest.SourcePlatformUUID,
 		SourcePlatformPath:      addRepositoryRequest.SourcePlatformPath,
 		DestinationPlatformUUID: addRepositoryRequest.DestinationPlatformUUID,
 		DestinationPlatformPath: addRepositoryRequest.DestinationPlatformPath,
-		Status:                  StatusInitiated,
-		State:                   "active",
-		UpdatedAt:               "",
 	})
-
-	err = conf.SaveRepositoriesConfig(repositories)
 	if err != nil {
 		logger.Error("RepositoriesController/Add", err.Error())
+		return
 	}
 
 	logger.Info("RepositoriesController/Add", fmt.Sprintf("New repository with name %s added successfully!", addRepositoryRequest.Name))
@@ -92,7 +53,7 @@ func (ctrl RepositoriesController) Add(c *gin.Context) {
 // Edit describes edit repository action.
 func (ctrl RepositoriesController) Edit(c *gin.Context) {
 
-	var editRepositoryRequest model.EditRepositoryRequest
+	var editRepositoryRequest repository.EditRepositoryRequest
 	_, err := helper.WsHandler(c.Writer, c.Request, &editRepositoryRequest)
 	if err != nil {
 		logger.Error("RepositoriesController/Edit", err.Error())
@@ -130,7 +91,7 @@ func (ctrl RepositoriesController) Edit(c *gin.Context) {
 // Remove describes remove repository action.
 func (ctrl RepositoriesController) Remove(c *gin.Context) {
 
-	var removeRepositoryRequest model.RemoveRepositoryRequest
+	var removeRepositoryRequest repository.RemoveRepositoryRequest
 	_, err := helper.WsHandler(c.Writer, c.Request, &removeRepositoryRequest)
 	if err != nil {
 		logger.Error("RepositoriesController/Remove", err.Error())
@@ -154,42 +115,4 @@ func (ctrl RepositoriesController) Remove(c *gin.Context) {
 	}
 
 	logger.Info("RepositoriesController/Remove", fmt.Sprintf("Repository with name %s successfully removed!", removedRepositoryName))
-}
-
-// UpdateRepositoryStatus describes update repository status action.
-func UpdateRepositoryStatus(uuid string, status string) {
-
-	oldRepositoriesList := conf.GetRepositoriesConfig()
-	for i, repository := range oldRepositoriesList {
-		if repository.UUID == uuid {
-			oldRepositoriesList[i].Status = status
-			if status == StatusPulled || status == StatusPushed || status == StatusSynchronized {
-				t := time.Now()
-				oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
-			}
-		}
-	}
-
-	err := conf.SaveRepositoriesConfig(oldRepositoriesList)
-	if err != nil {
-		return
-	}
-}
-
-// UpdateRepositoryState describes update repository state action.
-func UpdateRepositoryState(uuid string, state string) {
-
-	oldRepositoriesList := conf.GetRepositoriesConfig()
-	for i, repository := range oldRepositoriesList {
-		if repository.UUID == uuid {
-			oldRepositoriesList[i].State = state
-			t := time.Now()
-			oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
-		}
-	}
-
-	err := conf.SaveRepositoriesConfig(oldRepositoriesList)
-	if err != nil {
-		return
-	}
 }

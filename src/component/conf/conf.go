@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/Shitovdm/GitRsync/src/model"
+	"github.com/Shitovdm/GitRsync/src/model/repository"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
-	"strings"
 )
 
 // MarshalFunc returns bytes array.
@@ -207,22 +207,7 @@ func SaveAppConfig(appConfig *model.AppConfig) error {
 	return nil
 }
 
-// GetRepositoriesConfig returns repositories config.
-func GetRepositoriesConfig() []model.RepositoryConfig {
 
-	repositoriesConfig := make([]model.RepositoryConfig, 0)
-	err := Load("Repositories.json", &repositoriesConfig)
-	if err != nil {
-		fmt.Printf("Error while loading repositories config file! %s", err.Error())
-		err = Save("Repositories.json", []map[string]interface{}{})
-		if err != nil {
-			fmt.Printf("Error while creating new repositories config file! %s", err.Error())
-		}
-		return []model.RepositoryConfig{}
-	}
-
-	return repositoriesConfig
-}
 
 // GetRepositoriesConfigData returns repositories config data.
 func GetRepositoriesConfigData() ([]map[string]interface{}, error) {
@@ -241,7 +226,7 @@ func GetActiveRepositoriesConfigData() ([]map[string]interface{}, error) {
 	repositoriesConfig, _ := GetRepositoriesConfigData()
 	var activeRepositories []map[string]interface{}
 	for _, repo := range repositoriesConfig {
-		if repo["state"] == model.StateActive {
+		if repo["state"] == repository.StateActive {
 			activeRepositories = append(activeRepositories, repo)
 		}
 	}
@@ -255,7 +240,7 @@ func GetBlockedRepositoriesConfigData() ([]map[string]interface{}, error) {
 	repositoriesConfig, _ := GetRepositoriesConfigData()
 	var blockedRepositories []map[string]interface{}
 	for _, repo := range repositoriesConfig {
-		if repo["state"] == model.StateBlocked {
+		if repo["state"] == repository.StateBlocked {
 			blockedRepositories = append(blockedRepositories, repo)
 		}
 	}
@@ -263,22 +248,8 @@ func GetBlockedRepositoriesConfigData() ([]map[string]interface{}, error) {
 	return blockedRepositories, nil
 }
 
-// GetRepositoryDestinationRepositoryName parses destination repository name.
-func GetRepositoryDestinationRepositoryName(repoConfig *model.RepositoryConfig) string {
-
-	dpp := strings.Trim(strings.TrimRight(repoConfig.DestinationPlatformPath, "git"), ".")
-	return strings.Split(dpp, "/")[len(strings.Split(dpp, "/"))-1]
-}
-
-// GetRepositorySourceRepositoryName parses source repository name.
-func GetRepositorySourceRepositoryName(repoConfig *model.RepositoryConfig) string {
-
-	spp := strings.Trim(strings.TrimRight(repoConfig.SourcePlatformPath, "git"), ".")
-	return strings.Split(spp, "/")[len(strings.Split(spp, "/"))-1]
-}
-
 // SaveRepositoriesConfig stores repositories config.
-func SaveRepositoriesConfig(repositories []model.RepositoryConfig) error {
+func SaveRepositories(repositories []repository.Repository) error {
 
 	err := Save("Repositories.json", &repositories)
 	if err != nil {
@@ -338,15 +309,3 @@ func GetPlatformByUUID(UUID string) *model.PlatformConfig {
 	return nil
 }
 
-// GetRepositoryByUUID returns repository config by repository UUID.
-func GetRepositoryByUUID(UUID string) *model.RepositoryConfig {
-
-	repositoriesList := GetRepositoriesConfig()
-	for _, repository := range repositoriesList {
-		if repository.UUID == UUID {
-			return &repository
-		}
-	}
-
-	return nil
-}

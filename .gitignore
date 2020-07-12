@@ -17,3 +17,4 @@
 *.exe~
 *.lnk
 *.syso
+./tmp/*.txt

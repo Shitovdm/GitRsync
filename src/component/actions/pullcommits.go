@@ -10,11 +10,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func PullCommits(repositoryUUID string) error {
+func (r *repository.Repository) PullCommits() error {
 
-	repo := repository.Get(repositoryUUID)
-	repo.SetStatus(repository.StatusPendingPull)
-	_ = repo.Update()
+	r.SetStatus(repository.StatusPendingPull)
+	_ = r.Update()
 
 	logger.Trace("ActionsController/Pull", fmt.Sprintf("Start pulling repository with UUID %s...", repositoryUUID))
 
