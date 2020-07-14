@@ -2,13 +2,11 @@ package controller
 
 import (
 	"fmt"
-	"github.com/Shitovdm/GitRsync/src/component/conf"
 	"github.com/Shitovdm/GitRsync/src/component/gui"
 	"github.com/Shitovdm/GitRsync/src/component/helper"
 	"github.com/Shitovdm/GitRsync/src/component/logger"
-	"github.com/Shitovdm/GitRsync/src/model"
+	"github.com/Shitovdm/GitRsync/src/model/platform"
 	"github.com/gin-gonic/gin"
-	"github.com/gofrs/uuid"
 	"net/http"
 )
 
@@ -21,7 +19,7 @@ func (ctrl PlatformsController) Index(c *gin.Context) {
 	menu := gui.GetMenu(c)
 	templateParams := gin.H{"menu": menu}
 	templateParams["title"] = "Platforms"
-	templateParams["platforms"], _ = conf.GetPlatformsConfigData()
+	templateParams["platforms"], _ = platform.GetAllInInterface()
 
 	c.HTML(http.StatusOK, "platforms/index", templateParams)
 }
@@ -29,24 +27,19 @@ func (ctrl PlatformsController) Index(c *gin.Context) {
 // Add describes add platform action.
 func (ctrl PlatformsController) Add(c *gin.Context) {
 
-	var addPlatformRequest model.AddPlatformRequest
+	var addPlatformRequest platform.AddPlatformRequest
 	_, err := helper.WsHandler(c.Writer, c.Request, &addPlatformRequest)
 	if err != nil {
 		logger.Error("PlatformsController/Add", err.Error())
 		return
 	}
 
-	newPlatformUUID, _ := uuid.NewV4()
-	platforms := conf.GetPlatformsConfig()
-	platforms = append(platforms, model.PlatformConfig{
-		UUID:     newPlatformUUID.String(),
+	err = platform.Create(&platform.Platform{
 		Name:     addPlatformRequest.Name,
 		Address:  addPlatformRequest.Address,
 		Username: addPlatformRequest.Username,
 		Password: addPlatformRequest.Password,
 	})
-
-	err = conf.SavePlatformsConfig(platforms)
 	if err != nil {
 		logger.Error("PlatformsController/Add", err.Error())
 	}
@@ -57,30 +50,19 @@ func (ctrl PlatformsController) Add(c *gin.Context) {
 // Edit describes edit platform action.
 func (ctrl PlatformsController) Edit(c *gin.Context) {
 
-	var editPlatformRequest model.EditPlatformRequest
+	var editPlatformRequest platform.EditPlatformRequest
 	_, err := helper.WsHandler(c.Writer, c.Request, &editPlatformRequest)
 	if err != nil {
 		logger.Error("PlatformsController/Edit", err.Error())
 		return
 	}
 
-	oldPlatformsList := conf.GetPlatformsConfig()
-	newPlatformsList := make([]model.PlatformConfig, 0)
-	for _, platform := range oldPlatformsList {
-		if platform.UUID == editPlatformRequest.UUID {
-			newPlatformsList = append(newPlatformsList, model.PlatformConfig{
-				UUID:     platform.UUID,
-				Name:     editPlatformRequest.Name,
-				Address:  editPlatformRequest.Address,
-				Username: editPlatformRequest.Username,
-				Password: editPlatformRequest.Password,
-			})
-			continue
-		}
-		newPlatformsList = append(newPlatformsList, platform)
-	}
-
-	err = conf.SavePlatformsConfig(newPlatformsList)
+	pl := platform.Get(editPlatformRequest.UUID)
+	pl.SetName(editPlatformRequest.Name)
+	pl.SetAddress(editPlatformRequest.Address)
+	pl.SetUsername(editPlatformRequest.Username)
+	pl.SetPassword(editPlatformRequest.Password)
+	err = pl.Update()
 	if err != nil {
 		logger.Error("PlatformsController/Edit", err.Error())
 	}
@@ -91,28 +73,18 @@ func (ctrl PlatformsController) Edit(c *gin.Context) {
 // Remove describes remove platform action.
 func (ctrl PlatformsController) Remove(c *gin.Context) {
 
-	var removePlatformRequest model.RemovePlatformRequest
+	var removePlatformRequest platform.RemovePlatformRequest
 	_, err := helper.WsHandler(c.Writer, c.Request, &removePlatformRequest)
 	if err != nil {
 		logger.Error("PlatformsController/Remove", err.Error())
 		return
 	}
 
-	removedPlatformName := ""
-	oldPlatformsList := conf.GetPlatformsConfig()
-	newPlatformsList := make([]model.PlatformConfig, 0)
-	for _, platform := range oldPlatformsList {
-		if platform.UUID != removePlatformRequest.UUID {
-			newPlatformsList = append(newPlatformsList, platform)
-		} else {
-			removedPlatformName = platform.Name
-		}
-	}
-
-	err = conf.SavePlatformsConfig(newPlatformsList)
+	pl := platform.Get(removePlatformRequest.UUID)
+	err = pl.Delete()
 	if err != nil {
 		logger.Error("PlatformsController/Remove", err.Error())
 	}
 
-	logger.Info("PlatformsController/Remove", fmt.Sprintf("Platform with name %s successfully removed!", removedPlatformName))
+	logger.Info("PlatformsController/Remove", fmt.Sprintf("Platform with name %s successfully removed!", pl.GetName()))
 }
