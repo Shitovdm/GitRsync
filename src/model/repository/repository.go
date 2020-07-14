@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Shitovdm/GitRsync/src/component/conf"
 	"github.com/gofrs/uuid"
@@ -9,6 +10,9 @@ import (
 )
 
 const (
+	//	ConfigFileName describe repositories config file name.
+	ConfigFileName = "Repositories.json"
+
 	// StatusInitiated describe status "initiated"
 	StatusInitiated = "initiated"
 	// StatusPendingPull describe status "pending_pull"
@@ -44,7 +48,7 @@ var (
 	timeFormat = "02-01-2006 15:04"
 )
 
-// RepositoryConfig struct describes repository config.
+// Repository struct describes repository config.
 type Repository struct {
 	UUID                    string `json:"uuid"`
 	Name                    string `json:"name"`
@@ -81,24 +85,94 @@ type RemoveRepositoryRequest struct {
 	UUID string `json:"uuid"`
 }
 
+// GetUUID returns repository UUID.
 func (r *Repository) GetUUID() string {
 	return r.UUID
 }
+
+// SetUUID sets repository UUID.
 func (r *Repository) SetUUID(UUID string) {
 	r.UUID = UUID
 }
+
+// GetName returns repository Name.
 func (r *Repository) GetName() string {
 	return r.Name
 }
+
+// SetName sets repository Name.
 func (r *Repository) SetName(name string) {
 	r.Name = name
 }
 
+// GetSourcePlatformUUID returns repository SourcePlatformUUID.
+func (r *Repository) GetSourcePlatformUUID() string {
+	return r.SourcePlatformUUID
+}
+
+// SetSourcePlatformUUID sets repository SourcePlatformUUID.
+func (r *Repository) SetSourcePlatformUUID(sourcePlatformUUID string) {
+	r.SourcePlatformUUID = sourcePlatformUUID
+}
+
+// GetSourcePlatformPath returns repository SourcePlatformPath.
+func (r *Repository) GetSourcePlatformPath() string {
+	return r.SourcePlatformPath
+}
+
+// SetSourcePlatformPath sets repository SourcePlatformPath.
+func (r *Repository) SetSourcePlatformPath(sourcePlatformPath string) {
+	r.SourcePlatformPath = sourcePlatformPath
+}
+
+// GetDestinationPlatformUUID returns repository DestinationPlatformUUID.
+func (r *Repository) GetDestinationPlatformUUID() string {
+	return r.DestinationPlatformUUID
+}
+
+// SetDestinationPlatformUUID sets repository DestinationPlatformUUID.
+func (r *Repository) SetDestinationPlatformUUID(destinationPlatformUUID string) {
+	r.DestinationPlatformUUID = destinationPlatformUUID
+}
+
+// GetDestinationPlatformPath returns repository DestinationPlatformPath.
+func (r *Repository) GetDestinationPlatformPath() string {
+	return r.DestinationPlatformPath
+}
+
+// SetDestinationPlatformPath sets repository DestinationPlatformPath.
+func (r *Repository) SetDestinationPlatformPath(destinationPlatformPath string) {
+	r.DestinationPlatformPath = destinationPlatformPath
+}
+
+// GetStatus returns repository Status.
 func (r *Repository) GetStatus() string {
 	return r.Status
 }
+
+// SetStatus sets repository Status.
 func (r *Repository) SetStatus(status string) {
 	r.Status = status
+}
+
+// GetState returns repository State.
+func (r *Repository) GetState() string {
+	return r.State
+}
+
+// SetState sets repository State.
+func (r *Repository) SetState(state string) {
+	r.State = state
+}
+
+// GetUpdatedAt returns repository UpdatedAt.
+func (r *Repository) GetUpdatedAt() string {
+	return r.UpdatedAt
+}
+
+// SetUpdatedAt sets repository UpdatedAt.
+func (r *Repository) SetUpdatedAt(updatedAt string) {
+	r.UpdatedAt = updatedAt
 }
 
 // Get returns repository config by repository UUID.
@@ -118,10 +192,10 @@ func Get(UUID string) *Repository {
 func GetAll() []Repository {
 
 	repositoriesConfig := make([]Repository, 0)
-	err := conf.Load("Repositories.json", &repositoriesConfig)
+	err := conf.Load(ConfigFileName, &repositoriesConfig)
 	if err != nil {
 		fmt.Printf("Error while loading repositories config file! %s", err.Error())
-		err = conf.Save("Repositories.json", []map[string]interface{}{})
+		err = conf.Save(ConfigFileName, []map[string]interface{}{})
 		if err != nil {
 			fmt.Printf("Error while creating new repositories config file! %s", err.Error())
 		}
@@ -131,7 +205,46 @@ func GetAll() []Repository {
 	return repositoriesConfig
 }
 
-// Update describes update repository status action.
+// GetAllInInterface returns repositories config data.
+func GetAllInInterface() ([]map[string]interface{}, error) {
+
+	var repositoriesConfig []map[string]interface{}
+	err := conf.Load(ConfigFileName, &repositoriesConfig)
+	if err != nil {
+		return []map[string]interface{}{}, errors.New("unable to load repositories configuration")
+	}
+	return repositoriesConfig, nil
+}
+
+// GetActive returns active repositories config.
+func GetActive() ([]map[string]interface{}, error) {
+
+	repositoriesConfig, _ := GetAllInInterface()
+	var activeRepositories []map[string]interface{}
+	for _, repo := range repositoriesConfig {
+		if repo["state"] == StateActive {
+			activeRepositories = append(activeRepositories, repo)
+		}
+	}
+
+	return activeRepositories, nil
+}
+
+// GetBlocked returns blocked repositories config.
+func GetBlocked() ([]map[string]interface{}, error) {
+
+	repositoriesConfig, _ := GetAllInInterface()
+	var blockedRepositories []map[string]interface{}
+	for _, repo := range repositoriesConfig {
+		if repo["state"] == StateBlocked {
+			blockedRepositories = append(blockedRepositories, repo)
+		}
+	}
+
+	return blockedRepositories, nil
+}
+
+// Create creates new repository..
 func Create(r *Repository) error {
 
 	UUID, _ := uuid.NewV4()
@@ -141,7 +254,7 @@ func Create(r *Repository) error {
 	r.UpdatedAt = ""
 	repositories := GetAll()
 	repositories = append(repositories, *r)
-	err := conf.SaveRepositories(repositories)
+	err := saveRepositories(repositories)
 	if err != nil {
 		return err
 	}
@@ -152,6 +265,7 @@ func Create(r *Repository) error {
 // Update describes update repository status action.
 func (r *Repository) Update() error {
 
+	t := time.Now()
 	oldRepositoriesList := GetAll()
 	for i, repository := range oldRepositoriesList {
 		if repository.UUID == r.UUID {
@@ -162,14 +276,30 @@ func (r *Repository) Update() error {
 			oldRepositoriesList[i].DestinationPlatformPath = r.DestinationPlatformPath
 			oldRepositoriesList[i].Status = r.Status
 			oldRepositoriesList[i].State = r.State
-			if r.Status == StatusPulled || r.Status == StatusPushed || r.Status == StatusSynchronized {
-				t := time.Now()
-				oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
-			}
+			oldRepositoriesList[i].UpdatedAt = t.Format(timeFormat)
 		}
 	}
 
-	err := conf.SaveRepositories(oldRepositoriesList)
+	err := saveRepositories(oldRepositoriesList)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Delete removes repository config.
+func (r *Repository) Delete() error {
+
+	oldRepositoriesList := GetAll()
+	newRepositoriesList := make([]Repository, 0)
+	for _, repository := range oldRepositoriesList {
+		if repository.UUID != r.UUID {
+			newRepositoriesList = append(newRepositoriesList, repository) //nolint:staticcheck
+		}
+	}
+
+	err := saveRepositories(newRepositoriesList)
 	if err != nil {
 		return err
 	}
@@ -189,4 +319,13 @@ func (r *Repository) GetDestinationRepositoryName() string {
 
 	dpp := strings.Trim(strings.TrimRight(r.DestinationPlatformPath, "git"), ".")
 	return strings.Split(dpp, "/")[len(strings.Split(dpp, "/"))-1]
+}
+
+// saveRepositories stores repositories config data.
+func saveRepositories(repositories []Repository) error {
+	err := conf.Save(ConfigFileName, &repositories)
+	if err != nil {
+		return fmt.Errorf("Error while saving repositories config file! %s ", err.Error())
+	}
+	return nil
 }
