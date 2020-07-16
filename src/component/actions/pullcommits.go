@@ -6,50 +6,41 @@ import (
 	"github.com/Shitovdm/GitRsync/src/component/conf"
 	"github.com/Shitovdm/GitRsync/src/component/helper"
 	"github.com/Shitovdm/GitRsync/src/component/logger"
+	"github.com/Shitovdm/GitRsync/src/model/platform"
 	"github.com/Shitovdm/GitRsync/src/model/repository"
-	"github.com/gorilla/websocket"
 )
 
-func (r *repository.Repository) PullCommits() error {
+// PullCommits pulls source repository.
+func PullCommits(repo *repository.Repository, re string) error {
 
-	r.SetStatus(repository.StatusPendingPull)
-	_ = r.Update()
-
-	logger.Trace("ActionsController/Pull", fmt.Sprintf("Start pulling repository with UUID %s...", repositoryUUID))
-
-	platformConfig := conf.GetPlatformByUUID(repositoryConfig.SourcePlatformUUID)
-	if platformConfig == nil {
-		UpdateRepositoryStatus(repositoryUUID, repository.StatusPullFailed)
-		ErrorMsg := fmt.Sprintf("Platform with UUID %s not found!", repositoryConfig.SourcePlatformUUID)
-		logger.Error("ActionsController/Pull", ErrorMsg)
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONError(ErrorMsg)))
-		logger.Warning("ActionsController/Pull", "Fetching source repository aborted!")
-		return
-	}
-
+	logger.Trace("ActionsController/Pull", fmt.Sprintf("Start pulling repository with UUID %s...", repo.UUID))
+	repo.SetStatus(repository.StatusPendingPull)
+	_ = repo.Update()
 	sourceName := repo.GetSourceRepositoryName()
-	repositoryName := conf.GetRepositorySourceRepositoryName(repositoryConfig)
 
 	isNewRepository := false
 	if !helper.IsDirExists(conf.BuildPlatformPath(fmt.Sprintf(`\projects\%s`, repo.GetName()))) ||
-		!helper.IsDirExists(conf.BuildPlatformPath(fmt.Sprintf(`\projects\%s\source\%s`, repo.GetName(), repositoryName))) {
-		logger.Trace("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repositoryConfig.Name))
-		err = helper.CreateNewDir(conf.BuildPlatformPath(fmt.Sprintf(`\projects\%s\source`, repositoryConfig.Name)))
+		!helper.IsDirExists(conf.BuildPlatformPath(fmt.Sprintf(`\projects\%s\source\%s`, repo.GetName(), sourceName))) {
+		logger.Trace("ActionsController/Pull", fmt.Sprintf("Repository %s has not been initialized earlier! Initialization...", repo.GetName()))
+		err := helper.CreateNewDir(conf.BuildPlatformPath(fmt.Sprintf(`\projects\%s\source`, repo.GetName())))
 		if err != nil {
-			UpdateRepositoryStatus(repositoryUUID, repository.StatusPullFailed)
-			ErrorMsg := fmt.Sprintf(`Error while creating new folder .\projects\%s\source`, repositoryConfig.Name)
-			logger.Error("ActionsController/Pull", ErrorMsg)
-			_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONError(ErrorMsg)))
-			logger.Warning("ActionsController/Pull", "Fetching source repository aborted!")
-			return
+			repo.SetStatus(repository.StatusPullFailed)
+			_ = repo.Update()
+			return fmt.Errorf(`Error while creating new folder .\projects\%s\source `, repo.GetName())
 		}
-		logger.Trace("ActionsController/Pull", fmt.Sprintf("Root folders for repository %s succesfully created!", repositoryConfig.Name))
+		logger.Trace("ActionsController/Pull", fmt.Sprintf("Root folders for repository %s succesfully created!", repo.GetName()))
 		isNewRepository = true
 	}
 
-	repositoryFullURL := platformConfig.Address + repositoryConfig.SourcePlatformPath
-	repositoryFullPath := conf.BuildPlatformPath(fmt.Sprintf(`projects\%s\source`, repositoryConfig.Name))
-	//
+	pl := platform.Get(repo.DestinationPlatformUUID)
+	repositoryFullURL := pl.GetAddress() + repo.GetDestinationPlatformPath()
+	repositoryFullPath := conf.BuildPlatformPath(fmt.Sprintf(`projects\%s\destination`, repo.GetName()))
+	if re == "source" {
+		pl = platform.Get(repo.SourcePlatformUUID)
+		repositoryFullURL = pl.GetAddress() + repo.GetSourcePlatformPath()
+		repositoryFullPath = conf.BuildPlatformPath(fmt.Sprintf(`projects\%s\source`, repo.GetName()))
+	}
+
 	finishFetching := make(chan bool)
 	if isNewRepository {
 		//	Clone action.
@@ -68,7 +59,7 @@ func (r *repository.Repository) PullCommits() error {
 		//	Pull action.
 		logger.Trace("ActionsController/Pull", fmt.Sprintf("Fetching new from %s...", repositoryFullURL))
 		go func() {
-			pullResult := cmd.Pull(repositoryFullPath + `\` + repositoryName)
+			pullResult := cmd.Pull(repositoryFullPath + `\` + repo.GetName())
 			if pullResult {
 				logger.Trace("ActionsController/Pull", fmt.Sprintf("Repository %s pulled successfully!", repositoryFullURL))
 				finishFetching <- true
@@ -81,12 +72,9 @@ func (r *repository.Repository) PullCommits() error {
 
 	fetchRes := <-finishFetching
 	if !fetchRes {
-		UpdateRepositoryStatus(pullActionRequest.RepositoryUUID, repository.StatusPullFailed)
-		Msg := "Error occurred while fetching source repository!"
-		logger.Error("ActionsController/Pull", Msg)
-		_ = conn.WriteMessage(websocket.TextMessage, []byte(BuildWsJSONError(Msg)))
-		logger.Warning("ActionsController/Pull", "Fetching source repository aborted!")
-		return
+		repo.SetStatus(repository.StatusPullFailed)
+		_ = repo.Update()
+		return fmt.Errorf(`Error occurred while fetching source repository %s! `, repo.GetName())
 	}
 
 	return nil

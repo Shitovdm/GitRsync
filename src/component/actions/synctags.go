@@ -4,18 +4,15 @@ import (
 	"fmt"
 	"github.com/Shitovdm/GitRsync/src/component/cmd"
 	"github.com/Shitovdm/GitRsync/src/component/conf"
+	"github.com/Shitovdm/GitRsync/src/model/repository"
 )
 
 // SyncTags syncs repositories tags.
-func SyncTags(repositoryUUID string) error {
-	repositoryConfig := conf.GetRepositoryByUUID(repositoryUUID)
-	if repositoryConfig == nil {
-		return fmt.Errorf("Repository with transferred UUID %s not found! ", repositoryUUID)
-	}
+func SyncTags(repo *repository.Repository) error {
 
-	repositoryFullPath := conf.BuildPlatformPath(fmt.Sprintf(`projects\%s`, repositoryConfig.Name))
-	sourceRepositoryName := conf.GetRepositorySourceRepositoryName(repositoryConfig)
-	destinationRepositoryName := conf.GetRepositoryDestinationRepositoryName(repositoryConfig)
+	repositoryFullPath := conf.BuildPlatformPath(fmt.Sprintf(`projects\%s`, repo.GetName()))
+	sourceRepositoryName := repo.GetSourceRepositoryName()
+	destinationRepositoryName := repo.GetDestinationRepositoryName()
 	sourceRepositoryPath := repositoryFullPath + `\source\` + sourceRepositoryName
 	destinationRepositoryPath := repositoryFullPath + `\destination\` + destinationRepositoryName
 

@@ -295,7 +295,7 @@ func (r *Repository) Delete() error {
 	newRepositoriesList := make([]Repository, 0)
 	for _, repository := range oldRepositoriesList {
 		if repository.UUID != r.UUID {
-			newRepositoriesList = append(newRepositoriesList, repository) //nolint:staticcheck
+			newRepositoriesList = append(newRepositoriesList, repository)
 		}
 	}
 
