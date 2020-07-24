@@ -107,31 +107,26 @@ func CopyDirContent(src string, dst string) error {
 	var fds []os.FileInfo
 	var srcinfo os.FileInfo
 
-	if srcinfo, err = os.Stat(src); err != nil {
+	srcinfo, err = os.Stat(src)
+	if err != nil {
 		return err
 	}
 
-	if err = os.MkdirAll(dst, srcinfo.Mode()); err != nil {
+	err = os.MkdirAll(dst, srcinfo.Mode())
+	if err != nil {
 		return err
 	}
 
-	if fds, err = ioutil.ReadDir(src); err != nil {
+	fds, err = ioutil.ReadDir(src)
+	if err != nil {
 		return err
 	}
+
 	for _, fd := range fds {
-		srcfp := path.Join(src, fd.Name())
-		dstfp := path.Join(dst, fd.Name())
-
-		if fd.IsDir() {
-			if err = CopyDirContent(srcfp, dstfp); err != nil {
-				//Logger.Warning("FS/CopyDirContent", err.Error())
-			}
-		} else {
-			if err = CopyFile(srcfp, dstfp); err != nil {
-				//Logger.Warning("FS/CopyDirContent", err.Error())
-			}
-		}
+		_ = path.Join(src, fd.Name())
+		_ = path.Join(dst, fd.Name())
 	}
+
 	return nil
 }
 

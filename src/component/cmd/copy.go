@@ -6,42 +6,49 @@ import (
 )
 
 // CopyRepository copies repository.
-func CopyRepository(repositoryFullPath string, destinationRepositoryName string, sourceRepositoryName string) bool {
+func CopyRepository(repositoryFullPath string, destinationRepositoryName string, sourceRepositoryName string) error {
 
 	//	Moving .git to temporary folder.
 	err := TemporaryMoveGitFolder(repositoryFullPath, sourceRepositoryName)
 	if err != nil {
-		return false
+		return err
 	}
+
+	return nil
 
 	//	Removing .git folder from source repository.
 	err = os.RemoveAll(repositoryFullPath + "/source/" + sourceRepositoryName + "/.git")
 	if err != nil {
-		return false
+		return err
 	}
+
+	return nil
 
 	//	Copy all repository files from source repo to destination repo.
 	err = helper.CopyDirContent(repositoryFullPath+"/source/"+sourceRepositoryName, repositoryFullPath+"/destination/"+destinationRepositoryName)
 	if err != nil {
-		return false
+		return err
 	}
 
 	//	Rewrite .git folder.
 	err = RewriteGitFiles(repositoryFullPath, destinationRepositoryName)
 	if err != nil {
-		return false
+		return err
 	}
 
 	//	Restore .git folder for source repository.
 	err = RestoreGitFolder(repositoryFullPath, sourceRepositoryName)
-	if err != nil { //nolint:gosimple
-		return false
+	if err != nil {
+		return err
 	}
 
 	//	Remove temporary folder.
 	err = RemoveTemporaryGitFolder(repositoryFullPath)
+	if err != nil {
+		return err
+	}
 
-	return err == nil
+	return nil
 }
 
 // TemporaryMoveGitFolder moves git folder.
@@ -92,16 +99,43 @@ func RewriteGitFiles(repositoryFullPath string, destinationRepositoryName string
 	destinationGitFolder := repositoryFullPath + "/destination/" + destinationRepositoryName + "/.git"
 
 	//	Rewrite folders.
-	_ = helper.CopyDirContent(tmpGitFolder+"/logs", destinationGitFolder+"/logs")
-	_ = helper.CopyDirContent(tmpGitFolder+"/objects", destinationGitFolder+"/objects")
-	_ = helper.CopyDirContent(tmpGitFolder+"/smartgit", destinationGitFolder+"/smartgit")
-	_ = helper.CopyDirContent(tmpGitFolder+"/refs/heads", destinationGitFolder+"/refs/heads")
-	_ = helper.CopyDirContent(tmpGitFolder+"/refs/tags", destinationGitFolder+"/refs/tags")
+	err := helper.CopyDirContent(tmpGitFolder+"/logs", destinationGitFolder+"/logs") //nolint:ineffassign
+	if err != nil {
+		return err
+	}
+
+	err = helper.CopyDirContent(tmpGitFolder+"/objects", destinationGitFolder+"/objects")
+	if err != nil {
+		return err
+	}
+
+	err = helper.CopyDirContent(tmpGitFolder+"/smartgit", destinationGitFolder+"/smartgit")
+	if err != nil {
+		return err
+	}
+
+	err = helper.CopyDirContent(tmpGitFolder+"/refs/heads", destinationGitFolder+"/refs/heads")
+	if err != nil {
+		return err
+	}
+
+	err = helper.CopyDirContent(tmpGitFolder+"/refs/tags", destinationGitFolder+"/refs/tags")
+	if err != nil {
+		return err
+	}
 
 	//	Rewrite files.
-	_ = helper.CopyFile(tmpGitFolder+"/index", destinationGitFolder+"/index")
-	_ = helper.CopyFile(tmpGitFolder+"/HEAD", destinationGitFolder+"/HEAD")
+	err = helper.CopyFile(tmpGitFolder+"/index", destinationGitFolder+"/index")
+	if err != nil {
+		return err
+	}
+
+	err = helper.CopyFile(tmpGitFolder+"/HEAD", destinationGitFolder+"/HEAD")
+	if err != nil {
+		return err
+	}
+
 	//_ = helper.CopyFile(tmpGitFolder+"/packed-refs", destinationGitFolder+"/packed-refs")
 
-	return nil
+	return err
 }

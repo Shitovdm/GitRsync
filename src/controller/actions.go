@@ -70,19 +70,22 @@ func (ctrl ActionsController) Push(c *gin.Context) {
 	logger.Trace("ActionsController/Push", "Repository successfully fetched!")
 
 	//	Step 2. Copying all files from source to destination repositories dir`s.
-	repositoryFullPath := conf.BuildPlatformPath(fmt.Sprintf(`projects\%s\destination`, repo.GetName()))
+	repositoryFullPath := conf.BuildPlatformPath(fmt.Sprintf(`projects\%s`, repo.GetName()))
+	fmt.Println(repositoryFullPath)
+
 	sourceName := repo.GetSourceRepositoryName()
 	destinationName := repo.GetDestinationRepositoryName()
 	logger.Trace("ActionsController/Push", "Start copying all repository files...")
-	if !cmd.CopyRepository(repositoryFullPath, destinationName, sourceName) {
+	err = cmd.CopyRepository(repositoryFullPath, destinationName, sourceName)
+	if err != nil {
 		repo.SetStatus(repository.StatusPushFailed)
 		_ = repo.Update()
-		LogErrorWithResponse("Push", "Error occurred while copying repository files!",
-			"Pulling source repository aborted!", conn)
+		LogErrorWithResponse("Push", err.Error(), "Pulling source repository aborted!", conn)
 		return
 	}
 	logger.Trace("ActionsController/Push", "Repository files successfully copied!")
 
+	return
 	//	Step 3. Checking needed pushing destination repository.
 
 	commits, err := cmd.Log(repo.GetDestinationRepositoryName(), "origin/master..HEAD", -1)
